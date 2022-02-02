@@ -64,7 +64,7 @@ save_plot <- function (plot_grid, width, height, save_filepath) {
   #save it
   ggplot2::ggsave(filename = save_filepath,
                   plot=plot_grid, width=(width/72), height=(height/72),
-                  bg="white")
+                  bg="white", type="cairo-png")
 }
 
 #Left align text
@@ -109,8 +109,10 @@ finalise_plot <- function(plot_name,
                           save_filepath,
                           width_pixels=640,
                           height_pixels=450,
-                          #logo_image_path = file.path(system.file("data", package = 'bbplot'),"placeholder.png")) {
-                          logo_image_path = "swtlogo.png",
+                          logo_image_path = file.path(system.file("data",
+                                                                  package = 'swt'),
+                                                      "swtlogo.png"),
+                          #logo_image_path = "swtlogo.png",
                           footer = TRUE) {
 
   #Draw your left-aligned grid
