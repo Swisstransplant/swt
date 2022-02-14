@@ -52,7 +52,7 @@ swt_style <- function(title_size=18, subtitle_size=14, font_size=14,
     # Grid lines
     panel.grid.minor = ggplot2::element_blank(),
     panel.grid.major.y = ggplot2::element_line(color=gridColor),
-    panel.grid.major.x = ggplot2::element_blank(),
+    panel.grid.major.x = ggplot2::element_line(color=gridColor),
 
     # Background
     # This sets the panel background as blank, removing the standard grey ggplot
@@ -68,7 +68,7 @@ swt_style <- function(title_size=18, subtitle_size=14, font_size=14,
   )
 }
 
-save_plot <- function (plot_grid, width, height, save_filepath) {
+save_figure <- function (plot_grid, width, height, save_filepath) {
   grid::grid.draw(plot_grid)
   #save it
   ggplot2::ggsave(filename = save_filepath,
@@ -147,16 +147,18 @@ finalise_plot <- function(plot_name,
 
 
 swt_colors <- function() {
-  list(blue.swt                = rgb( 42, 84,138, maxColorValue = 255),
-       turkis.transplantation  = rgb(105,211,195, maxColorValue = 255),
-       yellow.organdonation    = rgb(251,228, 70, maxColorValue = 255),
-       strongred.heart         = rgb(229,  0, 92, maxColorValue = 255),
+  list(blue.swt           = rgb( 42, 84,138, maxColorValue = 255),
+       turkis.tx          = rgb(105,211,195, maxColorValue = 255),
+       yellow.organ       = rgb(251,228, 70, maxColorValue = 255),
+       red.heart          = rgb(229,  0, 92, maxColorValue = 255),
 
-       red.liver               = rgb(217,143,143, maxColorValue = 255),
-       darkyellow.kidney       = rgb(242,175, 92, maxColorValue = 255),
-       green.pancreas          = rgb(139,173,143, maxColorValue = 255),
-       lightblue.lungs         = rgb(155,189,197, maxColorValue = 255),
-       beige.smallintestine    = rgb(209,205,189, maxColorValue = 255)
+       pink.liver         = rgb(217,143,143, maxColorValue = 255),
+       orange.kidney      = rgb(242,175, 92, maxColorValue = 255),
+       green.pancreas     = rgb(139,173,143, maxColorValue = 255),
+       sky.lungs          = rgb(155,189,197, maxColorValue = 255),
+       beige.intestine    = rgb(209,205,189, maxColorValue = 255),
+
+       grey.bg            = rgb(244,244,241, maxColorValue = 255)
        )
 
 }
