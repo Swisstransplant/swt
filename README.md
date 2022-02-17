@@ -28,3 +28,9 @@ Please find further instruction on how to use the package in the
 
     R CMD build swt
     R CMD check --as-cran swt_0.1.tar.gz
+
+### Install package locally
+    detach("package:swt", unload=TRUE)
+
+    R CMD REMOVE swt
+    R CMD INSTALL swt_0.1.tar.gz
