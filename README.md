@@ -16,3 +16,15 @@ Foundation for organ donation and transplantation.
 
 Please find further instruction on how to use the package in the
 [SWT cookbook](https://schw4b.github.io/rcookbook/).
+
+
+### Package building
+   export LC_CTYPE='C'
+
+   rm swt/NAMESPACE
+   cd swt; R -e 'devtools::document()'; cd ..
+   rm swt*.tar.gz
+   rm -rf swt.Rcheck
+
+   R CMD build swt
+   R CMD check --as-cran swt_0.1.tar.gz
