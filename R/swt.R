@@ -15,7 +15,7 @@ swt_style <- function(title_size=18, subtitle_size=14, font_size=14,
   font = "sans" # SWT uses font Segement Light
 
   bgColor = "white"
-  gridColor = "#F4F4F1"
+  gridColor = "gray90"
   if (grey_theme) {
     bgColor = "#F4F4F1"
     gridColor = "white"
@@ -72,84 +72,6 @@ swt_style <- function(title_size=18, subtitle_size=14, font_size=14,
     # strip.text = ggplot2::element_text(size  = 22,  hjust = 0)
   )
 }
-
-save_figure <- function (plot_grid, width, height, save_filepath) {
-  grid::grid.draw(plot_grid)
-  #save it
-  ggplot2::ggsave(filename = save_filepath,
-                  plot=plot_grid, width=(width/72), height=(height/72),
-                  bg="white", type="cairo-png")
-}
-
-left_align <- function(plot_name, pieces){
-  grob = ggplot2::ggplotGrob(plot_name)
-  n = length(pieces)
-  grob$layout$l[grob$layout$name %in% pieces] = 2
-  return(grob)
-}
-
-create_footer <- function (source_name, logo_image_path, color = "#F4F4F1") {
-  #Make the footer
-  footer = grid::grobTree(# grid::linesGrob(x = grid::unit(c(0, 1), "npc"),
-    #                 y = grid::unit(1.1, "npc")),
-    grid::rectGrob(gp=grid::gpar(fill=color, col=color)),
-    grid::textGrob(source_name, x = 0.01, hjust = 0,
-                   gp = grid::gpar(fontsize=10)),
-    grid::rasterGrob(png::readPNG(logo_image_path),
-                     x = 0.98))
-  return(footer)
-
-}
-
-#' Arrange alignment and save SWT plot
-#'
-#' Running this function will save your plot with the correct guidelines for
-#' publication for a SWT graphic. It will left align the title and subtitle,
-#' add the SWT logo at the bottom right and save it to your specified location.
-#'
-#' @param plot_name The ggplot object of the plot
-#' @param source_name The text in the footer
-#' @param save_filepath Exact filepath that you want the plot to be saved to
-#' @param width_pixels Width in pixels - defaults to 640
-#' @param height_pixels Height in pixels - defaults to 450
-#' @param footer Whether to use a footer with the logo (TRUE or FALSE)
-#' @param logo_image_path File path for the logo image
-#'
-#' @return (Invisibly) an updated ggplot object.
-#'
-#' @export
-finalise_plot <- function(plot_name,
-                          source_name,
-                          save_filepath,
-                          width_pixels=640,
-                          height_pixels=450,
-                          logo_image_path = file.path(system.file(c("inst","extdata"),
-                                                                  package = 'swt'),
-                                                      "swtlogo.png"),
-                          #logo_image_path = "swtlogo.png",
-                          footer = TRUE) {
-
-  #Draw your left-aligned grid
-  plot_left_aligned = left_align(plot_name, c("subtitle", "title", "caption"))
-
-  myFooter=NULL
-  if (footer) {
-    myFooter = create_footer(source_name, logo_image_path, color="#F4F4F1")
-    plot_grid = ggpubr::ggarrange(plot_left_aligned, myFooter,
-                                  ncol = 1, nrow = 2,
-                                  heights = c(1, 0.045/(height_pixels/450))
-    )
-  } else {
-    plot_grid = ggpubr::ggarrange(plot_left_aligned,
-                                  ncol = 1, nrow = 1)
-  }
-  ## print(paste("Saving to", save_filepath))
-  save_figure(plot_grid, width_pixels, height_pixels, save_filepath)
-  ## Return (invisibly) a copy of the graph. Can be assigned to a
-  ## variable or silently ignored.
-  invisible(plot_grid)
-}
-
 
 #' SWT colors
 #'
