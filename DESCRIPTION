@@ -1,6 +1,6 @@
 Package: swt
 Type: Package
-Title: Swisstransplant R package
+Title: Swisstransplant R Package
 Version: 0.1
 Authors@R: c(
   person("Simon", "Schwab", email = "simon.schwab@swisstransplant.org",
@@ -11,7 +11,7 @@ Authors@R: c(
 Description: This R package provides tools for data analysis and visualization
     by Swisstransplant--the national organisation for organ donation and
     transplantation in Switzerland.
-Imports: ggplot2, grid, ggpubr, png, grDevices
+Imports: ggplot2, grid, ggpubr, png, grDevices, utils
 License: file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.1.2

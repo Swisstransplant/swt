@@ -106,7 +106,94 @@ swt_colors <- function() {
        beige.intestine    = grDevices::rgb(209,205,189, maxColorValue = 255),
 
        grey.bg            = grDevices::rgb(244,244,241, maxColorValue = 255)
-       )
+  )
 
 }
 
+#' Read LifePort data
+#'
+#' @param file The data file
+#' @param binary Whether the data file is binary (default FALSE)
+#'
+#' @return a list with LifePort data
+#' @export
+#'
+read.lifeport <- function(file, binary=FALSE) {
+
+  # read from binary file
+  if (binary) {
+
+    to.read = file(file, "rb")
+
+    UnitID = readBin(to.read, character(), n = 1, size = 1)
+    skip = readBin(to.read, raw(), n =34, size = 1)
+
+    OrganID = readBin(to.read, character(), n =1, size = 1, signed = FALSE)
+    skip = readBin(to.read, integer(), n =6, size = 2)
+
+    data.raw = readBin(to.read, integer(), n =10^6, size = 2)
+    close(to.read)
+
+    # data device
+    data.device = data.frame(array(NA, dim=c(1,9)))
+    colnames(data.device) = c("SerialNumber", "Type", "SubType", "UnitID",
+                              "FirmwareVersion", "FileID", "StartTime",
+                              "DataState", "HasGaps")
+    data.device$UnitID = UnitID
+
+    # data organ
+    data.organ = data.frame(array(NA, dim=c(1,13)))
+    colnames(data.organ) = c("OrganID", "KidneySide", "BloodType", "CrossClampTime.Date",
+                              "CrossClampTimezone", "TotalIschemicTime", "PerfusateLot",
+                              "PerfusateExpirationDate", "PerfusateUsed", "Cannula",
+                              "CannulaExpirationDate", "CassetteLot.", "CasetteExpirationDate"
+    )
+    data.organ$OrganID = OrganID
+
+    # data
+    no_rows = length(data.raw)/16
+    data.raw = t(array(data.raw, dim=c(16,no_rows)))
+
+    # remove last two rows filled with -1 (found in 2 examples, probably in all)
+    data.raw = data.raw[1:(nrow(data.raw)-2),]
+
+    data = data.frame(
+      SequentialRecordNumber = data.raw[,1],
+      SerialNumber           = NA,
+      FileID                 = data.raw[,3],
+      InfuseTime             = NA,
+      FlowRate               = data.raw[,5],
+      OrganResistance        = data.raw[,6],
+      IceContainerTemperature= data.raw[,7],
+      InfuseTemperature      = data.raw[,8],
+      Error1                 = data.raw[,9],
+      Error2                 = data.raw[,10],
+      State                  = data.raw[,11],
+      PressureSet            = data.raw[,12],
+      AveragePressure        = data.raw[,13],
+      DiastolicPressure      = data.raw[,14],
+      SystolicPressure       = data.raw[,15],
+      Checksum               = data.raw[,16]
+    )
+
+    # when file is ascii data (export from ORS Data Station)
+  } else {
+
+    data.device = utils::read.csv(file = file, nrows = 1, head = TRUE)
+    data.organ  = utils::read.csv(file = file, skip = 3, nrows = 1, head = TRUE)
+    data = utils::read.csv(file = file, skip = 6, head = TRUE)
+
+  }
+
+  # Conversions since data is stored in integers
+  data$InfuseTemperature = data$InfuseTemperature/10
+  data$IceContainerTemperature = data$IceContainerTemperature/10
+  data$OrganResistance = data$OrganResistance/100
+
+  data.list = list(
+    data.device=data.device,
+    data.organ = data.organ,
+    data = data)
+
+  return(data.list)
+}
