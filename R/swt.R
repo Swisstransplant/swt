@@ -8,16 +8,24 @@
 #' @param grey_theme Whether to use the grey theme instead (TRUE or FALSE)
 #' @param legend_position Position of the legend (top, bottom, left or right)
 #'
+#' @examples
+#' \donttest{
+#' library(ggplot2)
+#' ggplot(mtcars, aes(wt, mpg)) +
+#'    geom_point() +
+#'    swt_style()
+#' }
+#'
 #' @export
 swt_style <- function(title_size=18, subtitle_size=14, font_size=14,
                       grey_theme = FALSE, legend_position="top") {
   # windowsFonts()
-  font = "sans" # SWT uses font Segement Light
+  font = "sans"
 
-  bgColor = "white"
+  bgColor   = "white"
   gridColor = "gray90"
   if (grey_theme) {
-    bgColor = "#F4F4F1"
+    bgColor   = "#F4F4F1"
     gridColor = "white"
   }
 
@@ -78,6 +86,11 @@ swt_style <- function(title_size=18, subtitle_size=14, font_size=14,
 #' Easy access to official SWT color scheme
 #'
 #' @return a SWT color object
+#'
+#' @examples
+#' mycolors = swt_colors()
+#' mycolors$pink.liver
+#'
 #' @export
 #'
 swt_colors <- function() {

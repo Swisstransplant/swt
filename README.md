@@ -21,13 +21,10 @@ Please find further instruction on how to use the package in the
 ### Package building
     export LC_CTYPE='C'
 
-    rm swt/NAMESPACE
+    make clean
     cd swt; R -e 'devtools::document()'; cd ..
-    rm swt*.tar.gz
-    rm -rf swt.Rcheck
-
-    R CMD build swt
-    R CMD check --as-cran swt_0.1.tar.gz
+    make build
+    make file=swt_0.1.tar.gz check
 
 ### Install package locally
     detach("package:swt", unload=TRUE)

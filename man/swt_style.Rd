@@ -26,3 +26,12 @@ swt_style(
 \description{
 This function allows you to add the SWT theme to your ggplot graphics.
 }
+\examples{
+\donttest{
+library(ggplot2)
+ggplot(mtcars, aes(wt, mpg)) +
+   geom_point() +
+   swt_style()
+}
+
+}
