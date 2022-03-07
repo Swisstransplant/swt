@@ -123,23 +123,117 @@ read.lifeport <- function(file, binary=FALSE) {
   # read from binary file
   if (binary) {
 
+    # reverse engineering
+    # header is 1-64 bytes long
+    # data starts from 65-end byte
+    # numbers = rep(NA, 64) # keep at 64
+    # for (i in 1:64) {
+    #   to.read = file(file, "rb")
+    #   skip = readBin(to.read, raw(), n =i, size = 1)
+    #   print(paste0("byte ", i+1, ":", readBin(to.read, character(), n = 1, size = 1)))
+    #   close(to.read)
+    # }
+    # which(numbers==515)
+
+    # UnitID
     to.read = file(file, "rb")
-
     UnitID = readBin(to.read, character(), n = 1, size = 1)
-    skip = readBin(to.read, raw(), n =34, size = 1)
-
-    OrganID = readBin(to.read, character(), n =1, size = 1, signed = FALSE)
-    skip = readBin(to.read, integer(), n =6, size = 2)
-
-    data.raw = readBin(to.read, integer(), n =10^6, size = 2)
     close(to.read)
+
+    # SerialNumber
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 24, size = 1)
+    SerialNumber = readBin(to.read, integer(), n = 1, size = 4)
+    close(to.read)
+
+    # Data State?? 3 is complete
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 28, size = 1)
+    DataState = readBin(to.read, integer(), n = 1, size = 2)
+    close(to.read)
+
+    # FirmwareVersion
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 30, size = 1)
+    FirmwareVersion = readBin(to.read, integer(), n = 1, size = 2)
+    close(to.read)
+
+    # 33 ???
+    # to.read = file(file, "rb")
+    # skip = readBin(to.read, raw(), n =32, size = 1)
+    # as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    # close(to.read)
+
+    # FileID
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 33, size = 1)
+    FileID = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    close(to.read)
+
+    # Starttime incl. Date
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 35, size = 1)
+    # Date
+    StartMonth = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    StartDay = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    StartYear = as.numeric(readBin(to.read, raw(), n = 1, size = 1)) + 2000
+    # Time
+    StartHour = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    StartMin = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    StartSec = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    close(to.read)
+    # Create proper Date object "%Y-%m-%d %H:%M:%S"
+    StartTime = sprintf("%02d-%02d-%02d %02d:%02d:%02d", StartYear, StartMonth,
+                        StartDay, StartHour, StartMin, StartSec)
+
+    # OrganID
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 41, size = 1)
+    OrganID = readBin(to.read, character(), n = 1, size = 1)
+    OrganID = strsplit(OrganID, split = "\\\\|[^[:print:]]", fixed = FALSE)[[1]][1]
+    close(to.read)
+
+    # 54 KidneySide: 1 right, 2 left
+    # 55 BloodType: 1 A, 2 B, 3 AB, 4 O
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 53, size = 1)
+    KidneySide.Nr = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    BloodTyp.Nr = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    close(to.read)
+
+    # assign BloodType and KidneySide
+    KidneySide = switch(KidneySide.Nr, "Right", "Left")
+    BloodType = switch(BloodTyp.Nr, "A", "B", "AB", "0")
+    KidneySide = ifelse(is.null(KidneySide), NA, KidneySide)
+    BloodType = ifelse(is.null(BloodType), NA, BloodType)
+
+    # ClampTime
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 55, size = 1)
+    # Date
+    ClampMonth = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    ClampDay = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    ClampYear = as.numeric(readBin(to.read, raw(), n = 1, size = 1)) + 2000
+    # Time
+    ClampHour = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    ClampMin = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    ClampSec = as.numeric(readBin(to.read, raw(), n = 1, size = 1))
+    close(to.read)
+    # Create proper Date object "%Y-%m-%d %H:%M:%S"
+    ClampTime = sprintf("%02d-%02d-%02d %02d:%02d:%02d", ClampYear, ClampMonth,
+                        ClampDay, ClampHour, ClampMin, ClampSec)
+    if (ClampTime == "2000-00-00 00:00:00") {ClampTime = NA}
 
     # data device
     data.device = data.frame(array(NA, dim=c(1,9)))
     colnames(data.device) = c("SerialNumber", "Type", "SubType", "UnitID",
                               "FirmwareVersion", "FileID", "StartTime",
                               "DataState", "HasGaps")
+    data.device$SerialNumber = SerialNumber
     data.device$UnitID = UnitID
+    data.device$FirmwareVersion = FirmwareVersion
+    data.device$FileID = FileID
+    data.device$StartTime = StartTime
 
     # data organ
     data.organ = data.frame(array(NA, dim=c(1,13)))
@@ -149,12 +243,22 @@ read.lifeport <- function(file, binary=FALSE) {
                               "CannulaExpirationDate", "CassetteLot.", "CasetteExpirationDate"
     )
     data.organ$OrganID = OrganID
+    data.organ$KidneySide = KidneySide
+    data.organ$BloodType = BloodType
+    data.organ$CrossClampTime.Date = ClampTime
 
-    # data
+    # Data (timeseries)
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 64, size = 1)
+    data.raw = readBin(to.read, integer(), n =10^6, size = 2)
+    close(to.read)
     no_rows = length(data.raw)/16
     data.raw = t(array(data.raw, dim=c(16,no_rows)))
-
     # remove last two rows filled with -1 (found in 2 examples, probably in all)
+    if (nrow(data.raw) == 2) { # when file is empty, two rows of -1: fill NA
+      data.raw = array(NA, dim = c(5,16))
+    }
+
     data.raw = data.raw[1:(nrow(data.raw)-2),]
 
     data = data.frame(
