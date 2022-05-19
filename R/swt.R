@@ -113,15 +113,26 @@ swt_colors <- function() {
 #' Read LifePort data
 #'
 #' @param file The data file
-#' @param binary Whether the data file is binary (default FALSE)
+#' @param format guess, binary or plaintxt (default guess)
 #'
 #' @return a list with LifePort data
 #' @export
 #'
-read.lifeport <- function(file, binary=FALSE) {
+read.lifeport <- function(file, format="guess") {
+
+  # guess ascii vs binary
+  # we read the first line, for ascii it contains the full variable header
+  # with 83 characters, for binary it only contains the UnitID which is
+  # generally < 10 and sometimes an empty string , i.e. "".
+  if (format == "guess") {
+    con = file(file, "r")
+    firstline = readLines(con, n = 1, warn = F)
+    close(con)
+    format = ifelse(nchar(firstline) > 80, "plaintxt", "binary")
+  }
 
   # read from binary file
-  if (binary) {
+  if (format == "binary") {
 
     # reverse engineering
     # header is 1-64 bytes long
@@ -281,7 +292,7 @@ read.lifeport <- function(file, binary=FALSE) {
     )
 
     # when file is ascii data (export from ORS Data Station)
-  } else {
+  } else if (format == "plaintxt"){
 
     data.device = utils::read.csv(file = file, nrows = 1, head = TRUE)
     data.organ  = utils::read.csv(file = file, skip = 3, nrows = 1, head = TRUE)
@@ -300,4 +311,16 @@ read.lifeport <- function(file, binary=FALSE) {
     data = data)
 
   return(data.list)
+}
+
+#' Process LifePort data
+#'
+#' @param file The data file
+#' @param binary Whether the data file is binary (default FALSE)
+#'
+#' @return a list with LifePort data
+#' @export
+#'
+process.lifeport <- function(file, binary=FALSE) {
+
 }
