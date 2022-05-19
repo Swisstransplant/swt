@@ -4,12 +4,12 @@
 \alias{read.lifeport}
 \title{Read LifePort data}
 \usage{
-read.lifeport(file, binary = FALSE)
+read.lifeport(file, format = "guess")
 }
 \arguments{
 \item{file}{The data file}
 
-\item{binary}{Whether the data file is binary (default FALSE)}
+\item{format}{guess, binary or plaintxt (default guess)}
 }
 \value{
 a list with LifePort data

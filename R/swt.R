@@ -249,9 +249,9 @@ read.lifeport <- function(file, format="guess") {
     # data organ
     data.organ = data.frame(array(NA, dim=c(1,13)))
     colnames(data.organ) = c("OrganID", "KidneySide", "BloodType", "CrossClampTime.Date",
-                              "CrossClampTimezone", "TotalIschemicTime", "PerfusateLot",
-                              "PerfusateExpirationDate", "PerfusateUsed", "Cannula",
-                              "CannulaExpirationDate", "CassetteLot.", "CasetteExpirationDate"
+                             "CrossClampTimezone", "TotalIschemicTime", "PerfusateLot",
+                             "PerfusateExpirationDate", "PerfusateUsed", "Cannula",
+                             "CannulaExpirationDate", "CassetteLot.", "CasetteExpirationDate"
     )
     data.organ$OrganID = OrganID
     data.organ$KidneySide = KidneySide
@@ -298,6 +298,12 @@ read.lifeport <- function(file, format="guess") {
     data.organ  = utils::read.csv(file = file, skip = 3, nrows = 1, head = TRUE)
     data = utils::read.csv(file = file, skip = 6, head = TRUE)
 
+    # fix StartTime for consistency with binary data
+    # bin file: 2022-05-06 11:18:07
+    # txt file: 06.05.2022 11:18:07
+    as.POSIXct("1970-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
+    data.device$StartTime =
+      as.character(as.POSIXct(data.device$StartTime, format = "%d.%m.%Y %H:%M:%S", tz = "CET"))
   }
 
   # Conversions since data is stored in integers
@@ -313,14 +319,44 @@ read.lifeport <- function(file, format="guess") {
   return(data.list)
 }
 
-#' Process LifePort data
+#' Process LifePort data. Adds runtime, clock time vectors, and filtered time
+#' series.
 #'
-#' @param file The data file
-#' @param binary Whether the data file is binary (default FALSE)
+#' @param lpdat A list with data from read.lifeport()
+#' @param window_size rolling window size for filtering
 #'
-#' @return a list with LifePort data
+#' @return a list with additional processed data tables
 #' @export
 #'
-process.lifeport <- function(file, binary=FALSE) {
+process.lifeport <- function(lpdat, window_size = 30) {
 
+  # Calculate runtime from StartTime and number of samples
+  n = nrow(lpdat$data) # number of samples every 10 seconds
+  start = as.POSIXct(lpdat$data.device$StartTime, format = "%Y-%m-%d %H:%M:%S", tz = "CET")
+  dur = (start + n*10) - start
+  lpdat$data.device$Runtime = as.character(hms::as_hms(dur))
+
+  # We calculate own time vector ignoring the duplicated timestamps in InfuseTime
+  # InfuseTime is only in the txt file so must be an bug in ORS software export
+
+  # relative clock
+  lpdat$data$time.clock = start + seq(0, n*10 - 1, 10)
+
+  # absolute clock starting from 0
+  start.zero = as.POSIXct("1970-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
+  lpdat$data$time.zero = start.zero + seq(0, n*10 - 1, 10)
+
+  # timeseries filtering
+  lpdat$data$SystolicPressure.flt  =
+    data.table::frollmean(lpdat$data$SystolicPressure, n = window_size, align = "center")
+  lpdat$data$DiastolicPressure.flt =
+    data.table::frollmean(lpdat$data$DiastolicPressure, n = window_size, align = "center")
+  lpdat$data$AveragePressure.flt =
+    data.table::frollmean(lpdat$data$AveragePressure, n = window_size, align = "center")
+  lpdat$data$FlowRate.flt =
+    data.table::frollmean(lpdat$data$FlowRate, n = window_size, align = "center")
+  lpdat$data$OrganResistance.flt =
+    data.table::frollmean(lpdat$data$OrganResistance, n = window_size, align = "center")
+
+  return(lpdat)
 }
