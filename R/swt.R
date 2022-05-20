@@ -128,6 +128,8 @@ read.lifeport <- function(file, format="guess") {
     con = file(file, "r")
     firstline = readLines(con, n = 1, warn = F)
     close(con)
+    firstline = gsub('"', "", deparse(firstline))
+    firstline = gsub('\\\\x[0-9a-fA-F]{2}', "?", firstline)
     format = ifelse(nchar(firstline) > 80, "plaintxt", "binary")
   }
 
