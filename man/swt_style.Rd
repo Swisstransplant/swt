@@ -5,7 +5,7 @@
 \title{SWT theme for ggplot}
 \usage{
 swt_style(
-  title_size = 18,
+  title_size = 14,
   subtitle_size = 14,
   font_size = 14,
   grey_theme = FALSE,

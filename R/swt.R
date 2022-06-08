@@ -17,7 +17,7 @@
 #' }
 #'
 #' @export
-swt_style <- function(title_size=18, subtitle_size=14, font_size=14,
+swt_style <- function(title_size=14, subtitle_size=14, font_size=14,
                       grey_theme = FALSE, legend_position="top") {
   # windowsFonts()
   font = "sans"
@@ -89,22 +89,32 @@ swt_style <- function(title_size=18, subtitle_size=14, font_size=14,
 #'
 #' @examples
 #' mycolors = swt_colors()
-#' mycolors$pink.liver
+#' mycolors$red.liver
 #'
 #' @export
 #'
 swt_colors <- function() {
-  list(blue.swt           = grDevices::rgb( 42, 84,138, maxColorValue = 255),
-       turkis.tx          = grDevices::rgb(105,211,195, maxColorValue = 255),
-       yellow.organ       = grDevices::rgb(251,228, 70, maxColorValue = 255),
-       red.heart          = grDevices::rgb(229,  0, 92, maxColorValue = 255),
+  list(# primary colors
+       blue.swt           = grDevices::rgb( 42, 84,138, maxColorValue = 255),
+       turkis.cm          = grDevices::rgb(105,211,195, maxColorValue = 255),
+       yellow.cndo        = grDevices::rgb(251,228, 70, maxColorValue = 255),
+       strongred.akzent   = grDevices::rgb(229,  0, 92, maxColorValue = 255),
 
-       pink.liver         = grDevices::rgb(217,143,143, maxColorValue = 255),
-       orange.kidney      = grDevices::rgb(242,175, 92, maxColorValue = 255),
+       # same colors again
+       turkis.tpx         = grDevices::rgb(105,211,195, maxColorValue = 255),
+       yellow.donation    = grDevices::rgb(251,228, 70, maxColorValue = 255),
+
+       # secondary colors
+       lightblue.lungs    = grDevices::rgb(155,189,197, maxColorValue = 255),
        green.pancreas     = grDevices::rgb(139,173,143, maxColorValue = 255),
-       sky.lungs          = grDevices::rgb(155,189,197, maxColorValue = 255),
+       green.langerhans   = grDevices::rgb(139,173,143, maxColorValue = 255),
+       darkyellow.kidney  = grDevices::rgb(242,175, 92, maxColorValue = 255),
+       red.liver          = grDevices::rgb(217,143,143, maxColorValue = 255),
        beige.intestine    = grDevices::rgb(209,205,189, maxColorValue = 255),
+       # 40% alpha:
+       pink.heart         = grDevices::rgb(212,  0, 84, 0.40*255, maxColorValue = 255),
 
+       # background color
        grey.bg            = grDevices::rgb(244,244,241, maxColorValue = 255)
   )
 

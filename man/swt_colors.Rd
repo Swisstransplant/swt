@@ -14,6 +14,6 @@ Easy access to official SWT color scheme
 }
 \examples{
 mycolors = swt_colors()
-mycolors$pink.liver
+mycolors$red.liver
 
 }
