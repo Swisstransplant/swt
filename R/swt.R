@@ -346,7 +346,7 @@ process.lifeport <- function(lpdat, window_size = 30) {
   n = nrow(lpdat$data) # number of samples every 10 seconds
   start = as.POSIXct(lpdat$data.device$StartTime, format = "%Y-%m-%d %H:%M:%S", tz = "CET")
   dur = (start + n*10) - start
-  lpdat$data.device$Runtime = as.character(hms::as_hms(dur))
+  lpdat$data.device$Runtime = as.character(hms::round_hms(hms::as_hms(dur), 1))
 
   # We calculate own time vector ignoring the duplicated timestamps in InfuseTime
   # InfuseTime is only in the txt file so must be an bug in ORS software export
