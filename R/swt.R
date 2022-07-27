@@ -17,7 +17,7 @@
 #' }
 #'
 #' @export
-swt_style <- function(title_size=14, subtitle_size=14, font_size=14,
+swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
                       grey_theme = FALSE, legend_position="top") {
   # windowsFonts()
   font = "sans"
@@ -94,30 +94,76 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=14,
 #' @export
 #'
 swt_colors <- function() {
-  list(# primary colors
-       blue.swt           = grDevices::rgb( 42, 84,138, maxColorValue = 255),
-       turkis.cm          = grDevices::rgb(105,211,195, maxColorValue = 255),
-       yellow.cndo        = grDevices::rgb(251,228, 70, maxColorValue = 255),
-       strongred.akzent   = grDevices::rgb(229,  0, 92, maxColorValue = 255),
+  colors = list(# primary colors
+    blue.swt           = grDevices::rgb( 42, 84,138, maxColorValue = 255),
+    turkis.cm          = grDevices::rgb(105,211,195, maxColorValue = 255),
+    yellow.cndo        = grDevices::rgb(251,228, 70, maxColorValue = 255),
+    strongred.akzent   = grDevices::rgb(229,  0, 92, maxColorValue = 255),
 
-       # same colors again
-       turkis.tpx         = grDevices::rgb(105,211,195, maxColorValue = 255),
-       yellow.donation    = grDevices::rgb(251,228, 70, maxColorValue = 255),
+    # duplicate colors
+    turkis.tpx         = grDevices::rgb(105,211,195, maxColorValue = 255),
+    yellow.donation    = grDevices::rgb(251,228, 70, maxColorValue = 255),
 
-       # secondary colors
-       lightblue.lungs    = grDevices::rgb(155,189,197, maxColorValue = 255),
-       green.pancreas     = grDevices::rgb(139,173,143, maxColorValue = 255),
-       green.langerhans   = grDevices::rgb(139,173,143, maxColorValue = 255),
-       darkyellow.kidney  = grDevices::rgb(242,175, 92, maxColorValue = 255),
-       red.liver          = grDevices::rgb(217,143,143, maxColorValue = 255),
-       beige.intestine    = grDevices::rgb(209,205,189, maxColorValue = 255),
-       # 40% alpha:
-       pink.heart         = grDevices::rgb(212,  0, 84, 0.40*255, maxColorValue = 255),
+    # secondary colors
+    lightblue.lungs    = grDevices::rgb(155,189,197, maxColorValue = 255),
+    green.pancreas     = grDevices::rgb(139,173,143, maxColorValue = 255),
+    green.langerhans   = grDevices::rgb(139,173,143, maxColorValue = 255),
+    darkyellow.kidney  = grDevices::rgb(242,175, 92, maxColorValue = 255),
+    red.liver          = grDevices::rgb(217,143,143, maxColorValue = 255),
+    beige.intestine    = grDevices::rgb(209,205,189, maxColorValue = 255),
+    # 40% alpha:
+    pink.heart         = grDevices::rgb(212,  0, 84, 0.40*255, maxColorValue = 255),
 
-       # background color
-       grey.bg            = grDevices::rgb(244,244,241, maxColorValue = 255)
+    # background color
+    grey.bg            = grDevices::rgb(244,244,241, maxColorValue = 255),
+    white              = grDevices::rgb(255,255, 255, maxColorValue = 255)
   )
 
+  # single 5 hue color scheme 100% 75% 50%  25% 0% (white)
+
+  # primary colors
+  colfun = grDevices::colorRampPalette(c(colors$blue.swt, colors$white))
+  colors$pal.blue.swt = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$turkis.cm, colors$white))
+  colors$pal.turkis.cm = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$yellow.cndo, colors$white))
+  colors$pal.yellow.cndo = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$strongred.akzent, colors$white))
+  colors$pal.strongred.akzent = colfun(5)
+
+  # duplicate colors
+  colfun = grDevices::colorRampPalette(c(colors$turkis.tpx, colors$white))
+  colors$pal.turkis.tpx = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$blue.swt, colors$white))
+  colors$pal.blue.swt = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$yellow.donation, colors$white))
+  colors$pal.yellow.donation = colfun(5)
+
+  # secondary colors
+  colfun = grDevices::colorRampPalette(c(colors$lightblue.lungs, colors$white))
+  colors$pal.lightblue.lungs = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$green.pancreas, colors$white))
+  colors$pal.green.pancreas = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$green.langerhans, colors$white))
+  colors$pal.green.langerhans = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$darkyellow.kidney, colors$white))
+  colors$pal.darkyellow.kidney = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$red.liver, colors$white))
+  colors$pal.red.liver = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$beige.intestine, colors$white))
+  colors$pal.beige.intestine = colfun(5)
+
+  return(colors)
 }
 
 #' Read LifePort data
