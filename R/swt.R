@@ -174,7 +174,7 @@ swt_colors <- function() {
 #' @return a list with LifePort data
 #' @export
 #'
-read.lifeport <- function(file, format="guess") {
+read_lifeport <- function(file, format="guess") {
 
   # guess ascii vs binary
   # we read the first line, for ascii it contains the full variable header
@@ -369,6 +369,9 @@ read.lifeport <- function(file, format="guess") {
   data$IceContainerTemperature = data$IceContainerTemperature/10
   data$OrganResistance = data$OrganResistance/100
 
+  # fix for invalid UnitID
+  data.device$UnitID = gsub("\036|\x98f|\\xcc", NA,  data.device$UnitID)
+
   data.list = list(
     data.device=data.device,
     data.organ = data.organ,
@@ -386,7 +389,7 @@ read.lifeport <- function(file, format="guess") {
 #' @return a list with additional processed data tables
 #' @export
 #'
-process.lifeport <- function(lpdat, window_size = 30) {
+process_lifeport <- function(lpdat, window_size = 30) {
 
   # Calculate runtime from StartTime and number of samples
   n = nrow(lpdat$data) # number of samples every 10 seconds
@@ -417,4 +420,138 @@ process.lifeport <- function(lpdat, window_size = 30) {
     data.table::frollmean(lpdat$data$OrganResistance, n = window_size, align = "center")
 
   return(lpdat)
+}
+
+
+#' Create SWT LifePort Case Report in MS Word
+#'
+#' @param data.file Lifeport data file
+#' @param output.file target file docx
+#' @param template.file template file docx
+#' @importFrom ggplot2 ggplot aes geom_line geom_hline labs theme ylim scale_color_manual element_blank element_text margin scale_y_continuous
+
+#' @importFrom rlang .data
+#'
+#' @export
+#'
+swt_LifePortCaseReport <- function(data.file, output.file, template.file) {
+
+  swtcol = swt_colors()
+
+  d = read_lifeport(file = data.file)
+  d = process_lifeport(lpdat = d, window_size = 15)
+
+  # add OrganID from filename as well
+  # OrganID: what was entered by the nurse (sometimes missing, then timestamp)
+  # DonorID: Derived from filename and checked by SWT
+  d$data.device$Filename = basename(data.file)
+  d$data.organ$DonorID = gsub("^RD-|\\.txt$|\\.TXT$", "", basename(data.file))
+
+  data.device = d$data.device
+  data.organ  = d$data.organ
+  data        = d$data
+
+  # Table: Organ and Device Information
+  tab = cbind(data.organ[, c("DonorID", "KidneySide"),],
+              data.device[, c("SerialNumber", "UnitID", "StartTime", "Runtime")]
+  )
+  colnames(tab) = c("Donor ID", "Kidney side", "Serial number", "Unit ID",
+                    "Start time", "Runtime")
+
+  # Prepare data frames for ggplot
+  tab.pressure = data.frame(
+    time = rep(data$time.clock, 2),
+    pressure = c(data$SystolicPressure.flt, data$DiastolicPressure.flt),
+    group = rep(c("Systolic", "Diastolic"), each = nrow(data))
+  )
+
+  tab.temp = data.frame(
+    time = rep(data$time.clock, 2),
+    temperature = c(data$InfuseTemperature, data$IceContainerTemperature),
+    group = rep(c("Infuse", "Ice"), each = nrow(data))
+  )
+
+  # Figure Pressure
+  p1 = ggplot(tab.pressure, aes(x=.data$time, y=.data$pressure,
+                                group=.data$group, col=.data$group)) +
+    geom_line(size=0.5) +
+    geom_hline(yintercept = 30, linetype="dashed") +
+    scale_color_manual(values=c(swtcol$darkyellow.kidney, swtcol$blue.swt)) +
+    ylim(c(0,40)) +
+    labs(title = "Pressure", y = "mmHg") +
+    swt_style(font_size = 8, title_size = 8) +
+    theme(axis.title.x = element_blank(),
+          plot.title = element_text(margin=margin(0,0,-15,0)),
+          legend.box.margin=margin(0,0,-15,0)
+    )
+
+  # Figure Flow
+  p2 = ggplot(data, aes(x=.data$time.clock, y=.data$FlowRate.flt, col="Flow rate")) +
+    geom_line(size=0.5) +
+    geom_hline(yintercept = 85, linetype="dashed") +
+    scale_color_manual(values=swtcol$blue.swt) +
+    ylim(c(0,200)) +
+    labs(title = "Flow", y = "ml/min") +
+    swt_style(font_size = 8, title_size = 8) +
+    theme(axis.title.x = element_blank(),
+          plot.title = element_text(margin=margin(0,0,-15,0)),
+          legend.box.margin=margin(0,0,-15,0))
+
+  # Figure Resistance
+  p3 = ggplot(data, aes(x=.data$time.clock, y=.data$OrganResistance.flt,
+                        col="Organ resistance")) +
+    geom_line(size=0.5) +
+    ylim(c(0,0.5)) +
+    geom_hline(yintercept = 0.28, linetype="dashed") +
+    geom_hline(yintercept = 0.10, linetype="dashed") +
+    scale_color_manual(values=swtcol$blue.swt) +
+    labs(title = "Resistance", y = "mmHg/ml/min") +
+    swt_style(font_size = 8, title_size = 8) +
+    theme(axis.title.x = element_blank(),
+          plot.title = element_text(margin=margin(0,0,-15,0)),
+          legend.box.margin=margin(0,0,-15,0))
+
+  # Figure Temperature
+  p4 = ggplot(tab.temp, aes(x=.data$time, y=.data$temperature,
+                            group=.data$group, col=.data$group)) +
+    geom_line(size=0.5) +
+    geom_hline(yintercept = c(4,8), linetype="dashed") +
+    scale_color_manual(values=c(swtcol$blue.swt,
+                                swtcol$darkyellow.kidney)) +
+    #ylim(c(0,16)) +
+    scale_y_continuous(breaks = seq(0,20,4), limits = c(0,20)) +
+    labs(title = "Temperature", y = "\u2103") +
+    swt_style(font_size = 8, title_size = 8) +
+    theme(axis.title.x = element_blank(),
+          plot.title = element_text(margin=margin(0,0,-15,0)),
+          legend.box.margin=margin(0,0,-15,0))
+
+  myplot = cowplot::plot_grid(p1, p2, p3, p4, nrow = 2, ncol = 2)
+
+  myDoc = officer::read_docx(template.file)
+
+  myDoc = officer::body_add_par(myDoc, value = "Case Report", style = "Title")
+  myDoc = officer::body_add_par(myDoc, value = paste("LifePort Kidney Allograft Case Report from",
+                                                     format(Sys.Date(), "%d %b %Y")), style = "Subtitle")
+
+  # Table
+  myDoc = officer::body_add_par(myDoc, value = "Organ and Device Information", style = "heading 3")
+  myDoc = officer::body_add_par(myDoc, value = "", style = "Normal")
+  myDoc = officer::body_add_table(myDoc, value = tab, style = "SWT", align_table	= "left")
+
+  # Data Charts
+  myDoc = officer::body_add_par(myDoc, value = "Data Charts", style = "heading 3")
+  myDoc = officer::body_add_par(myDoc, value = "", style = "Normal")
+  myDoc = officer::body_add_gg(myDoc, value = myplot, width = 6, height = 3.5)
+
+  # General information
+  myDoc = officer::body_add_par(myDoc, value = "General Information", style = "heading 3")
+  myDoc = officer::body_add_par(myDoc, value = "The flow rate is automatically adjusted so that the target pressure is never exceeded (30 mmHg). In normal kidney behavior the flow is slightly increasing and renal resistance decreasing over time due to vasodilation. In abnormal behavior flow is not increasing, and resistance is not decreasing. Excellent perfusion parameters may be reassuring if considering a marginal kidney for transplantation, i.e. 81% of initial function if renal resistance is < 0.28 (Jochmans et al.; 2011).", style = "Normal")
+
+  # Comments
+  myDoc = officer::body_add_par(myDoc, value = "Comments", style = "heading 3")
+  myDoc = officer::body_add_par(myDoc, value = "None", style = "Normal")
+
+  print(myDoc, target = output.file)
+
 }
