@@ -2,6 +2,7 @@
 
 export(process_lifeport)
 export(read_lifeport)
+export(sumstats_lifeport)
 export(swt_LifePortCaseReport)
 export(swt_colors)
 export(swt_style)

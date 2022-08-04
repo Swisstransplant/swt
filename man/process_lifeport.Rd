@@ -5,7 +5,7 @@
 \title{Process LifePort data. Adds runtime, clock time vectors, and filtered time
 series.}
 \usage{
-process_lifeport(lpdat, window_size = 30)
+process_lifeport(lpdat, window_size = 15)
 }
 \arguments{
 \item{lpdat}{A list with data from read.lifeport()}

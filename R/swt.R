@@ -389,7 +389,7 @@ read_lifeport <- function(file, format="guess") {
 #' @return a list with additional processed data tables
 #' @export
 #'
-process_lifeport <- function(lpdat, window_size = 30) {
+process_lifeport <- function(lpdat, window_size = 15) {
 
   # Calculate runtime from StartTime and number of samples
   n = nrow(lpdat$data) # number of samples every 10 seconds
@@ -418,6 +418,28 @@ process_lifeport <- function(lpdat, window_size = 30) {
     data.table::frollmean(lpdat$data$FlowRate, n = window_size, align = "center")
   lpdat$data$OrganResistance.flt =
     data.table::frollmean(lpdat$data$OrganResistance, n = window_size, align = "center")
+
+  return(lpdat)
+}
+
+#' Summary statistics  for LifePort data.
+#'
+#' @param lpdat A list with data from read.lifeport()
+#'
+#' @return a list with additional summary statistics
+#' @export
+#'
+sumstats_lifeport <- function(lpdat) {
+
+  sumstats = data.frame(
+    SystolicPressure.mean = mean(lpdat$data$SystolicPressure.flt, na.rm = TRUE),
+    FlowRate.mean = mean(lpdat$data$FlowRate.flt, na.rm = TRUE),
+    OrganResistance.mean = mean(lpdat$data$OrganResistance.flt, na.rm = TRUE),
+    IceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature, na.rm = TRUE),
+    InfuseTemperature.mean = mean(lpdat$data$InfuseTemperature, na.rm = TRUE)
+  )
+
+  lpdat$data.sumstats = sumstats
 
   return(lpdat)
 }
