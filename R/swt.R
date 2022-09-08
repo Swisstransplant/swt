@@ -431,12 +431,88 @@ process_lifeport <- function(lpdat, window_size = 15) {
 #'
 sumstats_lifeport <- function(lpdat) {
 
+  # Systolic pressure
+  #
+  # mean across positive values -> nicer distribution when machine was not turned
+  # off after kidney removal
+  idx = lpdat$data$SystolicPressure.flt > 0
+  systolicPressure.mean = mean(lpdat$data$SystolicPressure.flt[idx], na.rm = TRUE)
+
+
+  # Flow rate and resistance
+  #
+  # We split timeseries in first 30 min and the rest
+  # only spitting when timeseries is > 30 min
+  # for mean only flow > 0 is considered
+  flowRate.2min  = NA
+  flowRate.30min = NA
+  flowRate.delta = NA
+  flowRate.mean  = NA
+
+  organResistance.2min  = NA
+  organResistance.30min = NA
+  organResistance.delta = NA
+  organResistance.mean = NA
+
+  if (length(lpdat$data$SequentialRecordNumber) > 181) {
+
+    flowRate.2min  = lpdat$data$FlowRate.flt[13]
+    flowRate.30min = lpdat$data$FlowRate.flt[181]
+    flowRate.delta = flowRate.30min - flowRate.2min
+
+    # 181 samples is 30 min.
+    idx = lpdat$data$SequentialRecordNumber > 181 &
+      lpdat$data$FlowRate.flt > 0
+    flowRate.mean = mean(lpdat$data$FlowRate.flt[idx], na.rm = TRUE)
+
+    organResistance.2min  = lpdat$data$OrganResistance.flt[13]
+    organResistance.30min = lpdat$data$OrganResistance.flt[181]
+    organResistance.delta = organResistance.30min - organResistance.2min
+
+    idx = lpdat$data$SequentialRecordNumber > 181 &
+      lpdat$data$OrganResistance.flt > 0
+    organResistance.mean = mean(lpdat$data$OrganResistance.flt[idx], na.rm = TRUE)
+
+  }
+
+  # Temperature
+  #
+  # mean ice temperature is calculated despite flow has stopped to assess
+  # cold storage integrity
+  # mean and SD of inf temp is calculated across positive flow
+  iceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature, na.rm = TRUE)
+  iceContainerTemperature.minAbove2 = (sum(lpdat$data$IceContainerTemperature > 2)*10)/60
+  iceContainerTemperature.minAbove2.str =
+    as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove2*60), 1))
+
+  idx = lpdat$data$FlowRate.flt > 0
+  infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
+  infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
+  infuseTemperature.minAbove8 = (sum(idx & lpdat$data$InfuseTemperature >= 8, na.rm = TRUE)*10)/60
+  infuseTemperature.minAbove8.str = as.character(hms::round_hms(hms::as_hms(infuseTemperature.minAbove8*60), 1))
+
   sumstats = data.frame(
-    SystolicPressure.mean = mean(lpdat$data$SystolicPressure.flt, na.rm = TRUE),
-    FlowRate.mean = mean(lpdat$data$FlowRate.flt, na.rm = TRUE),
-    OrganResistance.mean = mean(lpdat$data$OrganResistance.flt, na.rm = TRUE),
-    IceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature, na.rm = TRUE),
-    InfuseTemperature.mean = mean(lpdat$data$InfuseTemperature, na.rm = TRUE)
+
+    systolicPressure.mean = systolicPressure.mean,
+
+    flowRate.2min  = flowRate.2min,
+    flowRate.30min = flowRate.30min,
+    flowRate.delta = flowRate.delta,
+    flowRate.mean  = flowRate.mean,
+
+    organResistance.2min  = organResistance.2min,
+    organResistance.30min = organResistance.30min,
+    organResistance.delta = organResistance.delta,
+    organResistance.mean  = organResistance.mean,
+
+    iceContainerTemperature.mean = iceContainerTemperature.mean,
+    iceContainerTemperature.minAbove2 = iceContainerTemperature.minAbove2,
+    iceContainerTemperature.minAbove2.str = iceContainerTemperature.minAbove2.str,
+
+    infuseTemperature.mean = infuseTemperature.mean,
+    infuseTemperature.sd = infuseTemperature.sd,
+    infuseTemperature.minAbove8 = infuseTemperature.minAbove8,
+    infuseTemperature.minAbove8.str = infuseTemperature.minAbove8.str
   )
 
   lpdat$data.sumstats = sumstats
