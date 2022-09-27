@@ -359,7 +359,7 @@ read_lifeport <- function(file, format="guess") {
     # fix StartTime for consistency with binary data
     # bin file: 2022-05-06 11:18:07
     # txt file: 06.05.2022 11:18:07
-    as.POSIXct("1970-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
+    # as.POSIXct("1970-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
     data.device$StartTime =
       as.character(as.POSIXct(data.device$StartTime, format = "%d.%m.%Y %H:%M:%S", tz = "CET"))
   }
@@ -419,6 +419,10 @@ process_lifeport <- function(lpdat, window_size = 15) {
   lpdat$data$OrganResistance.flt =
     data.table::frollmean(lpdat$data$OrganResistance, n = window_size, align = "center")
 
+  # remove crazy temperatures
+  lpdat$data$InfuseTemperature[lpdat$data$InfuseTemperature > 200] = NA
+  lpdat$data$IceContainerTemperature[lpdat$data$IceContainerTemperature > 200] = NA
+
   return(lpdat)
 }
 
@@ -431,12 +435,14 @@ process_lifeport <- function(lpdat, window_size = 15) {
 #'
 sumstats_lifeport <- function(lpdat) {
 
-  # Systolic pressure
+  # Pressure
   #
   # mean across positive values -> nicer distribution when machine was not turned
   # off after kidney removal
   idx = lpdat$data$SystolicPressure.flt > 0
   systolicPressure.mean = mean(lpdat$data$SystolicPressure.flt[idx], na.rm = TRUE)
+  idx = lpdat$data$DiastolicPressure.flt > 0
+  diastolicPressure.mean = mean(lpdat$data$DiastolicPressure.flt[idx], na.rm = TRUE)
 
 
   # Flow rate and resistance
@@ -485,15 +491,16 @@ sumstats_lifeport <- function(lpdat) {
   iceContainerTemperature.minAbove2.str =
     as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove2*60), 1))
 
-  idx = lpdat$data$FlowRate.flt > 0
+  idx = lpdat$data$FlowRate.flt > 5
   infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
   infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
-  infuseTemperature.minAbove8 = (sum(idx & lpdat$data$InfuseTemperature >= 8, na.rm = TRUE)*10)/60
+  infuseTemperature.minAbove8 = (sum(idx & lpdat$data$InfuseTemperature > 8, na.rm = TRUE)*10)/60
   infuseTemperature.minAbove8.str = as.character(hms::round_hms(hms::as_hms(infuseTemperature.minAbove8*60), 1))
 
   sumstats = data.frame(
 
     systolicPressure.mean = systolicPressure.mean,
+    diastolicPressure.mean = diastolicPressure.mean,
 
     flowRate.2min  = flowRate.2min,
     flowRate.30min = flowRate.30min,
