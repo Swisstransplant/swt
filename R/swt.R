@@ -172,6 +172,9 @@ swt_colors <- function() {
 #' @param format guess, binary or plaintxt (default guess)
 #'
 #' @return a list with LifePort data
+#'
+#' @importFrom utf8 as_utf8
+#'
 #' @export
 #'
 read_lifeport <- function(file, format="guess") {
@@ -370,7 +373,10 @@ read_lifeport <- function(file, format="guess") {
   data$OrganResistance = data$OrganResistance/100
 
   # fix for invalid UnitID
-  data.device$UnitID = gsub("\036|\x98f|\\xcc", NA,  data.device$UnitID)
+  # data.device$UnitID = gsub("\036|\x98f|\\xcc", NA,  data.device$UnitID)
+  data.device$UnitID =  ifelse(is.na(data.device$UnitID),
+                               data.device$UnitID,
+                               utf8::as_utf8(data.device$UnitID))
 
   data.list = list(
     data.device=data.device,
@@ -435,15 +441,28 @@ process_lifeport <- function(lpdat, window_size = 15) {
 #'
 sumstats_lifeport <- function(lpdat) {
 
+  # Thresholds
+  THR_PRES = 0
+  THR_FLOW = 5
+  THR_RES  = 0
+  IDX_2MIN = 13
+  IDX_30MIN = 181
+  THR_ICE = 2
+  THR_INF = 8
+
+  # Perfusion time
+  # The time in minutes duration the kidney was perfused
+  prefusion.dur = (sum(lpdat$data$FlowRate.flt > THR_FLOW, na.rm = TRUE)*10)/60
+  prefusion.dur.str = as.character(hms::round_hms(hms::as_hms(prefusion.dur*60), 1))
+
   # Pressure
   #
   # mean across positive values -> nicer distribution when machine was not turned
   # off after kidney removal
-  idx = lpdat$data$SystolicPressure.flt > 0
+  idx = lpdat$data$SystolicPressure.flt > THR_PRES
   systolicPressure.mean = mean(lpdat$data$SystolicPressure.flt[idx], na.rm = TRUE)
-  idx = lpdat$data$DiastolicPressure.flt > 0
+  idx = lpdat$data$DiastolicPressure.flt > THR_PRES
   diastolicPressure.mean = mean(lpdat$data$DiastolicPressure.flt[idx], na.rm = TRUE)
-
 
   # Flow rate and resistance
   #
@@ -460,25 +479,25 @@ sumstats_lifeport <- function(lpdat) {
   organResistance.delta = NA
   organResistance.mean = NA
 
-  if (length(lpdat$data$SequentialRecordNumber) > 181) {
+  flowRate.2min  = lpdat$data$FlowRate.flt[IDX_2MIN]
+  organResistance.2min  = lpdat$data$OrganResistance.flt[IDX_2MIN]
 
-    flowRate.2min  = lpdat$data$FlowRate.flt[13]
-    flowRate.30min = lpdat$data$FlowRate.flt[181]
+  if (length(lpdat$data$SequentialRecordNumber) > IDX_30MIN) {
+
+    flowRate.30min = lpdat$data$FlowRate.flt[IDX_30MIN]
     flowRate.delta = flowRate.30min - flowRate.2min
 
     # 181 samples is 30 min.
-    idx = lpdat$data$SequentialRecordNumber > 181 &
-      lpdat$data$FlowRate.flt > 0
+    idx = lpdat$data$SequentialRecordNumber > IDX_30MIN &
+      lpdat$data$FlowRate.flt > THR_FLOW
     flowRate.mean = mean(lpdat$data$FlowRate.flt[idx], na.rm = TRUE)
 
-    organResistance.2min  = lpdat$data$OrganResistance.flt[13]
-    organResistance.30min = lpdat$data$OrganResistance.flt[181]
+    organResistance.30min = lpdat$data$OrganResistance.flt[IDX_30MIN]
     organResistance.delta = organResistance.30min - organResistance.2min
 
-    idx = lpdat$data$SequentialRecordNumber > 181 &
-      lpdat$data$OrganResistance.flt > 0
+    idx = lpdat$data$SequentialRecordNumber > IDX_30MIN &
+      lpdat$data$OrganResistance.flt > THR_RES
     organResistance.mean = mean(lpdat$data$OrganResistance.flt[idx], na.rm = TRUE)
-
   }
 
   # Temperature
@@ -487,17 +506,20 @@ sumstats_lifeport <- function(lpdat) {
   # cold storage integrity
   # mean and SD of inf temp is calculated across positive flow
   iceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature, na.rm = TRUE)
-  iceContainerTemperature.minAbove2 = (sum(lpdat$data$IceContainerTemperature > 2)*10)/60
+  iceContainerTemperature.minAbove2 = (sum(lpdat$data$IceContainerTemperature > THR_ICE)*10)/60
   iceContainerTemperature.minAbove2.str =
     as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove2*60), 1))
 
-  idx = lpdat$data$FlowRate.flt > 5
+  idx = lpdat$data$FlowRate.flt > THR_FLOW
   infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
   infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
-  infuseTemperature.minAbove8 = (sum(idx & lpdat$data$InfuseTemperature > 8, na.rm = TRUE)*10)/60
+  infuseTemperature.minAbove8 = (sum(idx & lpdat$data$InfuseTemperature > THR_INF, na.rm = TRUE)*10)/60
   infuseTemperature.minAbove8.str = as.character(hms::round_hms(hms::as_hms(infuseTemperature.minAbove8*60), 1))
 
   sumstats = data.frame(
+
+    prefusion.dur = prefusion.dur,
+    prefusion.dur.str = prefusion.dur.str,
 
     systolicPressure.mean = systolicPressure.mean,
     diastolicPressure.mean = diastolicPressure.mean,
