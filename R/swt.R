@@ -452,7 +452,7 @@ sumstats_lifeport <- function(lpdat) {
 
   # Perfusion time
   # The time in minutes duration the kidney was perfused
-  prefusion.dur = (sum(lpdat$data$FlowRate.flt > THR_FLOW, na.rm = TRUE)*10)/60
+  prefusion.dur = (sum(lpdat$data$FlowRate > THR_FLOW, na.rm = TRUE)*10)/60
   prefusion.dur.str = as.character(hms::round_hms(hms::as_hms(prefusion.dur*60), 1))
 
   # Pressure
@@ -510,7 +510,7 @@ sumstats_lifeport <- function(lpdat) {
   iceContainerTemperature.minAbove2.str =
     as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove2*60), 1))
 
-  idx = lpdat$data$FlowRate.flt > THR_FLOW
+  idx = lpdat$data$FlowRate > THR_FLOW
   infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
   infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
   infuseTemperature.minAbove8 = (sum(idx & lpdat$data$InfuseTemperature > THR_INF, na.rm = TRUE)*10)/60
