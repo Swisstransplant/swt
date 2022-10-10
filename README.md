@@ -8,14 +8,11 @@ Foundation for organ donation and transplantation.
 ### Installation from github
     install.packages("devtools")
     library(devtools)
-    install_github("schw4b/swt")
+    install_github("Swisstransplant/swt")
 
 
 ### Loading package swt
     library(swt)
-
-Please find further instruction on how to use the package in the
-[SWT cookbook](https://schw4b.github.io/rcookbook/).
 
 ## Developer guide
 ### Package building
