@@ -400,6 +400,10 @@ process_lifeport <- function(lpdat, window_size = 15) {
   # Calculate runtime from StartTime and number of samples
   n = nrow(lpdat$data) # number of samples every 10 seconds
   start = as.POSIXct(lpdat$data.device$StartTime, format = "%Y-%m-%d %H:%M:%S", tz = "CET")
+  if (is.na(start))  {
+    start = as.POSIXct("2000-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
+  } 
+  
   dur = (start + n*10) - start
   lpdat$data.device$Runtime = as.character(hms::round_hms(hms::as_hms(dur), 1))
 
@@ -410,7 +414,7 @@ process_lifeport <- function(lpdat, window_size = 15) {
   lpdat$data$time.clock = start + seq(0, n*10 - 1, 10)
 
   # absolute clock starting from 0
-  start.zero = as.POSIXct("1970-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
+  start.zero = as.POSIXct("2000-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
   lpdat$data$time.zero = start.zero + seq(0, n*10 - 1, 10)
 
   # timeseries filtering
@@ -502,15 +506,13 @@ sumstats_lifeport <- function(lpdat) {
 
   # Temperature
   #
-  # mean ice temperature is calculated despite flow has stopped to assess
-  # cold storage integrity
-  # mean and SD of inf temp is calculated across positive flow
-  iceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature, na.rm = TRUE)
-  iceContainerTemperature.minAbove2 = (sum(lpdat$data$IceContainerTemperature > THR_ICE)*10)/60
+  # mean and SD of temperatures is calculated as long as positive flow
+  idx = lpdat$data$FlowRate > THR_FLOW
+  iceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature[idx], na.rm = TRUE)
+  iceContainerTemperature.minAbove2 = (sum(lpdat$data$IceContainerTemperature[idx] > THR_ICE)*10)/60
   iceContainerTemperature.minAbove2.str =
     as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove2*60), 1))
 
-  idx = lpdat$data$FlowRate > THR_FLOW
   infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
   infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
   infuseTemperature.minAbove8 = (sum(idx & lpdat$data$InfuseTemperature > THR_INF, na.rm = TRUE)*10)/60
