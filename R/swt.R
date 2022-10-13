@@ -453,6 +453,7 @@ sumstats_lifeport <- function(lpdat) {
   IDX_30MIN = 181
   THR_ICE = 2
   THR_INF = 8
+  INF_START_RANGE = 6 # average across first minute (6 * 10)
 
   # Perfusion time
   # The time in minutes duration the kidney was perfused
@@ -513,8 +514,14 @@ sumstats_lifeport <- function(lpdat) {
   iceContainerTemperature.minAbove2.str =
     as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove2*60), 1))
 
-  infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
-  infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
+  infuseTemperature.mean = NA
+  infuseTemperature.sd = NA
+  infuseTemperature.start = NA
+  if (prefusion.dur > 5) { # only caclulate mean and sd when > 5 min duration.
+    infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
+    infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
+    infuseTemperature.start = mean(lpdat$data$InfuseTemperature[idx][1:INF_START_RANGE], na.rm = TRUE)
+  }
   infuseTemperature.minAbove8 = (sum(idx & lpdat$data$InfuseTemperature > THR_INF, na.rm = TRUE)*10)/60
   infuseTemperature.minAbove8.str = as.character(hms::round_hms(hms::as_hms(infuseTemperature.minAbove8*60), 1))
 
@@ -542,6 +549,7 @@ sumstats_lifeport <- function(lpdat) {
 
     infuseTemperature.mean = infuseTemperature.mean,
     infuseTemperature.sd = infuseTemperature.sd,
+    infuseTemperature.start = infuseTemperature.start,
     infuseTemperature.minAbove8 = infuseTemperature.minAbove8,
     infuseTemperature.minAbove8.str = infuseTemperature.minAbove8.str
   )
