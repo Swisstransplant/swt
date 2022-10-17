@@ -453,7 +453,7 @@ sumstats_lifeport <- function(lpdat) {
   IDX_30MIN = 181
   THR_ICE = 2
   THR_INF = 8
-  INF_START_RANGE = 6 # average across first minute (6 * 10)
+  INF_START_RANGE = 12 # average across first two minutes (12 * 10)
 
   # Perfusion time
   # The time in minutes duration the kidney was perfused
@@ -517,7 +517,7 @@ sumstats_lifeport <- function(lpdat) {
   infuseTemperature.mean = NA
   infuseTemperature.sd = NA
   infuseTemperature.start = NA
-  if (prefusion.dur > 5) { # only caclulate mean and sd when > 5 min duration.
+  if (prefusion.dur > 5) { # only calculate mean and sd when > 5 min duration.
     infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
     infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
     infuseTemperature.start = mean(lpdat$data$InfuseTemperature[idx][1:INF_START_RANGE], na.rm = TRUE)
@@ -690,5 +690,6 @@ swt_LifePortCaseReport <- function(data.file, output.file, template.file) {
   myDoc = officer::body_add_par(myDoc, value = "None", style = "Normal")
 
   print(myDoc, target = output.file)
+  return(basename(output.file))
 
 }
