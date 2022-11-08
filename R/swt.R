@@ -510,6 +510,7 @@ sumstats_lifeport <- function(lpdat) {
   # mean and SD of temperatures is calculated as long as positive flow
   idx = lpdat$data$FlowRate > THR_FLOW
   iceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature[idx], na.rm = TRUE)
+  iceContainerTemperature.sd = stats::sd(lpdat$data$IceContainerTemperature[idx], na.rm = TRUE)
   iceContainerTemperature.minAbove2 = (sum(lpdat$data$IceContainerTemperature[idx] > THR_ICE)*10)/60
   iceContainerTemperature.minAbove2.str =
     as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove2*60), 1))
@@ -544,6 +545,7 @@ sumstats_lifeport <- function(lpdat) {
     organResistance.mean  = organResistance.mean,
 
     iceContainerTemperature.mean = iceContainerTemperature.mean,
+    iceContainerTemperature.sd = iceContainerTemperature.sd,
     iceContainerTemperature.minAbove2 = iceContainerTemperature.minAbove2,
     iceContainerTemperature.minAbove2.str = iceContainerTemperature.minAbove2.str,
 
