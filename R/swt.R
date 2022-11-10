@@ -439,21 +439,28 @@ process_lifeport <- function(lpdat, window_size = 15) {
 #' Summary statistics  for LifePort data.
 #'
 #' @param lpdat A list with data from read.lifeport()
+#' @param ice_threshold Threshold for ice temperature in degrees Celsius
+#' @param infuse_threshold Threshold for infuse temperature in degrees Celsius
+#' @param infusion_start_range Number of samples to average for infusion start temperature
 #'
 #' @return a list with additional summary statistics
 #' @export
 #'
-sumstats_lifeport <- function(lpdat) {
+sumstats_lifeport <- function(lpdat, ice_threshold = 2, infuse_threshold = 10,
+                              infusion_start_range = 12) {
 
-  # Thresholds
+  # Thresholds that are more kind of fixed
   THR_PRES = 0
   THR_FLOW = 5
   THR_RES  = 0
+  
+  # Thresholds that may be changed with good reasoning
+  THR_ICE = ice_threshold
+  THR_INF = infuse_threshold
+  INF_START_RANGE = infusion_start_range # average across first two minutes (12 * 10)
+  
   IDX_2MIN = 13
   IDX_30MIN = 181
-  THR_ICE = 2
-  THR_INF = 8
-  INF_START_RANGE = 12 # average across first two minutes (12 * 10)
 
   # Perfusion time
   # The time in minutes duration the kidney was perfused
