@@ -95,6 +95,7 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
 #'
 swt_colors <- function() {
   colors = list(# primary colors
+    blue.dark          = grDevices::rgb(  0, 55,100, maxColorValue = 255),
     blue.swt           = grDevices::rgb( 42, 84,138, maxColorValue = 255),
     turkis.cm          = grDevices::rgb(105,211,195, maxColorValue = 255),
     yellow.cndo        = grDevices::rgb(251,228, 70, maxColorValue = 255),
@@ -402,8 +403,8 @@ process_lifeport <- function(lpdat, window_size = 15) {
   start = as.POSIXct(lpdat$data.device$StartTime, format = "%Y-%m-%d %H:%M:%S", tz = "CET")
   if (is.na(start))  {
     start = as.POSIXct("2000-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
-  } 
-  
+  }
+
   dur = (start + n*10) - start
   lpdat$data.device$Runtime = as.character(hms::round_hms(hms::as_hms(dur), 1))
 
@@ -441,24 +442,27 @@ process_lifeport <- function(lpdat, window_size = 15) {
 #' @param lpdat A list with data from read.lifeport()
 #' @param ice_threshold Threshold for ice temperature in degrees Celsius
 #' @param infuse_threshold Threshold for infuse temperature in degrees Celsius
-#' @param infusion_start_range Number of samples to average for infusion start temperature
+#' @param infusion_start_idx Indices to average for infusion start temperature
 #'
 #' @return a list with additional summary statistics
+#'
+#' @importFrom stats median
+#'
 #' @export
 #'
 sumstats_lifeport <- function(lpdat, ice_threshold = 2, infuse_threshold = 10,
-                              infusion_start_range = 12) {
+                              infusion_start_idx = 11:12) {
 
   # Thresholds that are more kind of fixed
   THR_PRES = 0
   THR_FLOW = 5
   THR_RES  = 0
-  
+
   # Thresholds that may be changed with good reasoning
   THR_ICE = ice_threshold
   THR_INF = infuse_threshold
-  INF_START_RANGE = infusion_start_range # average across first two minutes (12 * 10)
-  
+  INF_START_IDX = infusion_start_idx # average across first two minutes after excluding first 100 seconds (11:22)
+
   IDX_2MIN = 13
   IDX_30MIN = 181
 
@@ -472,7 +476,7 @@ sumstats_lifeport <- function(lpdat, ice_threshold = 2, infuse_threshold = 10,
   # mean across positive values -> nicer distribution when machine was not turned
   # off after kidney removal
   idx = lpdat$data$SystolicPressure.flt > THR_PRES
-  systolicPressure.mean = mean(lpdat$data$SystolicPressure.flt[idx], na.rm = TRUE)
+  systolicPressure.md = median(lpdat$data$SystolicPressure.flt[idx], na.rm = TRUE)
   idx = lpdat$data$DiastolicPressure.flt > THR_PRES
   diastolicPressure.mean = mean(lpdat$data$DiastolicPressure.flt[idx], na.rm = TRUE)
 
@@ -528,7 +532,7 @@ sumstats_lifeport <- function(lpdat, ice_threshold = 2, infuse_threshold = 10,
   if (perfusion.dur > 5) { # only calculate mean and sd when > 5 min duration.
     infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
     infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
-    infuseTemperature.start = mean(lpdat$data$InfuseTemperature[idx][1:INF_START_RANGE], na.rm = TRUE)
+    infuseTemperature.start = mean(lpdat$data$InfuseTemperature[idx][INF_START_IDX], na.rm = TRUE)
   }
   infuseTemperature.minAbove = (sum(idx & lpdat$data$InfuseTemperature > THR_INF, na.rm = TRUE)*10)/60
   infuseTemperature.minAbove.str = as.character(hms::round_hms(hms::as_hms(infuseTemperature.minAbove*60), 1))
@@ -538,7 +542,7 @@ sumstats_lifeport <- function(lpdat, ice_threshold = 2, infuse_threshold = 10,
     perfusion.dur = perfusion.dur,
     perfusion.dur.str = perfusion.dur.str,
 
-    systolicPressure.mean = systolicPressure.mean,
+    systolicPressure.md = systolicPressure.md,
     diastolicPressure.mean = diastolicPressure.mean,
 
     flowRate.2min  = flowRate.2min,

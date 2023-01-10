@@ -8,7 +8,7 @@ sumstats_lifeport(
   lpdat,
   ice_threshold = 2,
   infuse_threshold = 10,
-  infusion_start_range = 12
+  infusion_start_idx = 11:12
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ sumstats_lifeport(
 
 \item{infuse_threshold}{Threshold for infuse temperature in degrees Celsius}
 
-\item{infusion_start_range}{Number of samples to average for infusion start temperature}
+\item{infusion_start_idx}{Indices to average for infusion start temperature}
 }
 \value{
 a list with additional summary statistics
