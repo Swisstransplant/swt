@@ -1,0 +1,23 @@
+/* Link color
+a {
+    color: #003764;
+}
+*/
+
+/* Headings color */
+h1.title, h1, h2, h3 {
+    color: #003764;
+    font-weight: bold;
+}
+
+/* SWT logo above TOC */
+#TOC::before {
+  content: "";
+  display: block;
+  height: 80px;
+  margin: 2em 20px 30px 20px;
+  background-image: url("SWT_2955_2021.png");
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}

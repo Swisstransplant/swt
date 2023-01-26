@@ -1,3 +1,61 @@
+swt_skeleton <- function(path) {
+  
+  # ensure path exists
+  FILENAME = paste0(basename(path), ".qmd")
+  PATH_R = file.path(path, "R")
+  dir.create(PATH_R, recursive = TRUE, showWarnings = FALSE)
+  
+  # generate header for file
+  content = c(
+    "---",
+    "title: 'Project Title'",
+    "subtitle: 'Statistical report'",
+    "author: Author Name",
+    "date: 'Last updated: `r format(Sys.Date())`'",
+    "abstract: 'Short description of the project'",
+    "lang: en",
+    "format:",
+    "  html:",
+    "    toc: true",
+    "    css: swt.css",
+    "    mainfont: sans-serif",
+    "    linkcolor: '#E5005C'",
+    "    df-print: kable",
+    "    embed-resources: true",
+    "    code-fold: true",
+    "    code-block-bg: '#E6EEF0'",
+    "    code-block-border-left: '#E5005C'",
+    "---",
+    "",
+    "# Data import",
+    "",
+    "# Data overview",
+    "",
+    "# Data processing",
+    "",
+    "# Descriptive statistics",
+    "",
+    "# Analysis",
+    "",
+    "# Computing environment",
+    "",
+    "```{r}",
+    "sessionInfo()",
+    "```",
+    ""
+  )
+  
+  if (!file.exists(file.path(path, FILENAME))) {
+    writeLines(content, con = file.path(PATH_R, FILENAME))
+  }
+  
+  # copy files
+  SOURCEPATH = file.path(find.package("swt"), "rstudio", "templates", "project")
+  myfiles = list.files(SOURCEPATH, pattern = "swt.css|SWT_2955_2021.png", full.names = TRUE)
+  file.copy(myfiles, PATH_R)
+}
+
+
 #' SWT theme for ggplot
 #'
 #' This function allows you to add the SWT theme to your ggplot graphics.
