@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{swt_LifePortCaseReport}
 \alias{swt_LifePortCaseReport}
-\title{Create SWT LifePort Case Report in MS Word}
+\title{Create SWT LifePort Case Report in MS Word.}
 \usage{
 swt_LifePortCaseReport(data.file, output.file, template.file)
 }
@@ -14,5 +14,5 @@ swt_LifePortCaseReport(data.file, output.file, template.file)
 \item{template.file}{template file docx}
 }
 \description{
-Create SWT LifePort Case Report in MS Word
+Create SWT LifePort Case Report in MS Word.
 }

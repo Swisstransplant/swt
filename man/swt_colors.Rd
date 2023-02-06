@@ -10,7 +10,7 @@ swt_colors()
 a SWT color object
 }
 \description{
-Easy access to official SWT color scheme
+Easy access to official SWT color scheme.
 }
 \examples{
 mycolors = swt_colors()

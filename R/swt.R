@@ -1,17 +1,17 @@
 swt_skeleton <- function(path) {
-  
+
   # ensure path exists
   FILENAME = paste0(basename(path), ".qmd")
   PATH_R = file.path(path, "R")
   dir.create(PATH_R, recursive = TRUE, showWarnings = FALSE)
-  
+
   # generate header for file
   content = c(
     "---",
     "title: 'Project Title'",
     "subtitle: 'Statistical report'",
     "author: Author Name",
-    "date: 'Last updated: `r format(Sys.Date())`'",
+    "date: last-modified",
     "abstract: 'Short description of the project'",
     "lang: en",
     "format:",
@@ -44,17 +44,16 @@ swt_skeleton <- function(path) {
     "```",
     ""
   )
-  
+
   if (!file.exists(file.path(path, FILENAME))) {
     writeLines(content, con = file.path(PATH_R, FILENAME))
   }
-  
+
   # copy files
   SOURCEPATH = file.path(find.package("swt"), "rstudio", "templates", "project")
   myfiles = list.files(SOURCEPATH, pattern = "swt.css|SWT_2955_2021.png", full.names = TRUE)
   file.copy(myfiles, PATH_R)
 }
-
 
 #' SWT theme for ggplot
 #'
@@ -81,67 +80,66 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
   font = "sans"
 
   bgColor   = "white"
-  gridColor = "gray90"
-  if (grey_theme) {
-    bgColor   = "#F4F4F1"
-    gridColor = "white"
-  }
+    gridColor = "gray90"
+      if (grey_theme) {
+        bgColor   = "#F4F4F1"
+          gridColor = "white"
+      }
 
+    ggplot2::theme(
 
-  ggplot2::theme(
+      # Title
+      plot.title = ggplot2::element_text(family=font,
+                                         size=title_size,
+                                         face="bold"),
 
-    # Title
-    plot.title = ggplot2::element_text(family=font,
-                                       size=title_size,
-                                       face="bold"),
+      # Subtitle
+      plot.subtitle = ggplot2::element_text(family=font,
+                                            size=subtitle_size,
+                                            #margin=ggplot2::margin(9,0,9,0)
+      ),
+      plot.caption = ggplot2::element_blank(),
+      # This leaves the caption text element empty, because it is set elsewhere in
+      # the finalise plot function
 
-    # Subtitle
-    plot.subtitle = ggplot2::element_text(family=font,
-                                          size=subtitle_size,
-                                          #margin=ggplot2::margin(9,0,9,0)
-    ),
-    plot.caption = ggplot2::element_blank(),
-    # This leaves the caption text element empty, because it is set elsewhere in
-    # the finalise plot function
+      # Legend
+      legend.position = legend_position,
+      legend.text.align = 0,
+      legend.background = ggplot2::element_blank(),
+      legend.title = ggplot2::element_blank(),
+      legend.key = ggplot2::element_blank(),
+      legend.text = ggplot2::element_text(size=font_size),
 
-    # Legend
-    legend.position = legend_position,
-    legend.text.align = 0,
-    legend.background = ggplot2::element_blank(),
-    legend.title = ggplot2::element_blank(),
-    legend.key = ggplot2::element_blank(),
-    legend.text = ggplot2::element_text(size=font_size),
+      # Axis
+      axis.text = ggplot2::element_text(family=font, size=font_size),
+      axis.title = ggplot2::element_text(family=font, size=font_size),
+      # axis.text.x = ggplot2::element_text(margin=ggplot2::margin(5, b = 10)),
 
-    # Axis
-    axis.text = ggplot2::element_text(family=font, size=font_size),
-    axis.title = ggplot2::element_text(family=font, size=font_size),
-    # axis.text.x = ggplot2::element_text(margin=ggplot2::margin(5, b = 10)),
+      axis.ticks = ggplot2::element_blank(),
+      axis.line = ggplot2::element_blank(),
 
-    axis.ticks = ggplot2::element_blank(),
-    axis.line = ggplot2::element_blank(),
+      # Grid lines
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major.y = ggplot2::element_line(color=gridColor),
+      panel.grid.major.x = ggplot2::element_line(color=gridColor),
 
-    # Grid lines
-    panel.grid.minor = ggplot2::element_blank(),
-    panel.grid.major.y = ggplot2::element_line(color=gridColor),
-    panel.grid.major.x = ggplot2::element_line(color=gridColor),
+      # Background
+      # This sets the panel background as blank, removing the standard grey ggplot
+      # background colour from the plot
+      panel.background = ggplot2::element_rect(fill = bgColor),
+      plot.background = ggplot2::element_rect(fill = bgColor)
 
-    # Background
-    # This sets the panel background as blank, removing the standard grey ggplot
-    # background colour from the plot
-    panel.background = ggplot2::element_rect(fill = bgColor),
-    plot.background = ggplot2::element_rect(fill = bgColor)
-
-    # Strip background (This sets the panel background for facet-wrapped plots
-    # to white, removing the standard grey ggplot background colour and sets the
-    # title size of the facet-wrap title to font size 22)
-    # strip.background = ggplot2::element_rect(fill="red"),
-    # strip.text = ggplot2::element_text(size  = 22,  hjust = 0)
-  )
+      # Strip background (This sets the panel background for facet-wrapped plots
+      # to white, removing the standard grey ggplot background colour and sets the
+      # title size of the facet-wrap title to font size 22)
+      # strip.background = ggplot2::element_rect(fill="red"),
+      # strip.text = ggplot2::element_text(size  = 22,  hjust = 0)
+    )
 }
 
 #' SWT colors
 #'
-#' Easy access to official SWT color scheme
+#' Easy access to official SWT color scheme.
 #'
 #' @return a SWT color object
 #'
@@ -476,6 +474,9 @@ process_lifeport <- function(lpdat, window_size = 15) {
   start.zero = as.POSIXct("2000-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
   lpdat$data$time.zero = start.zero + seq(0, n*10 - 1, 10)
 
+  # stop time
+  lpdat$data.device$StopTime = as.character(lpdat$data$time.clock[nrow(lpdat$data)])
+
   # timeseries filtering
   lpdat$data$SystolicPressure.flt  =
     data.table::frollmean(lpdat$data$SystolicPressure, n = window_size, align = "center")
@@ -495,12 +496,11 @@ process_lifeport <- function(lpdat, window_size = 15) {
   return(lpdat)
 }
 
-#' Summary statistics  for LifePort data.
+#' Summary statistics for LifePort data.
 #'
 #' @param lpdat A list with data from read.lifeport()
 #' @param ice_threshold Threshold for ice temperature in degrees Celsius
 #' @param infuse_threshold Threshold for infuse temperature in degrees Celsius
-#' @param infusion_start_idx Indices to average for infusion start temperature
 #'
 #' @return a list with additional summary statistics
 #'
@@ -508,23 +508,26 @@ process_lifeport <- function(lpdat, window_size = 15) {
 #'
 #' @export
 #'
-sumstats_lifeport <- function(lpdat, ice_threshold = 2, infuse_threshold = 10,
-                              infusion_start_idx = 11:12) {
+sumstats_lifeport <- function(lpdat, ice_threshold = 2.5, infuse_threshold = 10) {
+
+  # Thresholds that may be changed with good reasoning
+  THR_ICE = ice_threshold
+  THR_INF = infuse_threshold
 
   # Thresholds that are more kind of fixed
   THR_PRES = 0
   THR_FLOW = 5
   THR_RES  = 0
 
-  # Thresholds that may be changed with good reasoning
-  THR_ICE = ice_threshold
-  THR_INF = infuse_threshold
-  INF_START_IDX = infusion_start_idx # average across first two minutes after excluding first 100 seconds (11:22)
+  IDX_2MIN = 12
+  IDX_30MIN = 180
 
-  IDX_2MIN = 13
-  IDX_30MIN = 181
+  INF_START_WINDOW = 30 # 5 minutes
+  INF_START_IDX = (IDX_2MIN+1):(IDX_2MIN+INF_START_WINDOW)
+  # average across 5 min but exclude first 2 min., thus 13:42
 
   # Perfusion time
+  #
   # The time in minutes duration the kidney was perfused
   perfusion.dur = (sum(lpdat$data$FlowRate > THR_FLOW, na.rm = TRUE)*10)/60
   perfusion.dur.str = as.character(hms::round_hms(hms::as_hms(perfusion.dur*60), 1))
@@ -551,7 +554,7 @@ sumstats_lifeport <- function(lpdat, ice_threshold = 2, infuse_threshold = 10,
   organResistance.2min  = NA
   organResistance.30min = NA
   organResistance.delta = NA
-  organResistance.mean = NA
+  organResistance.mean  = NA
 
   flowRate.2min  = lpdat$data$FlowRate.flt[IDX_2MIN]
   organResistance.2min  = lpdat$data$OrganResistance.flt[IDX_2MIN]
@@ -576,23 +579,33 @@ sumstats_lifeport <- function(lpdat, ice_threshold = 2, infuse_threshold = 10,
 
   # Temperature
   #
-  # mean and SD of temperatures is calculated as long as positive flow
-  idx = lpdat$data$FlowRate > THR_FLOW
-  iceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature[idx], na.rm = TRUE)
-  iceContainerTemperature.sd = stats::sd(lpdat$data$IceContainerTemperature[idx], na.rm = TRUE)
-  iceContainerTemperature.minAbove = (sum(lpdat$data$IceContainerTemperature[idx] > THR_ICE)*10)/60
+  # mean and SD of inf temperature are calculated excluding the first 2 min. and
+  # excluding segments with no flow using idx
+  # for example, infuse temp in first 2 min. affect sd and mean
+  idx = lpdat$data$SequentialRecordNumber > IDX_2MIN &
+    lpdat$data$FlowRate > THR_FLOW
+
+  # ice
+  iceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature, na.rm = TRUE)
+  iceContainerTemperature.sd = stats::sd(lpdat$data$IceContainerTemperature, na.rm = TRUE)
+  iceContainerTemperature.minAbove = (sum(lpdat$data$IceContainerTemperature > THR_ICE)*10)/60
   iceContainerTemperature.minAbove.str =
     as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove*60), 1))
 
+  # infuse
   infuseTemperature.mean = NA
   infuseTemperature.sd = NA
   infuseTemperature.start = NA
   if (perfusion.dur > 5) { # only calculate mean and sd when > 5 min duration.
+    # calculate the following indicators when flow is positive using idx
+    # for start temp this works also well to exclude segments of no perfusion at start
     infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
     infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
-    infuseTemperature.start = mean(lpdat$data$InfuseTemperature[idx][INF_START_IDX], na.rm = TRUE)
+
+    infuseTemperature.start =
+      mean(lpdat$data$InfuseTemperature[lpdat$data$FlowRate > THR_FLOW][INF_START_IDX], na.rm = TRUE)
   }
-  infuseTemperature.minAbove = (sum(idx & lpdat$data$InfuseTemperature > THR_INF, na.rm = TRUE)*10)/60
+  infuseTemperature.minAbove = (sum(lpdat$data$InfuseTemperature[idx] > THR_INF, na.rm = TRUE)*10)/60
   infuseTemperature.minAbove.str = as.character(hms::round_hms(hms::as_hms(infuseTemperature.minAbove*60), 1))
 
   sumstats = data.frame(
@@ -631,7 +644,7 @@ sumstats_lifeport <- function(lpdat, ice_threshold = 2, infuse_threshold = 10,
 }
 
 
-#' Create SWT LifePort Case Report in MS Word
+#' Create SWT LifePort Case Report in MS Word.
 #'
 #' @param data.file Lifeport data file
 #' @param output.file target file docx
@@ -763,4 +776,34 @@ swt_LifePortCaseReport <- function(data.file, output.file, template.file) {
   print(myDoc, target = output.file)
   return(basename(output.file))
 
+}
+
+#' Calculate Mahalanobis distance D-square for LifePort temperature data.
+#'
+#' @param data data frame or matrix with temperature data
+#'
+#' @return vector with D-square for temperature
+#'
+#' @importFrom stats mahalanobis
+#'
+#' @export
+#'
+d2_temp_lifeport <- function(data) {
+  d2 = stats::mahalanobis(x = data,
+                          center = idat.md.temp.center,
+                          cov = idat.md.temp.cov)
+  return(d2)
+}
+
+#' Returns the percentile ranke of the distance D-squared for the temperature
+#'
+#' @param d2 D-squared
+#'
+#' @return percentile rank
+#'
+#' @export
+#'
+d2prc_temp_lifeport <- function(d2) {
+  P = idat.fn.D2.temp(d2)
+  return(P)
 }

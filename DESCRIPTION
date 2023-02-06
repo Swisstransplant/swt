@@ -15,3 +15,5 @@ Imports: ggplot2, grDevices, utils, hms, data.table, rlang, officer, cowplot, ut
 License: file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10)

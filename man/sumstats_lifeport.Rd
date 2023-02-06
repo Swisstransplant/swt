@@ -2,14 +2,9 @@
 % Please edit documentation in R/swt.R
 \name{sumstats_lifeport}
 \alias{sumstats_lifeport}
-\title{Summary statistics  for LifePort data.}
+\title{Summary statistics for LifePort data.}
 \usage{
-sumstats_lifeport(
-  lpdat,
-  ice_threshold = 2,
-  infuse_threshold = 10,
-  infusion_start_idx = 11:12
-)
+sumstats_lifeport(lpdat, ice_threshold = 2.5, infuse_threshold = 10)
 }
 \arguments{
 \item{lpdat}{A list with data from read.lifeport()}
@@ -17,12 +12,10 @@ sumstats_lifeport(
 \item{ice_threshold}{Threshold for ice temperature in degrees Celsius}
 
 \item{infuse_threshold}{Threshold for infuse temperature in degrees Celsius}
-
-\item{infusion_start_idx}{Indices to average for infusion start temperature}
 }
 \value{
 a list with additional summary statistics
 }
 \description{
-Summary statistics  for LifePort data.
+Summary statistics for LifePort data.
 }
