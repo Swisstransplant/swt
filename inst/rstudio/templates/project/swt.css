@@ -1,16 +1,21 @@
-/* Link color
+/* hyperlink color */
 a {
     color: #003764;
 }
 */
 
-/* Headings color */
+/* headings color */
 h1.title, h1, h2, h3 {
     color: #003764;
     font-weight: bold;
 }
 
-/* SWT logo above TOC */
+/* table font size */
+.kable-table {
+  font-size: 85%;
+}
+
+/* logo above TOC */
 #TOC::before {
   content: "";
   display: block;

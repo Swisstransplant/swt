@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{d2prc_temp_lifeport}
 \alias{d2prc_temp_lifeport}
-\title{Returns the percentile ranke of the distance D-squared for the temperature}
+\title{Returns the percentile ranke of the distance D-squared for the temperature.}
 \usage{
 d2prc_temp_lifeport(d2)
 }
@@ -13,5 +13,5 @@ d2prc_temp_lifeport(d2)
 percentile rank
 }
 \description{
-Returns the percentile ranke of the distance D-squared for the temperature
+Returns the percentile ranke of the distance D-squared for the temperature.
 }

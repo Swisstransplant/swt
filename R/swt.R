@@ -795,7 +795,7 @@ d2_temp_lifeport <- function(data) {
   return(d2)
 }
 
-#' Returns the percentile ranke of the distance D-squared for the temperature
+#' Returns the percentile ranke of the distance D-squared for the temperature.
 #'
 #' @param d2 D-squared
 #'
@@ -806,4 +806,111 @@ d2_temp_lifeport <- function(data) {
 d2prc_temp_lifeport <- function(d2) {
   P = idat.fn.D2.temp(d2)
   return(P)
+}
+
+#' Formats p-values.
+#'
+#' @param x numerical vector with p-values
+#'
+#' @return formatted p-values as character vector
+#'
+#' @export
+#'
+tidy_pvalues <- function(x) {
+
+  f = function(p){
+
+    if (is.na(p)) {
+      p.fmt = NA_character_
+
+    } else if (p >= 0 & p <= 0.001) {
+      p.fmt = "< 0.001 ***"
+
+    } else if (p > 0.001 & p <= 0.01) {
+      p.fmt = sprintf("%.3f **", p)
+
+    } else if (p > 0.01 & p <= 0.05) {
+      p.fmt = sprintf("%.3f *", p)
+
+    } else if (p > 0.05 & p <= 0.10) {
+      p.fmt = sprintf("%.3f .", p)
+
+    } else if (p > 0.10 & p <= 1) {
+      p.fmt = sprintf("%.2f", p)
+
+    } else {
+      p.fmt = NA_character_
+    }
+  }
+  return(vapply(X = x, FUN = f, FUN.VALUE = ""))
+}
+
+#' Tidy rms model fit results.
+#'
+#' @param fit model fit from rms
+#'
+#' @return formatted data.frame
+#'
+#' @importFrom stats anova
+#'
+#' @export
+#'
+tidy_rmsfit <- function(fit) {
+
+  # # # this is for cph model fits # # #
+  # table wtih effects
+  tab.1 = as.data.frame(summary(fit))
+  tab.1 = tab.1[!grepl("^X.Hazard.Ratio", rownames(tab.1)),] # remove HRs
+  rownames(tab.1) = sub("\\.\\.\\..*", "", rownames(tab.1)) # fix rownames for factors
+  tab.1$Diff.tidy = sprintf("%.2f (%.2f\U2013%.2f)", tab.1$Diff., tab.1$Low, tab.1$High)
+  tab.1$Effect.tidy = sprintf("%.2f (from %.2f to %.2f)",
+                              exp(tab.1$Effect),
+                              exp(tab.1$`Lower 0.95`),
+                              exp(tab.1$`Upper 0.95`))
+  # table with test statistics
+  tab.2 = as.data.frame(anova(fit)) # anova from rms package
+  testit::assert(rownames(tab.1) %in% rownames(tab.2))
+  tab.2$`Chi-Square` = prettyNum(signif(tab.2$`Chi-Square`, digits = 3))
+  tab.2$P = tidy_pvalues(tab.2$P)
+
+  # merge both tables
+  tab = merge(x=tab.2, y=tab.1, by="row.names", all.x=TRUE, all.y=TRUE)
+  rownames(tab) = tab$Row.names
+
+  # replace NA with endash
+  idx = is.na(tab$Diff.) | tab$Diff. == 1 # remove descriptives when dichotomous
+  tab$Diff.tidy[idx] = "\U2013"
+  tab$Effect.tidy[is.na(tab$Effect.tidy)] = "\U2013"
+
+  # order
+  idx = match(rownames(tab.2), tab$Row.names) # same order as in tab.2
+  tab = tab[idx,c("Diff.tidy", "Effect.tidy", "Chi-Square", "d.f.", "P")]
+
+  colnames(tab) = c("Interquartile difference",
+                    "Hazard ratio (95%-CI)",
+                    "Chi-Square", "d.f.", "p-value")
+  # nice rownames
+  rn = rownames(tab)
+  rn[1:(length(rn) - 1)] = tolower(gsub("_|\\.", " ", rn[1:(length(rn) - 1)]))
+  rownames(tab) = rn
+  tab
+
+  return(tab)
+}
+
+#' Nearest element in vector for a given set of values.
+#'
+#' @param y vector to be searched
+#' @param y vector of values of interest
+#'
+#' @return indices of the nearest elements in y for a set of values in q.
+#'
+#' @export
+#'
+nearest <- function(y, q) {
+  ind = rep(NA, length(q))
+  for (i in 1:length(q)) {
+    ind[i] = which.min( abs(y - q[i]) )
+  }
+  return(ind)
 }
