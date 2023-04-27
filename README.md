@@ -6,8 +6,7 @@ Foundation for organ donation and transplantation.
 
 ## User guide
 ### Installation from github
-    library(devtools)
-    install_github("Swisstransplant/swt")
+    devtools::install_github("Swisstransplant/swt")
 
 
 ### Loading package swt
