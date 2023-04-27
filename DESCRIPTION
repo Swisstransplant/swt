@@ -12,8 +12,9 @@ Description: This R package provides tools for data analysis and visualization
     by Swisstransplant--the national organisation for organ donation and
     transplantation in Switzerland.
 Imports: ggplot2, grDevices, utils, hms, data.table, rlang, officer, cowplot, utf8, testit
+LazyData: true
 License: file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.2.3
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5.0)
