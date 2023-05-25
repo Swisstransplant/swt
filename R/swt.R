@@ -80,61 +80,61 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
   font = "sans"
 
   bgColor   = "white"
-    gridColor = "gray90"
-      if (grey_theme) {
-        bgColor   = "#F4F4F1"
-          gridColor = "white"
-      }
+  gridColor = "gray90"
+  if (grey_theme) {
+    bgColor   = "#F4F4F1"
+    gridColor = "white"
+  }
 
-    ggplot2::theme(
+  ggplot2::theme(
 
-      # Title
-      plot.title = ggplot2::element_text(family=font,
-                                         size=title_size,
-                                         face="bold"),
+    # Title
+    plot.title = ggplot2::element_text(family=font,
+                                       size=title_size,
+                                       face="bold"),
 
-      # Subtitle
-      plot.subtitle = ggplot2::element_text(family=font,
-                                            size=subtitle_size,
-                                            #margin=ggplot2::margin(9,0,9,0)
-      ),
-      plot.caption = ggplot2::element_blank(),
-      # This leaves the caption text element empty, because it is set elsewhere in
-      # the finalise plot function
+    # Subtitle
+    plot.subtitle = ggplot2::element_text(family=font,
+                                          size=subtitle_size,
+                                          #margin=ggplot2::margin(9,0,9,0)
+    ),
+    plot.caption = ggplot2::element_blank(),
+    # This leaves the caption text element empty, because it is set elsewhere in
+    # the finalise plot function
 
-      # Legend
-      legend.position = legend_position,
-      legend.text.align = 0,
-      legend.background = ggplot2::element_blank(),
-      legend.title = ggplot2::element_blank(),
-      legend.key = ggplot2::element_blank(),
-      legend.text = ggplot2::element_text(size=font_size),
+    # Legend
+    legend.position = legend_position,
+    legend.text.align = 0,
+    legend.background = ggplot2::element_blank(),
+    legend.title = ggplot2::element_blank(),
+    legend.key = ggplot2::element_blank(),
+    legend.text = ggplot2::element_text(size=font_size),
 
-      # Axis
-      axis.text = ggplot2::element_text(family=font, size=font_size),
-      axis.title = ggplot2::element_text(family=font, size=font_size),
-      # axis.text.x = ggplot2::element_text(margin=ggplot2::margin(5, b = 10)),
+    # Axis
+    axis.text = ggplot2::element_text(family=font, size=font_size),
+    axis.title = ggplot2::element_text(family=font, size=font_size),
+    # axis.text.x = ggplot2::element_text(margin=ggplot2::margin(5, b = 10)),
 
-      axis.ticks = ggplot2::element_blank(),
-      axis.line = ggplot2::element_blank(),
+    axis.ticks = ggplot2::element_blank(),
+    axis.line = ggplot2::element_blank(),
 
-      # Grid lines
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major.y = ggplot2::element_line(color=gridColor),
-      panel.grid.major.x = ggplot2::element_line(color=gridColor),
+    # Grid lines
+    panel.grid.minor = ggplot2::element_blank(),
+    panel.grid.major.y = ggplot2::element_line(color=gridColor),
+    panel.grid.major.x = ggplot2::element_line(color=gridColor),
 
-      # Background
-      # This sets the panel background as blank, removing the standard grey ggplot
-      # background colour from the plot
-      panel.background = ggplot2::element_rect(fill = bgColor),
-      plot.background = ggplot2::element_rect(fill = bgColor)
+    # Background
+    # This sets the panel background as blank, removing the standard grey ggplot
+    # background colour from the plot
+    panel.background = ggplot2::element_rect(fill = bgColor),
+    plot.background = ggplot2::element_rect(fill = bgColor)
 
-      # Strip background (This sets the panel background for facet-wrapped plots
-      # to white, removing the standard grey ggplot background colour and sets the
-      # title size of the facet-wrap title to font size 22)
-      # strip.background = ggplot2::element_rect(fill="red"),
-      # strip.text = ggplot2::element_text(size  = 22,  hjust = 0)
-    )
+    # Strip background (This sets the panel background for facet-wrapped plots
+    # to white, removing the standard grey ggplot background colour and sets the
+    # title size of the facet-wrap title to font size 22)
+    # strip.background = ggplot2::element_rect(fill="red"),
+    # strip.text = ggplot2::element_text(size  = 22,  hjust = 0)
+  )
 }
 
 #' SWT colors
@@ -795,7 +795,7 @@ d2_temp_lifeport <- function(data) {
   return(d2)
 }
 
-#' Returns the percentile ranke of the distance D-squared for the temperature.
+#' Returns the percentile rank of the distance D-squared for the temperature.
 #'
 #' @param d2 D-squared
 #'
@@ -902,7 +902,7 @@ tidy_rmsfit <- function(fit) {
     rn[1:(length(rn) - 2)] = tolower(gsub("_|\\.", " ", rn[1:(length(rn) - 2)]))
     rownames(tab) = rn
 
-  # cph
+    # cph
 
   } else if (all(class(fit) == c("cph", "rms", "coxph" ))) {
 
@@ -960,4 +960,196 @@ nearest <- function(y, q) {
     ind[i] = which.min( abs(y - q[i]) )
   }
   return(ind)
+}
+
+
+# Format HLA
+# Helper function to format HLA string for broads
+# e.g. A(10) becomes A10
+# "A" becomes NA
+
+#' Helper function to format strings for broads, e.g. A(10) becomes A10 and A becomes NA
+#'
+#' @param v_char character vector
+#'
+#' @return formatted character vector
+#' @export
+#'
+fmt_hla <- function(v_char) {
+  # remove ()
+  v_char = sub("\\((\\d*)\\)", "\\1", v_char)
+  # replace empty with NA
+  idx = grepl("^A$|^B$|^DR$", v_char)
+  v_char[idx] = NA
+
+  return(v_char)
+}
+
+#' Parser for the unstructured SOAS HLA information into structured data.
+#'
+#' @param D_HLA Donor HLA antigens. Character string from SOAS variable D HLA Ag.
+#' @param R_HLA Recipient HLA antigens. Character string from SOAS variable R HLA Ag.
+#'
+#' @return a data frame with structured HLA information.
+#' @export
+#'
+HLA_parse <- function(D_HLA, R_HLA) {
+
+  A_pattern  = ".*A\\[(\\d*)(\\(\\d*?\\))*,(\\d*)(\\(\\d*?\\))*\\].*"
+  B_pattern  = ".*B\\[(\\d*)(\\(\\d*?\\))*,(\\d*)(\\(\\d*?\\))*\\].*"
+  DR_pattern =".*DR\\[(\\d*)(\\(\\d*?\\))*,(\\d*)(\\(\\d*?\\))*\\].*"
+  # Note: In the molecular nomenclature, the name of this locus is DRB1.
+
+  tab = data.frame(
+    # 1, 2: split/broad and optional broad allele 1
+    # 3, 4: split/broad and optional broad allele 2
+
+    # Locus A
+    D.A1   =         sub(A_pattern , "A\\1", D_HLA),
+    D.A1.b = fmt_hla(sub(A_pattern , "A\\2", D_HLA)),
+    D.A2   =         sub(A_pattern , "A\\3", D_HLA),
+    D.A2.b = fmt_hla(sub(A_pattern , "A\\4", D_HLA)),
+
+    R.A1   =         sub(A_pattern , "A\\1", R_HLA),
+    R.A1.b = fmt_hla(sub(A_pattern , "A\\2", R_HLA)),
+    R.A2   =         sub(A_pattern , "A\\3", R_HLA),
+    R.A2.b = fmt_hla(sub(A_pattern , "A\\4", R_HLA)),
+
+    # Locus B
+    D.B1   =         sub(B_pattern , "B\\1", D_HLA),
+    D.B1.b = fmt_hla(sub(B_pattern , "B\\2", D_HLA)),
+    D.B2   =         sub(B_pattern , "B\\3", D_HLA),
+    D.B2.b = fmt_hla(sub(B_pattern , "B\\4", D_HLA)),
+
+    R.B1   =         sub(B_pattern , "B\\1", R_HLA),
+    R.B1.b = fmt_hla(sub(B_pattern , "B\\2", R_HLA)),
+    R.B2   =         sub(B_pattern , "B\\3", R_HLA),
+    R.B2.b = fmt_hla(sub(B_pattern , "B\\4", R_HLA)),
+
+    # Locus DR
+    D.DR1   =         sub(DR_pattern , "DR\\1", D_HLA),
+    D.DR1.b = fmt_hla(sub(DR_pattern , "DR\\2", D_HLA)),
+    D.DR2   =         sub(DR_pattern , "DR\\3", D_HLA),
+    D.DR2.b = fmt_hla(sub(DR_pattern , "DR\\4", D_HLA)),
+
+    R.DR1   =         sub(DR_pattern , "DR\\1", R_HLA),
+    R.DR1.b = fmt_hla(sub(DR_pattern , "DR\\2", R_HLA)),
+    R.DR2   =         sub(DR_pattern , "DR\\3", R_HLA),
+    R.DR2.b = fmt_hla(sub(DR_pattern , "DR\\4", R_HLA))
+  )
+
+  # add separately for A, B and DR for
+  tab$D.HLA.A = sub(A_pattern, "A[\\1\\2,\\3\\4]", D_HLA)
+  tab$R.HLA.A = sub(A_pattern, "A[\\1\\2,\\3\\4]", R_HLA)
+
+  tab$D.HLA.B = sub(B_pattern, "B[\\1\\2,\\3\\4]", D_HLA)
+  tab$R.HLA.B = sub(B_pattern, "B[\\1\\2,\\3\\4]", R_HLA)
+
+  tab$D.HLA.DR = sub(DR_pattern, "DR[\\1\\2,\\3\\4]", D_HLA)
+  tab$R.HLA.DR = sub(DR_pattern, "DR[\\1\\2,\\3\\4]", R_HLA)
+
+  # add the original data from SOAS
+  tab$D.HLA = D_HLA
+  tab$R.HLA = R_HLA
+
+  # quality checks
+  i = 1:length(D_HLA)
+  testit::assert(sapply(i, FUN = function(x) grepl(tab$D.HLA.A[x],  D_HLA[x], fixed = TRUE)))
+  testit::assert(sapply(i, FUN = function(x) grepl(tab$D.HLA.B[x],  D_HLA[x], fixed = TRUE)))
+  testit::assert(sapply(i, FUN = function(x) grepl(tab$D.HLA.DR[x], D_HLA[x], fixed = TRUE)))
+
+  testit::assert(sapply(i, FUN = function(x) grepl(tab$R.HLA.A[x],  R_HLA[x], fixed = TRUE)))
+  testit::assert(sapply(i, FUN = function(x) grepl(tab$R.HLA.B[x],  R_HLA[x], fixed = TRUE)))
+  testit::assert(sapply(i, FUN = function(x) grepl(tab$R.HLA.DR[x], R_HLA[x], fixed = TRUE)))
+
+  return(tab)
+}
+
+# The function calculates HLA mismatches. The serological nomenclature in SOAS
+# is as follows:
+#
+# L[p, q]
+#
+# L is the locus A B or DR. p and q are the two alleles of the locus L and the
+# convention is p <= q. The case p != q is known as heterozygote.
+#
+# A[2, 25]
+#
+# Homozygote if p = q. DR[11,11]
+#
+# The HLA-matching process has to handle broad and splits. Two alleles p and r
+# on the same locus L match if they are equal or if one of the allele is the
+# broad of the other allele . Two different splits of same broad do not match.
+# calculate mismatch
+# we look up donor antigens and match them in the recipient. In other words,
+# how many unknown antigens are transferred to the donor?
+
+#' The function calculates HLA mismatches.
+#'
+#' @param D.A1 Donor HLA Antigen on allele 1 locus A
+#' @param D.A2 Donor HLA Antigen on allele 2 locus A
+#' @param D.B1 Donor HLA Antigen on allele 1 locus B
+#' @param D.B2 Donor HLA Antigen on allele 2 locus B
+#' @param D.DR1 Donor HLA Antigen on allele 1 locus DR
+#' @param D.DR2 Donor HLA Antigen on allele 2 locus DR
+#' @param R.A1 Recipient HLA Antigen on allele 1 locus A
+#' @param R.A2 Recipient HLA Antigen on allele 2 locus A
+#' @param R.B1 Recipient HLA Antigen on allele 1 locus B
+#' @param R.B2 Recipient HLA Antigen on allele 2 locus B
+#' @param R.DR1 Recipient HLA Antigen on allele 1 locus DR
+#' @param R.DR2 Recipient HLA Antigen on allele 2 locus DR
+#'
+#' @return data frame with mismatch information.
+#' @export
+#'
+HLA_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
+                         R.A1, R.A2, R.B1, R.B2, R.DR1, R.DR2) {
+
+  # Locus A
+  A.Mm = rep(NA, length(D.A1))
+  # subset homocygote allele
+  idx = D.A1 == D.A2
+  A.Mm[idx] = as.numeric( (D.A1[idx] != R.A1[idx]) & (D.A1[idx] != R.A2[idx]) )
+
+  # subset heterocygote allele
+  idx = D.A1 != D.A2
+  # mismatch on the first donor allele, see HLA and priority score rules, page 12
+  m1 = as.numeric( (D.A1[idx] != R.A1[idx]) & D.A1[idx] != R.A2[idx] )
+  m2 = as.numeric( (D.A2[idx] != R.A1[idx]) & D.A2[idx] != R.A2[idx] )
+  A.Mm[idx] = m1 + m2
+  testit::assert(!all(is.na(A.Mm)))
+
+  # Locus B
+  B.Mm = rep(NA, length(D.B1))
+  # subset homocygote allele
+  idx = D.B1 == D.B2
+  B.Mm[idx] = as.numeric( (D.B1[idx] != R.B1[idx]) & (D.B1[idx] != R.B2[idx]) )
+
+  # subset heterocygote allele
+  idx = D.B1 != D.B2
+  # mismatch on the first donor allele, see HLA and priority score rules, page 12
+  m1 = as.numeric( (D.B1[idx] != R.B1[idx]) & D.B1[idx] != R.B2[idx] )
+  m2 = as.numeric( (D.B2[idx] != R.B1[idx]) & D.B2[idx] != R.B2[idx] )
+  B.Mm[idx] = m1 + m2
+  testit::assert(!all(is.na(B.Mm)))
+
+  # Locus DR
+  DR.Mm = rep(NA, length(D.DR1))
+  # subset homocygote allele
+  idx = D.DR1 == D.DR2
+  DR.Mm[idx] = as.numeric( (D.DR1[idx] != R.DR1[idx]) & (D.DR1[idx] != R.DR2[idx]) )
+
+  # subset heterocygote allele
+  idx = D.DR1 != D.DR2
+  # mismatch on the first donor allele, see HLA and priority score rules, page 12
+  m1 = as.numeric( (D.DR1[idx] != R.DR1[idx]) & D.DR1[idx] != R.DR2[idx] )
+  m2 = as.numeric( (D.DR2[idx] != R.DR1[idx]) & D.DR2[idx] != R.DR2[idx] )
+  DR.Mm[idx] = m1 + m2
+  testit::assert(!all(is.na(DR.Mm)))
+
+  df = data.frame(A.Mm = A.Mm,
+                  B.Mm = B.Mm,
+                  DR.Mm = DR.Mm,
+                  Total.Mm = A.Mm + B.Mm + DR.Mm)
+  return(df)
 }
