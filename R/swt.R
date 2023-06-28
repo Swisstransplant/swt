@@ -1153,3 +1153,13 @@ HLA_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
                   Total.Mm = A.Mm + B.Mm + DR.Mm)
   return(df)
 }
+
+
+#' KIDMO prediction model fit.
+#'
+#' @return Model fit
+#' @export
+#'
+get_kidmo_model <- function() {
+  return(idat.fit.kidmo)
+}
