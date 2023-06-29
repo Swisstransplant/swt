@@ -18,7 +18,6 @@ swt_skeleton <- function(path) {
     "  html:",
     "    toc: true",
     "    css: swt.css",
-    "    mainfont: sans-serif",
     "    linkcolor: '#E5005C'",
     "    df-print: kable",
     "    embed-resources: true",
