@@ -7,3 +7,9 @@ build:
 check:
 	R CMD check --as-cran --no-manual --no-vignettes swt_0.1.tar.gz
 	# R CMD check --as-cran --no-manual --no-vignettes $(file)
+
+doc:
+	rm swt.pdf
+	R CMD Rd2pdf swt
+	rm -rf ./swt/.Rd2pdf*
+	mv swt.pdf ./swt/manual/swt.pdf
