@@ -3,7 +3,10 @@ swt_skeleton <- function(path) {
   # ensure path exists
   FILENAME = paste0(basename(path), ".qmd")
   PATH_R = file.path(path, "R")
+  PATH_DATA = file.path(path, "data")
+
   dir.create(PATH_R, recursive = TRUE, showWarnings = FALSE)
+  dir.create(PATH_DATA, recursive = TRUE, showWarnings = FALSE)
 
   # generate header for file
   content = c(
@@ -28,9 +31,9 @@ swt_skeleton <- function(path) {
     "",
     "# Data import",
     "",
-    "# Data overview",
-    "",
     "# Data processing",
+    "",
+    "# Quality control",
     "",
     "# Descriptive statistics",
     "",
@@ -151,7 +154,7 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
 swt_colors <- function() {
   colors = list(# primary colors
     blue.dark          = grDevices::rgb(  0, 55,100, maxColorValue = 255),
-    blue.swt           = grDevices::rgb( 42, 84,138, maxColorValue = 255),
+    blue.swt           = grDevices::rgb(  0, 55,100, maxColorValue = 255),
     turkis.cm          = grDevices::rgb(105,211,195, maxColorValue = 255),
     yellow.cndo        = grDevices::rgb(251,228, 70, maxColorValue = 255),
     strongred.akzent   = grDevices::rgb(229,  0, 92, maxColorValue = 255),
@@ -233,7 +236,7 @@ swt_colors <- function() {
 #'
 #' @export
 #'
-read_lifeport <- function(file, format="guess") {
+lifeport_read <- function(file, format="guess") {
 
   # guess ascii vs binary
   # we read the first line, for ascii it contains the full variable header
@@ -451,7 +454,7 @@ read_lifeport <- function(file, format="guess") {
 #' @return a list with additional processed data tables
 #' @export
 #'
-process_lifeport <- function(lpdat, window_size = 15) {
+lifeport_process <- function(lpdat, window_size = 15) {
 
   # Calculate runtime from StartTime and number of samples
   n = nrow(lpdat$data) # number of samples every 10 seconds
@@ -507,7 +510,7 @@ process_lifeport <- function(lpdat, window_size = 15) {
 #'
 #' @export
 #'
-sumstats_lifeport <- function(lpdat, ice_threshold = 2.5, infuse_threshold = 10) {
+lifeport_sumstats <- function(lpdat, ice_threshold = 2.5, infuse_threshold = 10) {
 
   # Thresholds that may be changed with good reasoning
   THR_ICE = ice_threshold
@@ -658,8 +661,8 @@ swt_LifePortCaseReport <- function(data.file, output.file, template.file) {
 
   swtcol = swt_colors()
 
-  d = read_lifeport(file = data.file)
-  d = process_lifeport(lpdat = d, window_size = 15)
+  d = lifeport_read(file = data.file)
+  d = lifeport_process(lpdat = d, window_size = 15)
 
   # add OrganID from filename as well
   # OrganID: what was entered by the nurse (sometimes missing, then timestamp)
@@ -787,7 +790,7 @@ swt_LifePortCaseReport <- function(data.file, output.file, template.file) {
 #'
 #' @export
 #'
-d2_temp_lifeport <- function(data) {
+lifeport_d2_temp <- function(data) {
   d2 = stats::mahalanobis(x = data,
                           center = idat.md.temp.center,
                           cov = idat.md.temp.cov)
@@ -802,7 +805,7 @@ d2_temp_lifeport <- function(data) {
 #'
 #' @export
 #'
-d2prc_temp_lifeport <- function(d2) {
+lifeport_d2prc_temp <- function(d2) {
   P = idat.fn.D2.temp(d2)
   return(P)
 }
@@ -1154,11 +1157,11 @@ HLA_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
 }
 
 
-#' KIDMO prediction model fit.
+#' Gets KIDMO prediction model fit.
 #'
 #' @return Model fit
 #' @export
 #'
-get_kidmo_model <- function() {
+kidmo_model <- function() {
   return(idat.fit.kidmo)
 }
