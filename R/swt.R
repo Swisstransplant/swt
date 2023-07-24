@@ -153,6 +153,7 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
 #'
 swt_colors <- function() {
   colors = list(# primary colors
+    # ?? blue 42 84 138
     blue.dark          = grDevices::rgb(  0, 55,100, maxColorValue = 255),
     blue.swt           = grDevices::rgb(  0, 55,100, maxColorValue = 255),
     turkis.cm          = grDevices::rgb(105,211,195, maxColorValue = 255),
@@ -239,16 +240,33 @@ swt_colors <- function() {
 lifeport_read <- function(file, format="guess") {
 
   # guess ascii vs binary
+  # this option will also implement error handling
   # we read the first line, for ascii it contains the full variable header
   # with 83 characters, for binary it only contains the UnitID which is
   # generally < 10 and sometimes an empty string , i.e. "".
   if (format == "guess") {
+
+    # get serial number (binary)
+    to.read = file(file, "rb")
+    skip = readBin(to.read, raw(), n = 24, size = 1)
+    SerialNumber = readBin(to.read, integer(), n = 1, size = 4)
+    close(to.read)
+
+    # get first line (header of txt file)
     con = file(file, "r")
-    firstline = readLines(con, n = 1, warn = F)
+    firstLine = readLines(con, n = 1, warn = F)
     close(con)
-    firstline = gsub('"', "", deparse(firstline))
-    firstline = gsub('\\\\x[0-9a-fA-F]{2}', "?", firstline)
-    format = ifelse(nchar(firstline) > 80, "plaintxt", "binary")
+    firstLine = gsub('"', "", deparse(firstLine))
+    firstLine = gsub('\\\\x[0-9a-fA-F]{2}', "?", firstLine)
+
+    # valid binary file when serial number can be read and has 7 digits
+    if ( nchar(as.character(SerialNumber)) == 7 ) {
+      format = "binary"
+    }   else if ( nchar(firstLine) == 83) { # valid txt file if header is 83 long
+      format = "plaintxt"
+    } else {
+      stop(paste("Cannot read the file", basename(file)))
+    }
   }
 
   # read from binary file
