@@ -251,6 +251,8 @@ lifeport_read <- function(file, format="guess") {
     skip = readBin(to.read, raw(), n = 24, size = 1)
     SerialNumber = readBin(to.read, integer(), n = 1, size = 4)
     close(to.read)
+    # catch problem of empty object
+    SerialNumber = ifelse(length(SerialNumber) == 0, 0, SerialNumber)
 
     # get first line (header of txt file)
     con = file(file, "r")
