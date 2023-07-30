@@ -15,7 +15,7 @@ load(file.path(PATH_PKG, "R", "sysdata.rda"))
 
 # 2. Run project-specific pipeline to overwrite internal data
 # KIDMO project:
-idat.fit.kidmo = fit.mod1.fg.coxph
+idat.fit.kidmo = fit.mod1.fg.export
 
 # 3. Quality checks: don't save sensitive data
 assert(is.null(idat.fit.kidmo$x))
