@@ -15,7 +15,8 @@ load(file.path(PATH_PKG, "R", "sysdata.rda"))
 
 # 2. Run project-specific pipeline to overwrite internal data
 # KIDMO project:
-idat.fit.kidmo = fit.mod1.fg.export
+idat.kidmo_model = fit.mod1.fg.export
+idat.kidmo_hr2rank = kidmo_hr2rank
 
 # 3. Quality checks: don't save sensitive data
 assert(is.null(idat.fit.kidmo$x))
@@ -29,6 +30,8 @@ usethis::use_data(
   idat.md.temp.cov,
   idat.fn.D2.temp,
   # KIDMO
-  idat.fit.kidmo,
+  idat.kidmo_model,
+  idat.kidmo_hr2rank,
 
   internal = TRUE, overwrite = TRUE)
+

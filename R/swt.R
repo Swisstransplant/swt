@@ -1183,5 +1183,16 @@ HLA_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
 #' @export
 #'
 kidmo_model <- function() {
-  return(idat.fit.kidmo)
+  return(idat.kidmo_model)
+}
+
+#' KIDMO conversion of hazard ratio to percentile rank.
+#'
+#' @param hr hazard ratio
+#'
+#' @return percentile
+#' @export
+#'
+kidmo_hr2rank <- function(hr) {
+  return(idat.kidmo_hr2rank(hr))
 }

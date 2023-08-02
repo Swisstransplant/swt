@@ -3,6 +3,7 @@
 export(HLA_mismatch)
 export(HLA_parse)
 export(fmt_hla)
+export(kidmo_hr2rank)
 export(kidmo_model)
 export(lifeport_d2_temp)
 export(lifeport_d2prc_temp)
