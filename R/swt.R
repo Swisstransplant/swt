@@ -883,7 +883,6 @@ tidy_rmsfit <- function(fit) {
   tab.2 = as.data.frame(anova(fit)) # anova from rms package
 
   # ols
-
   if (all(class(fit) == c("ols", "rms", "lm" ))) {
     tab.1$Diff.tidy = sprintf("%.2f (from %.2f to %.2f)",
                               tab.1$Diff.,
@@ -925,20 +924,24 @@ tidy_rmsfit <- function(fit) {
     rownames(tab) = rn
 
     # cph
-
   } else if (all(class(fit) == c("cph", "rms", "coxph" ))) {
 
     # # # this is for cph model fits # # #
-    # table wtih effects
+    # table with effects
     tab.1 = tab.1[!grepl("^X.Hazard.Ratio", rownames(tab.1)),] # remove HRs
-    rownames(tab.1) = sub("\\.\\.\\..*", "", rownames(tab.1)) # fix rownames for factors
+    #rownames(tab.1) = sub("\\.\\.\\..*", "", rownames(tab.1)) # fix rownames for factors
     tab.1$Diff.tidy = sprintf("%.2f (%.2f\U2013%.2f)", tab.1$Diff., tab.1$Low, tab.1$High)
     tab.1$Effect.tidy = sprintf("%.2f (from %.2f to %.2f)",
                                 exp(tab.1$Effect),
                                 exp(tab.1$`Lower 0.95`),
                                 exp(tab.1$`Upper 0.95`))
+
     # table with test statistics
-    testit::assert(rownames(tab.1) %in% rownames(tab.2))
+    # improve nonlinear terms names so I can sort by rowname
+    idx = grep("Nonlinear", rownames(tab.2), ignore.case = FALSE)
+    mynames = paste(rownames(tab.2)[idx-1], "nonlinear")
+    rownames(tab.2)[idx] = mynames
+
     tab.2$`Chi-Square` = prettyNum(signif(tab.2$`Chi-Square`, digits = 3))
     tab.2$P = tidy_pvalues(tab.2$P)
 
@@ -946,8 +949,10 @@ tidy_rmsfit <- function(fit) {
     tab = merge(x=tab.2, y=tab.1, by="row.names", all.x=TRUE, all.y=TRUE)
     rownames(tab) = tab$Row.names
 
-    # replace NA with endash
-    idx = is.na(tab$Diff.) | tab$Diff. == 1 # remove descriptives when dichotomous
+    # TODO: put TOTAL LINEAR and TOTAL at the end
+
+    # remove descriptives when dichotomous or categorical and replace with endash
+    idx = (tab$Low==0 & tab$High == 1) | is.na(tab$Diff.)
     tab$Diff.tidy[idx] = "\U2013"
     tab$Effect.tidy[is.na(tab$Effect.tidy)] = "\U2013"
 
@@ -960,7 +965,7 @@ tidy_rmsfit <- function(fit) {
                       "Chi-Square", "d.f.", "p-value")
     # nice rownames
     rn = rownames(tab)
-    rn[1:(length(rn) - 1)] = tolower(gsub("_|\\.", " ", rn[1:(length(rn) - 1)]))
+    rn[1:(length(rn) - 1)] = gsub("_|\\.", " ", rn[1:(length(rn) - 1)])
     rownames(tab) = rn
   }
 
