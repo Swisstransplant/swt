@@ -877,9 +877,9 @@ tidy_pvalues <- function(x) {
 #'
 #' @export
 #'
-tidy_rmsfit <- function(fit) {
+tidy_rmsfit <- function(fit, ...) {
 
-  tab.1 = as.data.frame(summary(fit))
+  tab.1 = as.data.frame(summary(fit, ...))
   tab.2 = as.data.frame(anova(fit)) # anova from rms package
 
   # ols
@@ -949,23 +949,29 @@ tidy_rmsfit <- function(fit) {
     tab = merge(x=tab.2, y=tab.1, by="row.names", all.x=TRUE, all.y=TRUE)
     rownames(tab) = tab$Row.names
 
-    # TODO: put TOTAL LINEAR and TOTAL at the end
+    # put TOTAL NONLINEAR and TOTAL at the end
+    n = grep("^TOTAL$", rownames(tab)) # last row
+    n_1 = grep("^TOTAL.NONLINEAR$", rownames(tab)) # second last row
+    tab = rbind(tab[c(-n, -n_1),], tab[c(n_1, n),])
 
-    # remove descriptives when dichotomous or categorical and replace with endash
+    # remove values when dichotomous or categorical and replace with endash
     idx = (tab$Low==0 & tab$High == 1) | is.na(tab$Diff.)
     tab$Diff.tidy[idx] = "\U2013"
     tab$Effect.tidy[is.na(tab$Effect.tidy)] = "\U2013"
+    tab$`Chi-Square`[is.na(tab$`Chi-Square`)] = "\U2013"
+    tab$d.f.[is.na(tab$d.f.)] = "\U2013"
+    tab$P[is.na(tab$P)] = "\U2013"
 
-    # order
-    idx = match(rownames(tab.2), tab$Row.names) # same order as in tab.2
-    tab = tab[idx,c("Diff.tidy", "Effect.tidy", "Chi-Square", "d.f.", "P")]
+    # selection of colums to display
+    tab = tab[,c("Diff.tidy", "Effect.tidy", "Chi-Square", "d.f.", "P")]
 
     colnames(tab) = c("Interquartile difference",
                       "Hazard ratio (95%-CI)",
                       "Chi-Square", "d.f.", "p-value")
     # nice rownames
     rn = rownames(tab)
-    rn[1:(length(rn) - 1)] = gsub("_|\\.", " ", rn[1:(length(rn) - 1)])
+    rn = gsub("(.*)\\.\\.\\.(.*)\\.(.*)", "\\1 \\2", rn) # remove baseline level
+    rn = gsub("_|\\.", " ", rn) # remove underline and dots
     rownames(tab) = rn
   }
 

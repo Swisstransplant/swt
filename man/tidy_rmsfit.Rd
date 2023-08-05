@@ -4,7 +4,7 @@
 \alias{tidy_rmsfit}
 \title{Tidy rms model fit results.}
 \usage{
-tidy_rmsfit(fit)
+tidy_rmsfit(fit, ...)
 }
 \arguments{
 \item{fit}{model fit from rms}
