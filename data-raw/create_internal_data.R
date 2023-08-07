@@ -34,6 +34,7 @@ usethis::use_data(
   idat.fn.D2.temp,
   # KIDMO
   idat.kidmo.model.1,
+  idat.kidmo.model.1.scaling,
   idat.kidmo.model.1.hr2rank,
 
   internal = TRUE, overwrite = TRUE)
