@@ -14,14 +14,17 @@ PATH_PKG = file.path(fs::path_home(), "OneDrive - Swisstransplant", "Projects", 
 load(file.path(PATH_PKG, "R", "sysdata.rda"))
 
 # 2. Run project-specific pipeline to overwrite internal data
+
 # KIDMO project:
-idat.kidmo_model = fit.mod1.fg.export
-idat.kidmo_hr2rank = kidmo_hr2rank
+
+idat.kidmo.model.1 = fit.fg.del.1
+idat.kidmo.model.1$x = NULL
+idat.kidmo.model.1.scaling = fit.fg.del.1.scaling
+idat.kidmo.model.1.hr2rank = fit.fg.del.1.scaling.hr2rank
 
 # 3. Quality checks: don't save sensitive data
-assert(is.null(idat.fit.kidmo$x))
-#assert(is.null(idat.fit.kidmo$y))
-assert(is.null(idat.fit.kidmo$model))
+assert(is.null(idat.kidmo.model.1$x))
+assert(is.null(idat.kidmo.model.1$model))
 
 # 4. Save as internal data
 usethis::use_data(
@@ -30,8 +33,8 @@ usethis::use_data(
   idat.md.temp.cov,
   idat.fn.D2.temp,
   # KIDMO
-  idat.kidmo_model,
-  idat.kidmo_hr2rank,
+  idat.kidmo.model.1,
+  idat.kidmo.model.1.hr2rank,
 
   internal = TRUE, overwrite = TRUE)
 
