@@ -8,6 +8,8 @@ tidy_rmsfit(fit, ...)
 }
 \arguments{
 \item{fit}{model fit from rms}
+
+\item{...}{optional arguments to summary of the rms fit object.}
 }
 \value{
 formatted data.frame

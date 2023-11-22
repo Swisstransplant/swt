@@ -26,7 +26,7 @@ swt_skeleton <- function(path) {
     "    embed-resources: true",
     "    code-fold: true",
     "    code-block-bg: '#E6EEF0'",
-    "    code-block-border-left: '#E5005C'",
+    "    code-block-border-left: '#9BBDC5'",
     "---",
     "",
     "# Data import",
@@ -830,6 +830,78 @@ lifeport_d2prc_temp <- function(d2) {
   return(P)
 }
 
+#' Returns mean and SD.
+#'
+#' @param x a numeric vector
+#' @param d1 number of digits
+#' @param d2 number of digits
+#'
+#' @return character object
+#'
+#' @importFrom stats sd
+#'
+#' @export
+#'
+mean_sd = function(x, d1 = 1, d2 = 1) {
+  return(sprintf(paste0("%.", d1, "f (%.", d2, "f)"),
+                 mean(x, na.rm = TRUE),
+                 sd(x, na.rm = TRUE))
+  )
+}
+
+#' Returns frequency count and percentage.
+#'
+#' @param x a logical vector
+#' @param d1 number of digits
+#' @param d2 number of digits
+#'
+#' @return character object
+#'
+#' @export
+#'
+mean_sd = function(x, d1 = 1, d2 = 1) {
+  return(sprintf(paste0("%.", d1, "f (%.", d2, "f)"),
+                 mean(x, na.rm = TRUE),
+                 sd(x, na.rm = TRUE))
+  )
+}
+
+#' Returns median and interquartile range IQR.
+#'
+#' @param x a numeric vector
+#' @param d1 number of digits
+#' @param d2 number of digits
+#' @param d3 number of digits
+#'
+#' @return character object
+#'
+#' @importFrom stats quantile
+#'
+#' @export
+#'
+median_iqr = function(x, d1 = 1, d2 = 1, d3 = 1) {
+  return(sprintf(paste0("%.", d1, "f (from %.", d2, "f to %.", d3, "f)"),
+                 median(x, na.rm = TRUE),
+                 quantile(x, probs = 0.25, na.rm = TRUE),
+                 quantile(x, probs = 0.75, na.rm = TRUE)
+  ))
+}
+
+#' Returns frequency count and percentage of missing data.
+#'
+#' @param x a vector
+#' @param d2 number of digits
+#'
+#' @return character object
+#'
+#' @export
+#'
+miss_perc = function(x, d2 = 1) {
+  return(sprintf(paste0("%d (%.", d2, "f%%)"),
+                 sum(is.na(x)),
+                 sum(is.na(x))/length(x)*100))
+}
+
 #' Formats p-values.
 #'
 #' @param x numerical vector with p-values
@@ -870,6 +942,7 @@ tidy_pvalues <- function(x) {
 #' Tidy rms model fit results.
 #'
 #' @param fit model fit from rms
+#' @param ... optional arguments to summary of the rms fit object.
 #'
 #' @return formatted data.frame
 #'
@@ -978,6 +1051,22 @@ tidy_rmsfit <- function(fit, ...) {
   return(tab)
 }
 
+#' Tidy missing data summary from data frame.
+#'
+#' @param df data frame with raw data
+#'
+#' @return data frame with summary data
+#'
+#' @export
+#'
+tidy_missing = function(df) {
+
+  tab = apply(df, 2, FUN = miss_perc)
+  tab = as.data.frame((apply(df, 2, FUN = miss_perc)))
+  colnames(tab)[1] = "Missing"
+  return(tab)
+}
+
 #' Nearest element in vector for a given set of values.
 #'
 #' @param y vector to be searched
@@ -994,7 +1083,6 @@ nearest <- function(y, q) {
   }
   return(ind)
 }
-
 
 # Format HLA
 # Helper function to format HLA string for broads
@@ -1186,7 +1274,6 @@ HLA_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
                   Total.Mm = A.Mm + B.Mm + DR.Mm)
   return(df)
 }
-
 
 #' Gets KIDMO prediction model fit.
 #'
