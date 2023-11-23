@@ -3,6 +3,7 @@
 export(HLA_mismatch)
 export(HLA_parse)
 export(fmt_hla)
+export(freq_perc)
 export(kidmo_hr2rank)
 export(kidmo_model)
 export(kidmo_scaling)

@@ -849,23 +849,6 @@ mean_sd = function(x, d1 = 1, d2 = 1) {
   )
 }
 
-#' Returns frequency count and percentage.
-#'
-#' @param x a logical vector
-#' @param d1 number of digits
-#' @param d2 number of digits
-#'
-#' @return character object
-#'
-#' @export
-#'
-mean_sd = function(x, d1 = 1, d2 = 1) {
-  return(sprintf(paste0("%.", d1, "f (%.", d2, "f)"),
-                 mean(x, na.rm = TRUE),
-                 sd(x, na.rm = TRUE))
-  )
-}
-
 #' Returns median and interquartile range IQR.
 #'
 #' @param x a numeric vector
@@ -885,6 +868,23 @@ median_iqr = function(x, d1 = 1, d2 = 1, d3 = 1) {
                  quantile(x, probs = 0.25, na.rm = TRUE),
                  quantile(x, probs = 0.75, na.rm = TRUE)
   ))
+}
+
+#' Returns frequency count and percentage.
+#'
+#' @param x a logical vector
+#' @param count.na count NAs in denominator
+#' @param d2 number of digits
+#'
+#' @return character object
+#'
+#' @export
+#'
+freq_perc = function(x, count.na = TRUE, d2 = 1) {
+  if (!count.na) {x = x[!is.na(x)]}
+  return(sprintf(paste0("%d (%.", d2, "f%%)"),
+                 sum(x, na.rm = TRUE),
+                 sum(x, na.rm = TRUE)/length(x)*100))
 }
 
 #' Returns frequency count and percentage of missing data.

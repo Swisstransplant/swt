@@ -5,11 +5,9 @@
 \title{Returns mean and SD.}
 \usage{
 mean_sd(x, d1 = 1, d2 = 1)
-
-mean_sd(x, d1 = 1, d2 = 1)
 }
 \arguments{
-\item{x}{a logical vector}
+\item{x}{a numeric vector}
 
 \item{d1}{number of digits}
 
@@ -17,11 +15,7 @@ mean_sd(x, d1 = 1, d2 = 1)
 }
 \value{
 character object
-
-character object
 }
 \description{
 Returns mean and SD.
-
-Returns frequency count and percentage.
 }
