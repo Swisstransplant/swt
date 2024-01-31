@@ -2,18 +2,18 @@
 % Please edit documentation in R/swt.R
 \name{lifeport_read}
 \alias{lifeport_read}
-\title{Read LifePort data}
+\title{Read LifePort raw data}
 \usage{
 lifeport_read(file, format = "guess")
 }
 \arguments{
-\item{file}{The data file}
+\item{file}{data file with path}
 
-\item{format}{guess, binary or plaintxt (default guess)}
+\item{format}{guess (default), binary or plaintxt}
 }
 \value{
 a list with LifePort data
 }
 \description{
-Read LifePort data
+Read LifePort raw data
 }

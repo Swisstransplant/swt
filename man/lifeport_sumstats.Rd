@@ -7,14 +7,14 @@
 lifeport_sumstats(lpdat, ice_threshold = 2.5, infuse_threshold = 10)
 }
 \arguments{
-\item{lpdat}{A list with data from read.lifeport()}
+\item{lpdat}{a list with data from lifeport_process()}
 
-\item{ice_threshold}{Threshold for ice temperature in degrees Celsius}
+\item{ice_threshold}{threshold for ice temperature in degrees Celsius}
 
-\item{infuse_threshold}{Threshold for infuse temperature in degrees Celsius}
+\item{infuse_threshold}{threshold for infuse temperature in degrees Celsius}
 }
 \value{
-a list with additional summary statistics
+a list with LifePort data
 }
 \description{
 Summary statistics for LifePort data.

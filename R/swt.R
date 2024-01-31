@@ -57,7 +57,8 @@ swt_skeleton <- function(path) {
 
   # copy files
   SOURCEPATH = file.path(find.package("swt"), "rstudio", "templates", "project")
-  myfiles = list.files(SOURCEPATH, pattern = "swt.css|SWT_2955_2021.png", full.names = TRUE)
+  myfiles = list.files(SOURCEPATH, pattern = "swt.css|SWT_2955_2021.png",
+                       full.names = TRUE)
   file.copy(myfiles, PATH_R)
 }
 
@@ -230,14 +231,12 @@ swt_colors <- function() {
   return(colors)
 }
 
-#' Read LifePort data
+#' Read LifePort raw data
 #'
-#' @param file The data file
-#' @param format guess, binary or plaintxt (default guess)
+#' @param file data file with path
+#' @param format guess (default), binary or plaintxt
 #'
 #' @return a list with LifePort data
-#'
-#' @importFrom utf8 as_utf8
 #'
 #' @export
 #'
@@ -447,7 +446,8 @@ lifeport_read <- function(file, format="guess") {
     # txt file: 06.05.2022 11:18:07
     # as.POSIXct("1970-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
     data.device$StartTime =
-      as.character(as.POSIXct(data.device$StartTime, format = "%d.%m.%Y %H:%M:%S", tz = "CET"))
+      as.character(as.POSIXct(data.device$StartTime, format = "%d.%m.%Y %H:%M:%S",
+                              tz = "CET"))
   }
 
   # Conversions since data is stored in integers
@@ -455,11 +455,8 @@ lifeport_read <- function(file, format="guess") {
   data$IceContainerTemperature = data$IceContainerTemperature/10
   data$OrganResistance = data$OrganResistance/100
 
-  # fix for invalid UnitID
-  # data.device$UnitID = gsub("\036|\x98f|\\xcc", NA,  data.device$UnitID)
-  data.device$UnitID =  ifelse(is.na(data.device$UnitID),
-                               data.device$UnitID,
-                               utf8::as_utf8(data.device$UnitID))
+  # fix for invalid UnitID with special characters (Genève)
+  data.device$UnitID = iconv(data.device$UnitID, "ASCII", "UTF-8")
 
   data.list = list(
     data.device=data.device,
@@ -469,22 +466,23 @@ lifeport_read <- function(file, format="guess") {
   return(data.list)
 }
 
-#' Process LifePort data. Adds runtime, clock time vectors, and filtered time
-#' series.
+#' Process LifePort data. Adds runtime, clock time, and smoothed time series.
 #'
-#' @param lpdat A list with data from read.lifeport()
+#' @param lpdat a list with data from lifeport_read()
 #' @param window_size rolling window size for filtering
 #'
-#' @return a list with additional processed data tables
+#' @return a list with LifePort data
 #' @export
 #'
 lifeport_process <- function(lpdat, window_size = 15) {
 
   # Calculate runtime from StartTime and number of samples
   n = nrow(lpdat$data) # number of samples every 10 seconds
-  start = as.POSIXct(lpdat$data.device$StartTime, format = "%Y-%m-%d %H:%M:%S", tz = "CET")
+  start = as.POSIXct(lpdat$data.device$StartTime, format = "%Y-%m-%d %H:%M:%S",
+                     tz = "CET")
   if (is.na(start))  {
-    start = as.POSIXct("2000-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S", tz = "CET")
+    start = as.POSIXct("2000-01-01 00:00:00", format = "%Y-%m-%d %H:%M:%S",
+                       tz = "CET")
   }
 
   dur = (start + n*10) - start
@@ -524,17 +522,19 @@ lifeport_process <- function(lpdat, window_size = 15) {
 
 #' Summary statistics for LifePort data.
 #'
-#' @param lpdat A list with data from read.lifeport()
-#' @param ice_threshold Threshold for ice temperature in degrees Celsius
-#' @param infuse_threshold Threshold for infuse temperature in degrees Celsius
+#' @param lpdat a list with data from lifeport_process()
+#' @param ice_threshold threshold for ice temperature in degrees Celsius
+#' @param infuse_threshold threshold for infuse temperature in degrees Celsius
 #'
-#' @return a list with additional summary statistics
+#' @return a list with LifePort data
 #'
-#' @importFrom stats median
+#' @importFrom stats median lm
+#' @importFrom segmented segmented
 #'
 #' @export
 #'
-lifeport_sumstats <- function(lpdat, ice_threshold = 2.5, infuse_threshold = 10) {
+lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
+                              infuse_threshold = 10) {
 
   # Thresholds that may be changed with good reasoning
   THR_ICE = ice_threshold
@@ -543,73 +543,104 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5, infuse_threshold = 10)
   # Thresholds that are more kind of fixed
   THR_PRES = 0
   THR_FLOW = 5
+  THR_FLOW_PERF = 25 # only 2.5% of cases is 25 or lower
   THR_RES  = 0
 
   IDX_2MIN = 12
   IDX_30MIN = 180
+  IDX_60MIN = 360
 
   INF_START_WINDOW = 30 # 5 minutes
-  INF_START_IDX = (IDX_2MIN+1):(IDX_2MIN+INF_START_WINDOW)
-  # average across 5 min but exclude first 2 min., thus 13:42
+  INF_START_IDX = (IDX_2MIN + 1):(IDX_2MIN + INF_START_WINDOW)
+  # average across 5 min but exclude first 2 min., thus 13:42 (from 3 to 7 min)
 
-  # Perfusion time
-  #
+  NO_CHANGEPOINTS = 2 # number of change points for slope detection
+
+  ## Perfusion time
+
   # The time in minutes duration the kidney was perfused
-  perfusion.dur = (sum(lpdat$data$FlowRate > THR_FLOW, na.rm = TRUE)*10)/60
+  perfusion.dur = (sum(lpdat$data$FlowRate.flt > THR_FLOW_PERF, na.rm = TRUE)*10)/60
   perfusion.dur.str = as.character(hms::round_hms(hms::as_hms(perfusion.dur*60), 1))
 
-  # Pressure
-  #
-  # mean across positive values -> nicer distribution when machine was not turned
-  # off after kidney removal
-  idx = lpdat$data$SystolicPressure.flt > THR_PRES
+  ## Pressure
+
+  # mean across positive values as machine may not be turned off after kidney removal
+  # also perfusion needs to be at least 5 minutes
+  idx = lpdat$data$SystolicPressure.flt > THR_PRES & perfusion.dur > 5
   systolicPressure.md = median(lpdat$data$SystolicPressure.flt[idx], na.rm = TRUE)
-  idx = lpdat$data$DiastolicPressure.flt > THR_PRES
+
+  idx = lpdat$data$DiastolicPressure.flt > THR_PRES & perfusion.dur > 5
   diastolicPressure.mean = mean(lpdat$data$DiastolicPressure.flt[idx], na.rm = TRUE)
 
-  # Flow rate and resistance
-  #
+  ## Flow rate and resistance
+
   # We split timeseries in first 30 min and the rest
   # only spitting when timeseries is > 30 min
   # for mean only flow > 0 is considered
-  flowRate.2min  = NA
-  flowRate.30min = NA
-  flowRate.delta = NA
   flowRate.mean  = NA
-
-  organResistance.2min  = NA
-  organResistance.30min = NA
-  organResistance.delta = NA
   organResistance.mean  = NA
+  organResistance.sd  = NA
 
-  flowRate.2min  = lpdat$data$FlowRate.flt[IDX_2MIN]
-  organResistance.2min  = lpdat$data$OrganResistance.flt[IDX_2MIN]
+  organResistance.x1    = NA
+  organResistance.y1    = NA
+  organResistance.x2    = NA
+  organResistance.y2    = NA
+  organResistance.delta = NA
+  organResistance.slope = NA
 
-  if (length(lpdat$data$SequentialRecordNumber) > IDX_30MIN) {
-
-    flowRate.30min = lpdat$data$FlowRate.flt[IDX_30MIN]
-    flowRate.delta = flowRate.30min - flowRate.2min
+  # the indicators are only calculated when perfusion is larger than > 30 min.
+  # previously it was when recording was > 30 min.
+  #if (length(lpdat$data$SequentialRecordNumber) > IDX_30MIN) {
+  if (perfusion.dur > 30) {
 
     # 181 samples is 30 min.
     idx = lpdat$data$SequentialRecordNumber > IDX_30MIN &
       lpdat$data$FlowRate.flt > THR_FLOW
     flowRate.mean = mean(lpdat$data$FlowRate.flt[idx], na.rm = TRUE)
 
-    organResistance.30min = lpdat$data$OrganResistance.flt[IDX_30MIN]
-    organResistance.delta = organResistance.30min - organResistance.2min
-
     idx = lpdat$data$SequentialRecordNumber > IDX_30MIN &
       lpdat$data$OrganResistance.flt > THR_RES
     organResistance.mean = mean(lpdat$data$OrganResistance.flt[idx], na.rm = TRUE)
+    organResistance.sd = stats::sd(lpdat$data$OrganResistance.flt[idx], na.rm = TRUE)
+
+    # vascular indicators: delta and slope
+    NO_NA = sum(is.na(lpdat$data$OrganResistance.flt[1:40])) # No of NA due to smoothing
+
+    # data frame for change point detection in the first 60 min.
+    d.vi = data.frame(
+      x    = 1:IDX_60MIN,
+      y    = lpdat$data$OrganResistance.flt[1:IDX_60MIN]
+    )
+
+    # calculate vascular indicators only if there is no flat line at the last 10 minutes
+    # of the first 60 minutes period
+    if ( !all(d.vi$y[(length(d.vi$y) - 10*6):length(d.vi$y)] <= THR_RES) ) {
+
+      fit.lm = lm(y ~ 1 + x, data = d.vi)  # intercept-only model
+      fit = segmented::segmented(fit.lm, seg.Z = ~x, npsi = NO_CHANGEPOINTS)
+      y_ = c(rep(NA, NO_NA), fit$fitted.values) # adjust same length due to smoothing
+      # debug
+      # plot(fit); points(d.vi$y)
+
+      # get segment with largest negative change (reduction in organ resistance)
+      # calculate differences between yi at change point
+      y_points = c(y_[NO_NA + 1], y_[fit$psi[,2]],  y_[length(y_)])
+      x_points = c(NO_NA + 1, fit$psi[,2],  length(y_))
+      k_seg = which.min(diff(y_points)) # pick segment with the strongest decrease
+
+      # segment k has points P(x_k,y_k) and P(x_k+1, y_k+1)
+      organResistance.x1    = x_points[k_seg]
+      organResistance.y1    = y_points[k_seg]
+      organResistance.x2    = x_points[k_seg + 1]
+      organResistance.y2    = y_points[k_seg + 1]
+      organResistance.delta = y_points[k_seg + 1] - y_points[k_seg]
+      # scale as change in resistance per minute
+      organResistance.slope = segmented::slope(fit)$x[,1][k_seg] * 6
+    }
+
   }
 
-  # Temperature
-  #
-  # mean and SD of inf temperature are calculated excluding the first 2 min. and
-  # excluding segments with no flow using idx
-  # for example, infuse temp in first 2 min. affect sd and mean
-  idx = lpdat$data$SequentialRecordNumber > IDX_2MIN &
-    lpdat$data$FlowRate > THR_FLOW
+  ## Temperature
 
   # ice
   iceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature, na.rm = TRUE)
@@ -617,6 +648,12 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5, infuse_threshold = 10)
   iceContainerTemperature.minAbove = (sum(lpdat$data$IceContainerTemperature > THR_ICE)*10)/60
   iceContainerTemperature.minAbove.str =
     as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove*60), 1))
+
+  # mean and SD of inf temperature are calculated excluding the first 2 min. and
+  # excluding segments with no flow using idx
+  # for example, infuse temp in first 2 min. affect sd and mean
+  idx = lpdat$data$SequentialRecordNumber > IDX_2MIN &
+    lpdat$data$FlowRate > THR_FLOW_PERF
 
   # infuse
   infuseTemperature.mean = NA
@@ -634,26 +671,29 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5, infuse_threshold = 10)
   infuseTemperature.minAbove = (sum(lpdat$data$InfuseTemperature[idx] > THR_INF, na.rm = TRUE)*10)/60
   infuseTemperature.minAbove.str = as.character(hms::round_hms(hms::as_hms(infuseTemperature.minAbove*60), 1))
 
+  ## prepare data
+
   sumstats = data.frame(
 
-    perfusion.dur = perfusion.dur,
+    perfusion.dur     = perfusion.dur,
     perfusion.dur.str = perfusion.dur.str,
 
-    systolicPressure.md = systolicPressure.md,
+    systolicPressure.md    = systolicPressure.md,
     diastolicPressure.mean = diastolicPressure.mean,
 
-    flowRate.2min  = flowRate.2min,
-    flowRate.30min = flowRate.30min,
-    flowRate.delta = flowRate.delta,
-    flowRate.mean  = flowRate.mean,
-
-    organResistance.2min  = organResistance.2min,
-    organResistance.30min = organResistance.30min,
-    organResistance.delta = organResistance.delta,
+    flowRate.mean         = flowRate.mean,
     organResistance.mean  = organResistance.mean,
+    organResistance.sd    = organResistance.sd,
 
-    iceContainerTemperature.mean = iceContainerTemperature.mean,
-    iceContainerTemperature.sd = iceContainerTemperature.sd,
+    organResistance.x1    = organResistance.x1,
+    organResistance.y1    = organResistance.y1,
+    organResistance.x2    = organResistance.x2,
+    organResistance.y2    = organResistance.y2,
+    organResistance.delta = organResistance.delta,
+    organResistance.slope = organResistance.slope,
+
+    iceContainerTemperature.mean     = iceContainerTemperature.mean,
+    iceContainerTemperature.sd       = iceContainerTemperature.sd,
     iceContainerTemperature.minAbove = iceContainerTemperature.minAbove,
     iceContainerTemperature.minAbove.str = iceContainerTemperature.minAbove.str,
 
@@ -667,141 +707,6 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5, infuse_threshold = 10)
   lpdat$data.sumstats = sumstats
 
   return(lpdat)
-}
-
-
-#' Create SWT LifePort Case Report in MS Word.
-#'
-#' @param data.file Lifeport data file
-#' @param output.file target file docx
-#' @param template.file template file docx
-#' @importFrom ggplot2 ggplot aes geom_line geom_hline labs theme ylim scale_color_manual element_blank element_text margin scale_y_continuous
-
-#' @importFrom rlang .data
-#'
-#' @export
-#'
-swt_LifePortCaseReport <- function(data.file, output.file, template.file) {
-
-  swtcol = swt_colors()
-
-  d = lifeport_read(file = data.file)
-  d = lifeport_process(lpdat = d, window_size = 15)
-
-  # add OrganID from filename as well
-  # OrganID: what was entered by the nurse (sometimes missing, then timestamp)
-  # DonorID: Derived from filename and checked by SWT
-  d$data.device$Filename = basename(data.file)
-  d$data.organ$DonorID = gsub("^RD-|\\.txt$|\\.TXT$", "", basename(data.file))
-
-  data.device = d$data.device
-  data.organ  = d$data.organ
-  data        = d$data
-
-  # Table: Organ and Device Information
-  tab = cbind(data.organ[, c("DonorID", "KidneySide"),],
-              data.device[, c("SerialNumber", "UnitID", "StartTime", "Runtime")]
-  )
-  colnames(tab) = c("Donor ID", "Kidney side", "Serial number", "Unit ID",
-                    "Start time", "Runtime")
-
-  # Prepare data frames for ggplot
-  tab.pressure = data.frame(
-    time = rep(data$time.clock, 2),
-    pressure = c(data$SystolicPressure.flt, data$DiastolicPressure.flt),
-    group = rep(c("Systolic", "Diastolic"), each = nrow(data))
-  )
-
-  tab.temp = data.frame(
-    time = rep(data$time.clock, 2),
-    temperature = c(data$InfuseTemperature, data$IceContainerTemperature),
-    group = rep(c("Infuse", "Ice"), each = nrow(data))
-  )
-
-  # Figure Pressure
-  p1 = ggplot(tab.pressure, aes(x=.data$time, y=.data$pressure,
-                                group=.data$group, col=.data$group)) +
-    geom_line(size=0.5) +
-    geom_hline(yintercept = 30, linetype="dashed") +
-    scale_color_manual(values=c(swtcol$darkyellow.kidney, swtcol$blue.swt)) +
-    ylim(c(0,40)) +
-    labs(title = "Pressure", y = "mmHg") +
-    swt_style(font_size = 8, title_size = 8) +
-    theme(axis.title.x = element_blank(),
-          plot.title = element_text(margin=margin(0,0,-15,0)),
-          legend.box.margin=margin(0,0,-15,0)
-    )
-
-  # Figure Flow
-  p2 = ggplot(data, aes(x=.data$time.clock, y=.data$FlowRate.flt, col="Flow rate")) +
-    geom_line(size=0.5) +
-    geom_hline(yintercept = 85, linetype="dashed") +
-    scale_color_manual(values=swtcol$blue.swt) +
-    ylim(c(0,200)) +
-    labs(title = "Flow", y = "ml/min") +
-    swt_style(font_size = 8, title_size = 8) +
-    theme(axis.title.x = element_blank(),
-          plot.title = element_text(margin=margin(0,0,-15,0)),
-          legend.box.margin=margin(0,0,-15,0))
-
-  # Figure Resistance
-  p3 = ggplot(data, aes(x=.data$time.clock, y=.data$OrganResistance.flt,
-                        col="Organ resistance")) +
-    geom_line(size=0.5) +
-    ylim(c(0,0.5)) +
-    geom_hline(yintercept = 0.28, linetype="dashed") +
-    geom_hline(yintercept = 0.10, linetype="dashed") +
-    scale_color_manual(values=swtcol$blue.swt) +
-    labs(title = "Resistance", y = "mmHg/ml/min") +
-    swt_style(font_size = 8, title_size = 8) +
-    theme(axis.title.x = element_blank(),
-          plot.title = element_text(margin=margin(0,0,-15,0)),
-          legend.box.margin=margin(0,0,-15,0))
-
-  # Figure Temperature
-  p4 = ggplot(tab.temp, aes(x=.data$time, y=.data$temperature,
-                            group=.data$group, col=.data$group)) +
-    geom_line(size=0.5) +
-    geom_hline(yintercept = c(4,8), linetype="dashed") +
-    scale_color_manual(values=c(swtcol$blue.swt,
-                                swtcol$darkyellow.kidney)) +
-    #ylim(c(0,16)) +
-    scale_y_continuous(breaks = seq(0,20,4), limits = c(0,20)) +
-    labs(title = "Temperature", y = "\u2103") +
-    swt_style(font_size = 8, title_size = 8) +
-    theme(axis.title.x = element_blank(),
-          plot.title = element_text(margin=margin(0,0,-15,0)),
-          legend.box.margin=margin(0,0,-15,0))
-
-  myplot = cowplot::plot_grid(p1, p2, p3, p4, nrow = 2, ncol = 2)
-
-  myDoc = officer::read_docx(template.file)
-
-  myDoc = officer::body_add_par(myDoc, value = "Case Report", style = "Title")
-  myDoc = officer::body_add_par(myDoc, value = paste("LifePort Kidney Allograft Case Report from",
-                                                     format(Sys.Date(), "%d %b %Y")), style = "Subtitle")
-
-  # Table
-  myDoc = officer::body_add_par(myDoc, value = "Organ and Device Information", style = "heading 3")
-  myDoc = officer::body_add_par(myDoc, value = "", style = "Normal")
-  myDoc = officer::body_add_table(myDoc, value = tab, style = "SWT", align_table	= "left")
-
-  # Data Charts
-  myDoc = officer::body_add_par(myDoc, value = "Data Charts", style = "heading 3")
-  myDoc = officer::body_add_par(myDoc, value = "", style = "Normal")
-  myDoc = officer::body_add_gg(myDoc, value = myplot, width = 6, height = 3.5)
-
-  # General information
-  myDoc = officer::body_add_par(myDoc, value = "General Information", style = "heading 3")
-  myDoc = officer::body_add_par(myDoc, value = "The flow rate is automatically adjusted so that the target pressure is never exceeded (30 mmHg). In normal kidney behavior the flow is slightly increasing and renal resistance decreasing over time due to vasodilation. In abnormal behavior flow is not increasing, and resistance is not decreasing. Excellent perfusion parameters may be reassuring if considering a marginal kidney for transplantation, i.e. 81% of initial function if renal resistance is < 0.28 (Jochmans et al.; 2011).", style = "Normal")
-
-  # Comments
-  myDoc = officer::body_add_par(myDoc, value = "Comments", style = "heading 3")
-  myDoc = officer::body_add_par(myDoc, value = "None", style = "Normal")
-
-  print(myDoc, target = output.file)
-  return(basename(output.file))
-
 }
 
 #' Calculate Mahalanobis distance D-square for LifePort temperature data.
@@ -1306,4 +1211,49 @@ kidmo_scaling <- function() {
 #'
 kidmo_hr2rank <- function(hr) {
   return(idat.kidmo.model.1.hr2rank(hr))
+}
+
+#' Gets WAIT multi-state model fit.
+#'
+#' @return Model fit
+#' @export
+#'
+wait_model_he <- function() {
+  return(idat.wait.model.he)
+}
+
+#' Gets WAIT multi-state model fit.
+#'
+#' @return Model fit
+#' @export
+#'
+wait_model_ki <- function() {
+  return(idat.wait.model.ki)
+}
+
+#' Gets WAIT multi-state model fit.
+#'
+#' @return Model fit
+#' @export
+#'
+wait_model_li <- function() {
+  return(idat.wait.model.li)
+}
+
+#' Gets WAIT multi-state model fit.
+#'
+#' @return Model fit
+#' @export
+#'
+wait_model_lu <- function() {
+  return(idat.wait.model.lu)
+}
+
+#' Gets WAIT multi-state model fit.
+#'
+#' @return Model fit
+#' @export
+#'
+wait_model_pi <- function() {
+  return(idat.wait.model.pi)
 }
