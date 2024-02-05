@@ -39,10 +39,16 @@ usethis::use_data(
   idat.md.temp.center,
   idat.md.temp.cov,
   idat.fn.D2.temp,
+
+  idat.md.perf.center,
+  idat.md.perf.cov,
+  idat.fn.D2.perf,
+
   # KIDMO
   idat.kidmo.model.1,
   idat.kidmo.model.1.scaling,
   idat.kidmo.model.1.hr2rank,
+
   # WAIT
   idat.wait.model.he,
   idat.wait.model.ki,

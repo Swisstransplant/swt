@@ -709,33 +709,52 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
   return(lpdat)
 }
 
-#' Calculate Mahalanobis distance D-square for LifePort temperature data.
+#' Calculate Mahalanobis distance D-square for LifePort temperature and perfusion data.
 #'
-#' @param data data frame or matrix with temperature data
+#' @param data data frame or matrix with temperature or perfusion data
+#' @param type string, type of D-square either "temp" or "perf"
 #'
-#' @return vector with D-square for temperature
+#' @return vector with D-squares
 #'
 #' @importFrom stats mahalanobis
 #'
 #' @export
 #'
-lifeport_d2_temp <- function(data) {
-  d2 = stats::mahalanobis(x = data,
-                          center = idat.md.temp.center,
-                          cov = idat.md.temp.cov)
+lifeport_d2 <- function(data, type) {
+
+  d2 = NA
+
+  if (type == "temp") {
+    d2 = stats::mahalanobis(x = data,
+                            center = idat.md.temp.center,
+                            cov = idat.md.temp.cov)
+  } else if (type == "perf") {
+    d2 = stats::mahalanobis(x = data,
+                            center = idat.md.perf.center,
+                            cov = idat.md.perf.cov)
+  }
+
   return(d2)
 }
 
-#' Returns the percentile rank of the distance D-squared for the temperature.
+#' Returns the percentile rank of the temperature or perfusion D-squared.
 #'
 #' @param d2 D-squared
+#' @param type string, type of D-square either "temp" or "perf"
 #'
 #' @return percentile rank
 #'
 #' @export
 #'
-lifeport_d2prc_temp <- function(d2) {
-  P = idat.fn.D2.temp(d2)
+lifeport_d2toRank <- function(d2, type) {
+  P = NA
+
+  if (type == "temp") {
+    P = idat.fn.D2.temp(d2)
+  } else if (type == "perf") {
+    P = idat.fn.D2.perf(d2)
+  }
+
   return(P)
 }
 
