@@ -35,6 +35,7 @@ assert(is.null(idat.kidmo.model.1$model))
 
 # 4. Save as internal data
 usethis::use_data(
+
   # EXAM
   idat.md.temp.center,
   idat.md.temp.cov,
@@ -57,5 +58,3 @@ usethis::use_data(
   idat.wait.model.pi,
 
   internal = TRUE, overwrite = TRUE)
-
-
