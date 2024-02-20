@@ -559,7 +559,7 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
   ## Perfusion time
 
   # The time in minutes duration the kidney was perfused
-  perfusion.dur = (sum(lpdat$data$FlowRate.flt > THR_FLOW_PERF, na.rm = TRUE)*10)/60
+  perfusion.dur = (sum(lpdat$data$FlowRate.flt > THR_FLOW, na.rm = TRUE)*10)/60
   perfusion.dur.str = as.character(hms::round_hms(hms::as_hms(perfusion.dur*60), 1))
 
   ## Pressure
@@ -607,9 +607,10 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
     NO_NA = sum(is.na(lpdat$data$OrganResistance.flt[1:40])) # No of NA due to smoothing
 
     # data frame for change point detection in the first 60 min.
+    l = min(IDX_60MIN, nrow(lpdat$data)) # calculate length
     d.vi = data.frame(
-      x    = 1:IDX_60MIN,
-      y    = lpdat$data$OrganResistance.flt[1:IDX_60MIN]
+      x    = 1:l,
+      y    = lpdat$data$OrganResistance.flt[1:l]
     )
 
     # calculate vascular indicators only if there is no flat line at the last 10 minutes
