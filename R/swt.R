@@ -110,7 +110,7 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
     # the finalise plot function
 
     # Legend
-    legend.position.inside = legend_position,
+    legend.position = legend_position,
     legend.text.align = 0,
     legend.background = ggplot2::element_blank(),
     legend.title = ggplot2::element_blank(),
