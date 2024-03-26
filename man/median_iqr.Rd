@@ -4,7 +4,7 @@
 \alias{median_iqr}
 \title{Returns median and interquartile range IQR.}
 \usage{
-median_iqr(x, d1 = 1, d2 = 1, d3 = 1)
+median_iqr(x, d1 = 1, d2 = 1, d3 = 1, compact = FALSE)
 }
 \arguments{
 \item{x}{a numeric vector}
@@ -14,6 +14,8 @@ median_iqr(x, d1 = 1, d2 = 1, d3 = 1)
 \item{d2}{number of digits}
 
 \item{d3}{number of digits}
+
+\item{compact}{use en dash instead of "from X to Y"}
 }
 \value{
 character object

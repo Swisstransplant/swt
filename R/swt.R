@@ -784,6 +784,7 @@ mean_sd = function(x, d1 = 1, d2 = 1) {
 #' @param d1 number of digits
 #' @param d2 number of digits
 #' @param d3 number of digits
+#' @param compact use en dash instead of "from X to Y"
 #'
 #' @return character object
 #'
@@ -791,12 +792,21 @@ mean_sd = function(x, d1 = 1, d2 = 1) {
 #'
 #' @export
 #'
-median_iqr = function(x, d1 = 1, d2 = 1, d3 = 1) {
-  return(sprintf(paste0("%.", d1, "f (from %.", d2, "f to %.", d3, "f)"),
-                 median(x, na.rm = TRUE),
+median_iqr = function(x, d1 = 1, d2 = 1, d3 = 1, compact = FALSE) {
+
+  if (compact) {
+
+    format = paste0("%.", d1, "f (%.", d2, "f\U2012%.", d3, "f)")
+
+  } else {
+
+    format = paste0("%.", d1, "f (from %.", d2, "f to %.", d3, "f)")
+  }
+
+  return(sprintf(format, median(x, na.rm = TRUE),
                  quantile(x, probs = 0.25, na.rm = TRUE),
-                 quantile(x, probs = 0.75, na.rm = TRUE)
-  ))
+                 quantile(x, probs = 0.75, na.rm = TRUE))
+  )
 }
 
 #' Returns frequency count and percentage.
