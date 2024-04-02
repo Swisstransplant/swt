@@ -1023,6 +1023,26 @@ nearest <- function(y, q) {
   return(ind)
 }
 
+
+#' Convert excel days since origin to POSIXct data type (date/time)
+#'
+#' @param days days since origin
+#' @param origin origin, default in excel is 1899-12-30
+#' @param tz time zone to be forced upon
+#'
+#' @return date of the type POSIXct
+#'
+#' @importFrom lubridate force_tz
+#'
+#' @export
+#'
+num2date <- function(days, origin="1899-12-30", tz = "CET") {
+
+  dates = as.POSIXct(as.Date(days, origin = origin))
+  dates = force_tz(dates, tzone = tz) # force timezone
+  return(dates)
+}
+
 # Format HLA
 # Helper function to format HLA string for broads
 # e.g. A(10) becomes A10
