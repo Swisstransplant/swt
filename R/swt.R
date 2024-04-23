@@ -26,7 +26,7 @@ swt_skeleton <- function(path) {
     "    embed-resources: true",
     "    code-fold: true",
     "    code-block-bg: '#E6EEF0'",
-    "    code-block-border-left: '#9BBDC5'",
+    "    code-block-border-left: '#3F698A'",
     "---",
     "",
     "# Objectives",
@@ -821,7 +821,7 @@ median_iqr = function(x, d1 = 1, d2 = 1, d3 = 1, compact = FALSE) {
 #'
 freq_perc = function(x, count.na = TRUE, d2 = 1) {
   if (!count.na) {x = x[!is.na(x)]}
-  return(sprintf(paste0("%d (%.", d2, "f%%)"),
+  return(sprintf(paste0("%d (%.", d2, "f)"),
                  sum(x, na.rm = TRUE),
                  sum(x, na.rm = TRUE)/length(x)*100))
 }
