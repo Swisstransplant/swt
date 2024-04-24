@@ -1026,7 +1026,7 @@ nearest <- function(y, q) {
 
 #' Convert excel days since origin to POSIXct data type (date/time)
 #'
-#' @param days days since origin
+#' @param days days since origin as numeric or string
 #' @param origin origin, default in excel is 1899-12-30
 #' @param tz time zone to be forced upon
 #'
@@ -1038,6 +1038,14 @@ nearest <- function(y, q) {
 #'
 num2date <- function(days, origin="1899-12-30", tz = "CET") {
 
+  if ( !is.character(days) & !is.numeric(days) ) {
+    stop("'days' must be of type numeric or a character")
+  }
+
+  if (is.character(days)) {
+    days = as.numeric(days)
+  }
+  days[days == 0] = NA # sometimes empty dates are 0 in excel sheets
   dates = as.POSIXct(as.Date(days, origin = origin))
   dates = force_tz(dates, tzone = tz) # force timezone
   return(dates)

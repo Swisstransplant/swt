@@ -7,7 +7,7 @@
 num2date(days, origin = "1899-12-30", tz = "CET")
 }
 \arguments{
-\item{days}{days since origin}
+\item{days}{days since origin as numeric or string}
 
 \item{origin}{origin, default in excel is 1899-12-30}
 
