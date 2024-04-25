@@ -1029,6 +1029,9 @@ nearest <- function(y, q) {
 #' @param days days since origin as numeric or string
 #' @param origin origin, default in excel is 1899-12-30
 #' @param tz time zone to be forced upon
+#' @param filter filter to fix dates not recognized (default is FALSE)
+#' @param pattern the pattern to find dates not recognized
+#' @param format format to convert dates not recognized
 #'
 #' @return date of the type POSIXct
 #'
@@ -1036,11 +1039,19 @@ nearest <- function(y, q) {
 #'
 #' @export
 #'
-num2date <- function(days, origin="1899-12-30", tz = "CET") {
+num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
+                     pattern = "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}", format = "%d.%m.%Y") {
 
   if ( !is.character(days) & !is.numeric(days) ) {
     stop("'days' must be of type numeric or a character")
   }
+
+  # sometimes dates are not recognized due to inconsistencies in excel
+  # this filter fixes this issue for date of a specified pattern
+  idx = grepl(pattern = pattern, days)
+  dates_fixed = as.Date(days[idx], tz = "CET", format = "%d.%m.%Y")
+  days_fixed = as.numeric(difftime(dates_fixed, origin)) # convert back to numbers
+  days[idx] = as.character(round(days_fixed)) # round to fix 1 hour offset
 
   if (is.character(days)) {
     days = as.numeric(days)
@@ -1048,6 +1059,7 @@ num2date <- function(days, origin="1899-12-30", tz = "CET") {
   days[days == 0] = NA # sometimes empty dates are 0 in excel sheets
   dates = as.POSIXct(as.Date(days, origin = origin))
   dates = force_tz(dates, tzone = tz) # force timezone
+
   return(dates)
 }
 

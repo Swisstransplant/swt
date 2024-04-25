@@ -4,7 +4,14 @@
 \alias{num2date}
 \title{Convert excel days since origin to POSIXct data type (date/time)}
 \usage{
-num2date(days, origin = "1899-12-30", tz = "CET")
+num2date(
+  days,
+  origin = "1899-12-30",
+  tz = "CET",
+  filter = TRUE,
+  pattern = "[0-9]{2}\\\\.[0-9]{2}\\\\.[0-9]{4}",
+  format = "\%d.\%m.\%Y"
+)
 }
 \arguments{
 \item{days}{days since origin as numeric or string}
@@ -12,6 +19,12 @@ num2date(days, origin = "1899-12-30", tz = "CET")
 \item{origin}{origin, default in excel is 1899-12-30}
 
 \item{tz}{time zone to be forced upon}
+
+\item{filter}{filter to fix dates not recognized (default is FALSE)}
+
+\item{pattern}{the pattern to find dates not recognized}
+
+\item{format}{format to convert dates not recognized}
 }
 \value{
 date of the type POSIXct
