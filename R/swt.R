@@ -1048,10 +1048,12 @@ num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
 
   # sometimes dates are not recognized due to inconsistencies in excel
   # this filter fixes this issue for date of a specified pattern
-  idx = grepl(pattern = pattern, days)
-  dates_fixed = as.Date(days[idx], tz = "CET", format = "%d.%m.%Y")
-  days_fixed = as.numeric(difftime(dates_fixed, origin)) # convert back to numbers
-  days[idx] = as.character(round(days_fixed)) # round to fix 1 hour offset
+  if (filter) {
+    idx = grepl(pattern = pattern, days)
+    dates_fixed = as.Date(days[idx], tz = "CET", format = "%d.%m.%Y")
+    days_fixed = as.numeric(difftime(dates_fixed, origin)) # convert back to numbers
+    days[idx] = as.character(round(days_fixed)) # round to fix 1 hour offset
+  }
 
   if (is.character(days)) {
     days = as.numeric(days)
