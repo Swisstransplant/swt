@@ -2,6 +2,7 @@
 
 export(HLA_mismatch)
 export(HLA_parse)
+export(date2num)
 export(fmt_hla)
 export(freq_perc)
 export(kidmo_hr2rank)

@@ -1024,7 +1024,7 @@ nearest <- function(y, q) {
 }
 
 
-#' Convert excel days since origin to POSIXct data type (date/time)
+#' Convert Excel days since origin to POSIXct data type (date/time)
 #'
 #' @param days days since origin as numeric or string
 #' @param origin origin, default in excel is 1899-12-30
@@ -1043,7 +1043,7 @@ num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
                      pattern = "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}", format = "%d.%m.%Y") {
 
   if ( !is.character(days) & !is.numeric(days) ) {
-    stop("'days' must be of type numeric or a character")
+    stop("'days' must be of type numeric or character")
   }
 
   # sometimes dates are not recognized due to inconsistencies in excel
@@ -1063,6 +1063,25 @@ num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
   dates = force_tz(dates, tzone = tz) # force timezone
 
   return(dates)
+}
+
+#' Convert POSIXct data type (date/time) to Excel days since origin
+#'
+#' @param date character string in the form of YYYY-mm-dd
+#'
+#' @return number of days
+#'
+#' @export
+#'
+date2num <- function(date) {
+
+  if ( !is.character(date) ) {
+    stop("'date' must be of type character")
+  }
+
+  days = as.numeric(as.POSIXct(date, tz = "CET") - as.POSIXct("1899-12-30", tz = "CET"))
+
+  return(round(days))
 }
 
 # Format HLA

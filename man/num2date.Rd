@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{num2date}
 \alias{num2date}
-\title{Convert excel days since origin to POSIXct data type (date/time)}
+\title{Convert Excel days since origin to POSIXct data type (date/time)}
 \usage{
 num2date(
   days,
@@ -30,5 +30,5 @@ num2date(
 date of the type POSIXct
 }
 \description{
-Convert excel days since origin to POSIXct data type (date/time)
+Convert Excel days since origin to POSIXct data type (date/time)
 }
