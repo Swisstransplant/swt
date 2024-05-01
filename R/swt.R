@@ -1058,30 +1058,32 @@ num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
   if (is.character(days)) {
     days = as.numeric(days)
   }
+
   days[days == 0] = NA # sometimes empty dates are 0 in excel sheets
   dates = as.POSIXct(as.Date(days, origin = origin))
-  dates = force_tz(dates, tzone = tz) # force timezone
+
+  dates = force_tz(dates, tzone = tz) # force timezone, as we have no tz info from Excel
 
   return(dates)
 }
 
 #' Convert POSIXct data type (date/time) to Excel days since origin
 #'
-#' @param date character string in the form of YYYY-mm-dd
+#' @param dates character string in the form of YYYY-mm-dd
 #'
 #' @return number of days
 #'
 #' @export
 #'
-date2num <- function(date) {
+date2num <- function(dates) {
 
-  if ( !is.character(date) ) {
-    stop("'date' must be of type character")
+  if ( !is.character(dates) ) {
+    stop("'dates' must be of type character")
   }
 
-  days = as.numeric(as.POSIXct(date, tz = "CET") - as.POSIXct("1899-12-30", tz = "CET"))
+  days = as.numeric(as.POSIXct(dates, tz = "UTC") - as.POSIXct("1899-12-30", tz = "UTC"))
 
-  return(round(days))
+  return(days)
 }
 
 # Format HLA

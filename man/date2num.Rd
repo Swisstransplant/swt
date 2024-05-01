@@ -4,10 +4,10 @@
 \alias{date2num}
 \title{Convert POSIXct data type (date/time) to Excel days since origin}
 \usage{
-date2num(date)
+date2num(dates)
 }
 \arguments{
-\item{date}{character string in the form of YYYY-mm-dd}
+\item{dates}{character string in the form of YYYY-mm-dd}
 }
 \value{
 number of days
