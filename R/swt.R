@@ -1029,9 +1029,10 @@ nearest <- function(y, q) {
 #' @param days days since origin as numeric or string
 #' @param origin origin, default in excel is 1899-12-30
 #' @param tz time zone to be forced upon
-#' @param filter filter to fix dates not recognized (default is FALSE)
+#' @param filter a fix for dates not recognized (default is TRUE)
 #' @param pattern the pattern to find dates not recognized
-#' @param format format to convert dates not recognized
+#' @param format format to convert dates not recognized, e.g. \%d.\%m.\%Y \%H:\%M:\%OS
+#' @param round recommended when format has no time, only date information
 #'
 #' @return date of the type POSIXct
 #'
@@ -1041,7 +1042,7 @@ nearest <- function(y, q) {
 #'
 num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
                      pattern = "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}",
-                     format = "%d.%m.%Y %H:%M:%OS") {
+                     format = "%d.%m.%Y", round = TRUE) {
 
   if ( !is.character(days) & !is.numeric(days) ) {
     stop("'days' must be of type numeric or character")
@@ -1054,6 +1055,7 @@ num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
     #dates_fixed = as.Date(days[idx], tz = "CET", format = "%d.%m.%Y")
     dates_fixed = as.POSIXct(days[idx], tz = tz, format = format)
     days_fixed = as.numeric(difftime(dates_fixed, origin)) # convert back to numbers
+    if (round) {days_fixed = round(days_fixed)}
     days[idx] = as.character(days_fixed) # round to fix 1 hour offset
   }
 

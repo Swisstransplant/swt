@@ -10,7 +10,8 @@ num2date(
   tz = "CET",
   filter = TRUE,
   pattern = "[0-9]{2}\\\\.[0-9]{2}\\\\.[0-9]{4}",
-  format = "\%d.\%m.\%Y \%H:\%M:\%OS"
+  format = "\%d.\%m.\%Y",
+  round = TRUE
 )
 }
 \arguments{
@@ -20,11 +21,13 @@ num2date(
 
 \item{tz}{time zone to be forced upon}
 
-\item{filter}{filter to fix dates not recognized (default is FALSE)}
+\item{filter}{a fix for dates not recognized (default is TRUE)}
 
 \item{pattern}{the pattern to find dates not recognized}
 
-\item{format}{format to convert dates not recognized}
+\item{format}{format to convert dates not recognized, e.g. \%d.\%m.\%Y \%H:\%M:\%OS}
+
+\item{round}{recommended when format has no time, only date information}
 }
 \value{
 date of the type POSIXct
