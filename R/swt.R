@@ -1040,7 +1040,8 @@ nearest <- function(y, q) {
 #' @export
 #'
 num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
-                     pattern = "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}", format = "%d.%m.%Y") {
+                     pattern = "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}",
+                     format = "%d.%m.%Y %H:%M:%OS") {
 
   if ( !is.character(days) & !is.numeric(days) ) {
     stop("'days' must be of type numeric or character")
@@ -1050,9 +1051,10 @@ num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
   # this filter fixes this issue for date of a specified pattern
   if (filter) {
     idx = grepl(pattern = pattern, days)
-    dates_fixed = as.Date(days[idx], tz = "CET", format = "%d.%m.%Y")
+    #dates_fixed = as.Date(days[idx], tz = "CET", format = "%d.%m.%Y")
+    dates_fixed = as.POSIXct(days[idx], tz = tz, format = format)
     days_fixed = as.numeric(difftime(dates_fixed, origin)) # convert back to numbers
-    days[idx] = as.character(round(days_fixed)) # round to fix 1 hour offset
+    days[idx] = as.character(days_fixed) # round to fix 1 hour offset
   }
 
   if (is.character(days)) {

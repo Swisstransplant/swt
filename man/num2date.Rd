@@ -10,7 +10,7 @@ num2date(
   tz = "CET",
   filter = TRUE,
   pattern = "[0-9]{2}\\\\.[0-9]{2}\\\\.[0-9]{4}",
-  format = "\%d.\%m.\%Y"
+  format = "\%d.\%m.\%Y \%H:\%M:\%OS"
 )
 }
 \arguments{
