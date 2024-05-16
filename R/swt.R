@@ -1044,6 +1044,12 @@ num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
                      pattern = "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}",
                      format = "%d.%m.%Y", round = TRUE) {
 
+  # when a data frame contains a date variable but it is all NA the data type is logical
+  # and requires conversion to numeric
+  if (is.logical(days) & all(is.na(days))) {
+    days = as.numeric(days)
+  }
+
   if ( !is.character(days) & !is.numeric(days) ) {
     stop("'days' must be of type numeric or character")
   }
