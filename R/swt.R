@@ -157,10 +157,11 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
 #' @export
 #'
 swt_colors <- function() {
-  colors = list(# primary colors
-    # ?? blue 42 84 138
+  colors = list(
+
+    # primary colors
     blue.dark          = grDevices::rgb(  0, 55,100, maxColorValue = 255),
-    blue.swt           = grDevices::rgb(  0, 55,100, maxColorValue = 255),
+    blue.alt           = grDevices::rgb( 42, 84,138, maxColorValue = 255),
     turkis.cm          = grDevices::rgb(105,211,195, maxColorValue = 255),
     yellow.cndo        = grDevices::rgb(251,228, 70, maxColorValue = 255),
     strongred.akzent   = grDevices::rgb(229,  0, 92, maxColorValue = 255),
@@ -168,6 +169,7 @@ swt_colors <- function() {
     # duplicate colors
     turkis.tpx         = grDevices::rgb(105,211,195, maxColorValue = 255),
     yellow.donation    = grDevices::rgb(251,228, 70, maxColorValue = 255),
+    blue.swt           = grDevices::rgb(  0, 55,100, maxColorValue = 255),
 
     # secondary colors
     lightblue.lungs    = grDevices::rgb(155,189,197, maxColorValue = 255),
@@ -176,8 +178,9 @@ swt_colors <- function() {
     darkyellow.kidney  = grDevices::rgb(242,175, 92, maxColorValue = 255),
     red.liver          = grDevices::rgb(217,143,143, maxColorValue = 255),
     beige.intestine    = grDevices::rgb(209,205,189, maxColorValue = 255),
-    # 40% alpha:
-    pink.heart         = grDevices::rgb(212,  0, 84, 0.40*255, maxColorValue = 255),
+    # convert 40% alpha to RGB: round(255 - 0.8*(255 - c(212,  0, 84)))
+    # 50% pallette version will be 0.4
+    pink.heart         = grDevices::rgb(221, 51,118, maxColorValue = 255),
 
     # background color
     grey.bg            = grDevices::rgb(244,244,241, maxColorValue = 255),
@@ -187,8 +190,11 @@ swt_colors <- function() {
   # single 5 hue color scheme 100% 75% 50%  25% 0% (white)
 
   # primary colors
-  colfun = grDevices::colorRampPalette(c(colors$blue.swt, colors$white))
-  colors$pal.blue.swt = colfun(5)
+  colfun = grDevices::colorRampPalette(c(colors$blue.dark, colors$white))
+  colors$pal.blue.dark = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$blue.alt, colors$white))
+  colors$pal.blue.alt = colfun(5)
 
   colfun = grDevices::colorRampPalette(c(colors$turkis.cm, colors$white))
   colors$pal.turkis.cm = colfun(5)
@@ -200,16 +206,14 @@ swt_colors <- function() {
   colors$pal.strongred.akzent = colfun(5)
 
   # duplicate colors
-  colfun = grDevices::colorRampPalette(c(colors$turkis.tpx, colors$white))
-  colors$pal.turkis.tpx = colfun(5)
-
-  colfun = grDevices::colorRampPalette(c(colors$blue.swt, colors$white))
-  colors$pal.blue.swt = colfun(5)
-
-  colfun = grDevices::colorRampPalette(c(colors$yellow.donation, colors$white))
-  colors$pal.yellow.donation = colfun(5)
+  colors$pal.blue.swt        = colors$pal.blue.dark
+  colors$pal.turkis.tpx      = colors$pal.turkis.cm
+  colors$pal.yellow.donation = colors$pal.yellow.cndo
 
   # secondary colors
+  colfun = grDevices::colorRampPalette(c(colors$pink.heart, colors$white))
+  colors$pal.pink.heart = colfun(5)
+
   colfun = grDevices::colorRampPalette(c(colors$lightblue.lungs, colors$white))
   colors$pal.lightblue.lungs = colfun(5)
 
@@ -1043,6 +1047,7 @@ nearest <- function(y, q) {
 num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
                      pattern = "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}",
                      format = "%d.%m.%Y", round = TRUE) {
+  # TODO: Add adjustment factor by +1 second (default)
 
   # when a data frame contains a date variable but it is all NA the data type is logical
   # and requires conversion to numeric

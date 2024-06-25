@@ -1,5 +1,5 @@
-^devel$
 ^swt.Rproj$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^devel$
