@@ -1101,6 +1101,67 @@ date2num <- function(dates) {
   return(days)
 }
 
+#' CKD-EPI Creatinine Equation for eGFR (2021)
+#' see https://www.kidney.org/content/ckd-epi-creatinine-equation-2021
+#' @param SCr Serum creatinine in mg/dL (US) or μmol/L (S)
+#' @param age age in years
+#' @param sex either "F" for female, or "M" for male
+#' @param units unit for SCr, either "SI" (μmol/L; default) or "US" (mg/dL)
+#'
+#' @return eGFR mL/min/1.73m2
+#'
+#' @export
+#'
+egfr_ckd_epi <- function(SCr, age, sex, units = "SI") {
+
+  n = length(SCr)
+
+  if (units == "SI") {
+    SCr = SCr/88.4
+  } else if (!grepl("^SI$|^US$", units)) {
+    stop("'units' must be 'SI' or 'US'")
+  }
+
+  K = rep(NA, n)
+  K[sex == "F"] = 0.7
+  K[sex == "M"] = 0.9
+
+  alpha = rep(NA, n)
+  alpha[sex == "F"] = -0.241
+  alpha[sex == "M"] = -0.302
+
+  egfr = 142 *
+    pmin(SCr/K, 1)^alpha *
+    pmax(SCr/K, 1)^-1.2 * 0.9938^age *
+    ifelse(sex == "F", 1.012, 1)
+
+  return(round(egfr))
+}
+
+#' Revised Schwartz Equation for eGFR (2009)
+#' see https://www.mdcalc.com/calc/10008/revised-schwartz-equation-glomerular-filtration-rate-gfr-2009#evidence
+#' @param SCr Serum creatinine in mg/dL (US) or μmol/L (S)
+#' @param height in cm
+#' @param units unit for SCr, either "SI" (μmol/L; default) or "US" (mg/dL)
+#'
+#' @return eGFR mL/min/1.73m2
+#'
+#' @export
+#'
+egfr_schwartz <- function(SCr, height, units = "SI") {
+
+  if (units == "SI") {
+    SCr = SCr/88.4
+  } else if (!grepl("^SI$|^US$", units)) {
+    stop("'units' must be 'SI' or 'US'")
+  }
+
+  k = 0.413
+  egfr = k * height/SCr
+
+  return(round(egfr))
+}
+
 # Format HLA
 # Helper function to format HLA string for broads
 # e.g. A(10) becomes A10

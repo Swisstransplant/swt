@@ -3,6 +3,8 @@
 export(HLA_mismatch)
 export(HLA_parse)
 export(date2num)
+export(egfr_ckd_epi)
+export(egfr_schwartz)
 export(fmt_hla)
 export(freq_perc)
 export(kidmo_hr2rank)

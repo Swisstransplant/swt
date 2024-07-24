@@ -1,7 +1,7 @@
 Package: swt
 Type: Package
 Title: Swisstransplant R Package
-Version: 0.1
+Version: 0.2
 Authors@R: c(
   person("Simon", "Schwab", email = "simon.schwab@swisstransplant.org",
          role = c("aut", "cre"),
@@ -15,6 +15,6 @@ Imports: ggplot2, grDevices, utils, hms, data.table, testit, segmented, lubridat
 LazyData: true
 License: file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Depends: 
     R (>= 3.5.0)
