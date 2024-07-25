@@ -895,103 +895,124 @@ tidy_pvalues <- function(x) {
 #'
 tidy_rmsfit <- function(fit, ...) {
 
+  CHAR_DASH = "\U2013"
+
   tab.1 = as.data.frame(summary(fit, ...))
   tab.2 = as.data.frame(anova(fit)) # anova from rms package
 
-  # ols
+  # OLS
   if (all(class(fit) == c("ols", "rms", "lm" ))) {
-    tab.1$Diff.tidy = sprintf("%.2f (from %.2f to %.2f)",
-                              tab.1$Diff.,
-                              tab.1$Low, tab.1$High)
-    tab.1$Effect.tidy = sprintf("%.2f (from %.2f to %.2f)",
-                                tab.1$Effect,
-                                tab.1$`Lower 0.95`, tab.1$`Upper 0.95`)
 
-    # table with test statistics
-    testit::assert(rownames(tab.1) %in% rownames(tab.2))
+    tab.1$Diff.tidy = sprintf("%.2f (from %.2f to %.2f)",
+                              tab.1$Diff., tab.1$Low, tab.1$High)
+    tab.1$Effect.tidy = sprintf("%.2f (from %.2f to %.2f)",
+                                tab.1$Effect, tab.1$`Lower 0.95`, tab.1$`Upper 0.95`)
+
+    # improve nonlinear terms names so I can sort by rowname
+    idx = grep("Nonlinear", rownames(tab.2), ignore.case = FALSE)
+    mynames = paste(rownames(tab.2)[idx-1], "nonlinear") # get name one above nonlinear term
+    rownames(tab.2)[idx] = mynames
+
     tab.2$F = prettyNum(signif(tab.2$F, digits = 3))
     tab.2$P = tidy_pvalues(tab.2$P)
 
-
     # merge both tables
-    tab = merge(x=tab.2, y=tab.1, by="row.names", all.x=TRUE, all.y=TRUE)
+    tab = merge(x = tab.2, y = tab.1, by = "row.names", all.x = TRUE, all.y = TRUE)
     rownames(tab) = tab$Row.names
 
-    # replace NA with endash
-    idx = is.na(tab$Diff.) | tab$Diff. == 1 # remove descriptives when dichotomous
-    tab$Diff.tidy[idx] = "\U2013"
-    tab$Effect.tidy[is.na(tab$Effect.tidy)] = "\U2013"
+    # put TOTAL NONLINEAR, TOTAL, and ERROR at the end
+    k = grep("^ERROR$", rownames(tab)) # last row
+    k_1 = grep("^TOTAL$", rownames(tab)) # last second last
+    k_2 = grep("^TOTAL.NONLINEAR$", rownames(tab))
+    tab = rbind(tab[c(-k, -k_1, -k_2),], tab[c(k_2, k_1, k),])
 
-    idx = tab$F == "NA"  # remove NA from ERROR line
-    tab$F[idx] = "\U2013"
-    tab$P[idx] = "\U2013"
+    # remove values when dichotomous or categorical and replace with endash
+    tab$Diff.tidy[is.na(tab$Diff.)] = CHAR_DASH
+    tab$Effect.tidy[is.na(tab$Effect.)] = CHAR_DASH
+    tab$F[is.na(tab$F)] = CHAR_DASH
+    tab$F[tab$F == "NA"] = CHAR_DASH
+    tab$d.f.[is.na(tab$d.f.)] = CHAR_DASH
+    tab$P[is.na(tab$P)] = CHAR_DASH
 
-    # order
-    idx = match(rownames(tab.2), tab$Row.names) # same order as in tab.2
-    tab = tab[idx,c("Diff.tidy", "Effect.tidy", "F", "d.f.", "P")]
+    tab = tab[, c("Diff.tidy", "Effect.tidy", "F", "d.f.", "P")]
 
     colnames(tab) = c("Interquartile difference",
                       "Effect estimate (95%-CI)",
                       "F-value", "d.f.", "p-value")
 
-    # nicer rownames (to lower case)
+    # nice rownames
     rn = rownames(tab)
-    rn[1:(length(rn) - 2)] = tolower(gsub("_|\\.", " ", rn[1:(length(rn) - 2)]))
+    rn = gsub("(.*)\\s-\\s(.*):(.*)", "\\1 \\2", rn) # remove baseline level
+    rn = gsub("_|\\.", " ", rn) # remove underline and dots
     rownames(tab) = rn
 
-    # cph
-  } else if (all(class(fit) == c("cph", "rms", "coxph" ))) {
+    return(tab)
 
-    # # # this is for cph model fits # # #
-    # table with effects
-    tab.1 = tab.1[!grepl("^X.Hazard.Ratio", rownames(tab.1)),] # remove HRs
-    #rownames(tab.1) = sub("\\.\\.\\..*", "", rownames(tab.1)) # fix rownames for factors
+    # LRM or CPH
+  } else if ( all(class(fit) == c("lrm", "rms", "glm" )) |
+              all(class(fit) == c("cph", "rms", "coxph" )) ) {
+
+    tab.1 = tab.1[!grepl("Hazard.Ratio|Odds.Ratio", rownames(tab.1)),] # remove HRs and ORs
     tab.1$Diff.tidy = sprintf("%.2f (%.2f\U2013%.2f)", tab.1$Diff., tab.1$Low, tab.1$High)
     tab.1$Effect.tidy = sprintf("%.2f (from %.2f to %.2f)",
-                                exp(tab.1$Effect),
-                                exp(tab.1$`Lower 0.95`),
+                                exp(tab.1$Effect), exp(tab.1$`Lower 0.95`),
                                 exp(tab.1$`Upper 0.95`))
 
-    # table with test statistics
     # improve nonlinear terms names so I can sort by rowname
     idx = grep("Nonlinear", rownames(tab.2), ignore.case = FALSE)
-    mynames = paste(rownames(tab.2)[idx-1], "nonlinear")
+    mynames = paste(rownames(tab.2)[idx-1], "nonlinear") # get name one above nonlinear term
     rownames(tab.2)[idx] = mynames
 
     tab.2$`Chi-Square` = prettyNum(signif(tab.2$`Chi-Square`, digits = 3))
     tab.2$P = tidy_pvalues(tab.2$P)
 
     # merge both tables
-    tab = merge(x=tab.2, y=tab.1, by="row.names", all.x=TRUE, all.y=TRUE)
+    tab = merge(x = tab.2, y = tab.1, by = "row.names", all.x = TRUE, all.y = TRUE)
     rownames(tab) = tab$Row.names
 
     # put TOTAL NONLINEAR and TOTAL at the end
-    n = grep("^TOTAL$", rownames(tab)) # last row
-    n_1 = grep("^TOTAL.NONLINEAR$", rownames(tab)) # second last row
-    tab = rbind(tab[c(-n, -n_1),], tab[c(n_1, n),])
+    k = grep("^TOTAL$", rownames(tab)) # last row
+    k_1 = grep("^TOTAL.NONLINEAR$", rownames(tab)) # second last row
+    tab = rbind(tab[c(-k, -k_1),], tab[c(k_1, k),])
 
     # remove values when dichotomous or categorical and replace with endash
-    idx = (tab$Low==0 & tab$High == 1) | is.na(tab$Diff.)
-    tab$Diff.tidy[idx] = "\U2013"
-    tab$Effect.tidy[is.na(tab$Effect.tidy)] = "\U2013"
-    tab$`Chi-Square`[is.na(tab$`Chi-Square`)] = "\U2013"
-    tab$d.f.[is.na(tab$d.f.)] = "\U2013"
-    tab$P[is.na(tab$P)] = "\U2013"
+    tab$Diff.tidy[is.na(tab$Diff.)] = CHAR_DASH
+    tab$Effect.tidy[is.na(tab$Effect)] = CHAR_DASH
+    tab$`Chi-Square`[is.na(tab$`Chi-Square`)] = CHAR_DASH
+    tab$d.f.[is.na(tab$d.f.)] = CHAR_DASH
+    tab$P[is.na(tab$P)] = CHAR_DASH
 
     # selection of colums to display
     tab = tab[,c("Diff.tidy", "Effect.tidy", "Chi-Square", "d.f.", "P")]
 
-    colnames(tab) = c("Interquartile difference",
-                      "Hazard ratio (95%-CI)",
-                      "Chi-Square", "d.f.", "p-value")
+    if (class(fit)[1] == "lrm") {
+
+      colnames(tab) = c("Interquartile difference",
+                        "Odds ratio (95%-CI)",
+                        "Chi-Square", "d.f.", "p-value")
+
+    } else if ((class(fit)[1] == "cph")) {
+
+      colnames(tab) = c("Interquartile difference",
+                        "Hazard ratio (95%-CI)",
+                        "Chi-Square", "d.f.", "p-value")
+
+    }
+
     # nice rownames
     rn = rownames(tab)
     rn = gsub("(.*)\\.\\.\\.(.*)\\.(.*)", "\\1 \\2", rn) # remove baseline level
     rn = gsub("_|\\.", " ", rn) # remove underline and dots
     rownames(tab) = rn
+
+    return(tab)
+
+  } else {
+
+    warning("Unknown model: Seriously, reconsider your life choices.")
+
   }
 
-  return(tab)
 }
 
 #' Tidy missing data summary from data frame.

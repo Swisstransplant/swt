@@ -21,7 +21,7 @@ Foundation for organ donation and transplantation.
     make clean
     cd swt; R -e 'devtools::document()'; cd ..
     make build
-    make file=swt_0.21.tar.gz check
+    make file=swt_0.2.tar.gz check
 
 ### Install package locally
 

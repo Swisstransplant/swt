@@ -1,0 +1,39 @@
+---
+title: "Testing tidy_rmsfit"
+format: html
+---
+
+## Developing and testing tidy functions for regression fits using the `rms` package
+
+
+#### Setup data
+```{r}
+set.seed(2024)
+N = 100
+
+d = data.frame(y1 = rnorm(N),
+               y2 = sample(c(TRUE, FALSE), size = N, replace = TRUE),
+               x1 = rnorm(N),
+               x2 = rnorm(N),
+               x3 = rnorm(N),
+               x4 = sample(c(TRUE, FALSE), size = N, replace = TRUE),
+               x5 = sample(c("A", "B", "C"), size = N, replace = TRUE)
+)
+d$x4 = as.factor(d$x4)
+
+dd = datadist(d)
+options(datadist='dd')
+```
+
+
+### OLS
+```{r}
+fit = ols(y1 ~ x1 + rcs(x2, 3) + rcs(x3, 3) + x4 + x5, data = d)
+tidy_rmsfit(fit)
+```
+
+### LRM
+```{r}
+fit = lrm(y2 ~ x1 + rcs(x2, 3) + rcs(x3, 3) + x4 + x5, data = d)
+tidy_rmsfit(fit)
+```
