@@ -8,6 +8,9 @@ format: html
 
 #### Setup data
 ```{r}
+library(rms)
+library(swt)
+
 set.seed(2024)
 N = 100
 

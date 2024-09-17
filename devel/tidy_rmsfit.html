@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.55">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -98,24 +98,115 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="developing-and-testing-tidy-functions-for-regression-fits-using-the-rms-package" class="level2">
 <h2 class="anchored" data-anchor-id="developing-and-testing-tidy-functions-for-regression-fits-using-the-rms-package">Developing and testing tidy functions for regression fits using the <code>rms</code> package</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+<section id="setup-data" class="level4">
+<h4 class="anchored" data-anchor-id="setup-data">Setup data</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rms)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Hmisc</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'Hmisc'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    format.pval, units</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(swt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Copyright 2022, 2024 Swisstransplant. All rights reserved.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>d <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">y1 =</span> <span class="fu">rnorm</span>(N),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">y2 =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="at">size =</span> N, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">x1 =</span> <span class="fu">rnorm</span>(N),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">x2 =</span> <span class="fu">rnorm</span>(N),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">x3 =</span> <span class="fu">rnorm</span>(N),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">x4 =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="at">size =</span> N, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">x5 =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>), <span class="at">size =</span> N, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>d<span class="sc">$</span>x4 <span class="ot">=</span> <span class="fu">as.factor</span>(d<span class="sc">$</span>x4)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>dd <span class="ot">=</span> <span class="fu">datadist</span>(d)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">datadist=</span><span class="st">'dd'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
+<section id="ols" class="level3">
+<h3 class="anchored" data-anchor-id="ols">OLS</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">=</span> <span class="fu">ols</span>(y1 <span class="sc">~</span> x1 <span class="sc">+</span> <span class="fu">rcs</span>(x2, <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">rcs</span>(x3, <span class="dv">3</span>) <span class="sc">+</span> x4 <span class="sc">+</span> x5, <span class="at">data =</span> d)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy_rmsfit</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<pre><code>                 Interquartile difference    Effect estimate (95%-CI) F-value
+x1              1.11 (from -0.41 to 0.70) -0.36 (from -0.61 to -0.12)    8.98
+x2              1.35 (from -0.64 to 0.71)   0.19 (from -0.08 to 0.45)    1.07
+x2 nonlinear                            –                           –   0.117
+x3              1.30 (from -0.51 to 0.79)  -0.08 (from -0.36 to 0.20)   0.173
+x3 nonlinear                            –                           –  0.0706
+x4                                      –                           –   0.353
+x4 FALSE                                –   0.12 (from -0.28 to 0.53)       –
+x5                                      –                           –   0.104
+x5 B                                    –   0.10 (from -0.39 to 0.58)       –
+x5 C                                    –   0.09 (from -0.42 to 0.60)       –
+TOTAL NONLINEAR                         –                           –  0.0953
+TOTAL                                   –                           –    1.47
+ERROR                                   –                           –       –
+                d.f.  p-value
+x1                 1 0.004 **
+x2                 2     0.35
+x2 nonlinear       1     0.73
+x3                 2     0.84
+x3 nonlinear       1     0.79
+x4                 1     0.55
+x4 FALSE           –        –
+x5                 2     0.90
+x5 B               –        –
+x5 C               –        –
+TOTAL NONLINEAR    2     0.91
+TOTAL              8     0.18
+ERROR             91        –</code></pre>
 </div>
 </div>
-<p>You can add options to executable code like this</p>
+</section>
+<section id="lrm" class="level3">
+<h3 class="anchored" data-anchor-id="lrm">LRM</h3>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">=</span> <span class="fu">lrm</span>(y2 <span class="sc">~</span> x1 <span class="sc">+</span> <span class="fu">rcs</span>(x2, <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">rcs</span>(x3, <span class="dv">3</span>) <span class="sc">+</span> x4 <span class="sc">+</span> x5, <span class="at">data =</span> d)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy_rmsfit</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
+<pre><code>                Interquartile difference      Odds ratio (95%-CI) Chi-Square
+x1                     1.11 (-0.41–0.70) 1.03 (from 0.63 to 1.67)      0.011
+x2                     1.35 (-0.64–0.71) 0.81 (from 0.47 to 1.39)       1.14
+x2 nonlinear                           –                        –      0.642
+x3                     1.30 (-0.51–0.79) 0.78 (from 0.44 to 1.39)      0.692
+x3 nonlinear                           –                        –   8.79e-05
+x4                                     –                        –   0.000105
+x4 FALSE                               – 1.00 (from 0.44 to 2.25)          –
+x5                                     –                        –        2.8
+x5 B                                   – 2.30 (from 0.85 to 6.21)          –
+x5 C                                   – 1.16 (from 0.43 to 3.18)          –
+TOTAL NONLINEAR                        –                        –      0.643
+TOTAL                                  –                        –       4.48
+                d.f. p-value
+x1                 1    0.92
+x2                 2    0.57
+x2 nonlinear       1    0.42
+x3                 2    0.71
+x3 nonlinear       1    0.99
+x4                 1    0.99
+x4 FALSE           –       –
+x5                 2    0.25
+x5 B               –       –
+x5 C               –       –
+TOTAL NONLINEAR    2    0.73
+TOTAL              8    0.81</code></pre>
 </div>
 </div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+</section>
 </section>
 
 </main>

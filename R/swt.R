@@ -181,6 +181,7 @@ swt_colors <- function() {
     # convert 40% alpha to RGB: round(255 - 0.8*(255 - c(212,  0, 84)))
     # 50% pallette version will be 0.4
     pink.heart         = grDevices::rgb(221, 51,118, maxColorValue = 255),
+    purple.alt         = grDevices::rgb(196,201,255, maxColorValue = 255),
 
     # background color
     grey.bg            = grDevices::rgb(244,244,241, maxColorValue = 255),
@@ -211,9 +212,6 @@ swt_colors <- function() {
   colors$pal.yellow.donation = colors$pal.yellow.cndo
 
   # secondary colors
-  colfun = grDevices::colorRampPalette(c(colors$pink.heart, colors$white))
-  colors$pal.pink.heart = colfun(5)
-
   colfun = grDevices::colorRampPalette(c(colors$lightblue.lungs, colors$white))
   colors$pal.lightblue.lungs = colfun(5)
 
@@ -231,6 +229,12 @@ swt_colors <- function() {
 
   colfun = grDevices::colorRampPalette(c(colors$beige.intestine, colors$white))
   colors$pal.beige.intestine = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$pink.heart, colors$white))
+  colors$pal.pink.heart = colfun(5)
+
+  colfun = grDevices::colorRampPalette(c(colors$purple.alt, colors$white))
+  colors$pal.purple.alt = colfun(5)
 
   return(colors)
 }
