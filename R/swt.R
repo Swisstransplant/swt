@@ -1,3 +1,5 @@
+# TODO: Function that returns Constant DAYS_IN_YEAR = 365.24
+
 swt_skeleton <- function(path) {
 
   # ensure path exists
@@ -1025,12 +1027,14 @@ tidy_rmsfit <- function(fit, ...) {
 #'
 #' @return data frame with summary data
 #'
+#' @importFrom stats complete.cases
+#'
 #' @export
 #'
 tidy_missing = function(df) {
 
-  tab = apply(df, 2, FUN = miss_perc)
   tab = as.data.frame((apply(df, 2, FUN = miss_perc)))
+  tab = rbind(tab, TOTAL = freq_perc(!complete.cases(df)))
   colnames(tab)[1] = "Missing"
   return(tab)
 }
