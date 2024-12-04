@@ -57,7 +57,7 @@ swt_skeleton <- function(path) {
 
   # copy files
   SOURCEPATH = file.path(find.package("swt"), "rstudio", "templates", "project")
-  myfiles = list.files(SOURCEPATH, pattern = "swt.css|SWT_2955_2021.png",
+  myfiles = list.files(SOURCEPATH, pattern = "swt.scss|SWT_2955_2021.png",
                        full.names = TRUE)
   file.copy(myfiles, PATH_R)
 }
