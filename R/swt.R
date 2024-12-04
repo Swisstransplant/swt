@@ -1,5 +1,3 @@
-# TODO: Function that returns Constant DAYS_IN_YEAR = 365.24
-
 swt_skeleton <- function(path) {
 
   # ensure path exists
@@ -22,7 +20,7 @@ swt_skeleton <- function(path) {
     "format:",
     "  html:",
     "    toc: true",
-    "    css: swt.css",
+    "    theme: swt.scss",
     "    linkcolor: '#E5005C'",
     "    df-print: kable",
     "    embed-resources: true",
@@ -1128,6 +1126,16 @@ date2num <- function(dates) {
   days = as.numeric(as.POSIXct(dates, tz = "UTC") - as.POSIXct("1899-12-30", tz = "UTC"))
 
   return(days)
+}
+
+#' Get the number of days in a year. Used in survival analysis to convert event times.
+#'
+#' @return number of days
+#'
+#' @export
+#'
+get_days_in_year <- function() {
+  return(365.24)
 }
 
 #' CKD-EPI Creatinine Equation for eGFR (2021)

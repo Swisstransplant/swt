@@ -1,20 +1,24 @@
-/* hyperlink color */
-a {
-    color: #003764;
-}
+// swt theme by Simon Schwab
 
-/* headings color */
+/*-- scss:defaults --*/
+
+// quarto bug, callout border box disappears
+$table-border-color: #dee2e6;
+
+/*-- scss:rules --*/
+
+// headings color
 h1.title, h1, h2, h3, h4 {
     color: #003764;
     font-weight: bold;
 }
 
-/* table font size */
+// table font size
 .kable-table {
   font-size: 85%;
 }
 
-/* logo above TOC */
+// logo above TOC
 #TOC::before {
   content: "";
   display: block;

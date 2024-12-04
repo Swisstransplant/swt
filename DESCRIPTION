@@ -1,7 +1,7 @@
 Package: swt
 Type: Package
 Title: Swisstransplant R Package
-Version: 0.2
+Version: 0.3
 Authors@R: c(
   person("Simon", "Schwab", email = "simon.schwab@swisstransplant.org",
          role = c("aut", "cre"),
