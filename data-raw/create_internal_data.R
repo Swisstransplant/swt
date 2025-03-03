@@ -17,10 +17,9 @@ load(file.path(PATH_PKG, "R", "sysdata.rda"))
 
 # KIDMO project:
 
-idat.kidmo.model.1 = fit.fg.del.1
-idat.kidmo.model.1$x = NULL
-idat.kidmo.model.1.scaling = fit.fg.del.1.scaling
-idat.kidmo.model.1.hr2rank = fit.fg.del.1.scaling.hr2rank
+idat.kidmo.model = fit.fg.del
+idat.kidmo.model$x = NULL
+idat.kidmo.model.hr2rank = fit.fg.del.hr2rank
 
 # WAIT project:
 idat.wait.model.he = fit.he
@@ -30,8 +29,8 @@ idat.wait.model.lu = fit.lu
 idat.wait.model.pi = fit.pi
 
 # 3. Quality checks: don't save sensitive data
-assert(is.null(idat.kidmo.model.1$x))
-assert(is.null(idat.kidmo.model.1$model))
+assert(is.null(idat.kidmo.model$x))
+assert(is.null(idat.kidmo.model$model))
 
 # 4. Save as internal data
 usethis::use_data(
@@ -46,9 +45,8 @@ usethis::use_data(
   idat.fn.D2.perf,
 
   # KIDMO
-  idat.kidmo.model.1,
-  idat.kidmo.model.1.scaling,
-  idat.kidmo.model.1.hr2rank,
+  idat.kidmo.model,
+  idat.kidmo.model.hr2rank,
 
   # WAIT
   idat.wait.model.he,

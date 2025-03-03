@@ -1396,16 +1396,7 @@ HLA_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
 #' @export
 #'
 kidmo_model <- function() {
-  return(idat.kidmo.model.1)
-}
-
-#' Get KIDMO scaling factor.
-#'
-#' @return scaling factor
-#' @export
-#'
-kidmo_scaling <- function() {
-  return(idat.kidmo.model.1.scaling)
+  return(idat.kidmo.model)
 }
 
 #' KIDMO conversion of hazard ratio to percentile rank.
@@ -1416,7 +1407,7 @@ kidmo_scaling <- function() {
 #' @export
 #'
 kidmo_hr2rank <- function(hr) {
-  return(idat.kidmo.model.1.hr2rank(hr))
+  return(idat.kidmo.model.hr2rank(hr))
 }
 
 #' Gets WAIT multi-state model fit.
