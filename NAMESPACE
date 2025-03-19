@@ -2,6 +2,7 @@
 
 export(HLA_mismatch)
 export(HLA_parse)
+export(UK_DCD_Score)
 export(date2num)
 export(egfr_ckd_epi)
 export(egfr_schwartz)

@@ -1454,3 +1454,42 @@ wait_model_lu <- function() {
 wait_model_pi <- function() {
   return(idat.wait.model.pi)
 }
+
+#' UK DCD Risk Score by Schlegel et al.
+#'
+#' @param D_age donor age in years
+#' @param D_BMI donor BMI in kg/m^2
+#' @param fWIT functional warm ischemia time in minutes
+#' @param CIT cold ischemia time in hours
+#' @param R_age recipient age in years
+#' @param R_MELD recipient lab MELD score
+#' @param retpx whether the aim is a retransplant
+#'
+#' @return UK DCD Risk Score
+#'
+#' @export
+#'
+UK_DCD_Score <- function(D_age, D_BMI, fWIT, CIT, R_age, R_MELD, retpx) {
+
+  k = length(D_age)
+  testit::assert(length(D_BMI)  == k, fact = "Vectors must have same length.")
+  testit::assert(length(fWIT)   == k, fact = "Vectors must have same length.")
+  testit::assert(length(CIT)    == k, fact = "Vectors must have same length.")
+  testit::assert(length(R_age)  == k, fact = "Vectors must have same length.")
+  testit::assert(length(R_MELD) == k, fact = "Vectors must have same length.")
+  testit::assert(length(retpx)  == k, fact = "Vectors must have same length.")
+
+  s1 = ifelse(D_age > 60, 2, 0)
+  s2 = ifelse(D_BMI > 25, 3, 0)
+  s3 = ifelse(fWIT > 20 & fWIT <= 30, 3, 0)
+  s4 = ifelse(fWIT > 30, 6, 0)
+  s5 = ifelse(CIT > 6, 2, 0)
+  s6 = ifelse(R_age > 60, 3, 0)
+  s7 = ifelse(R_MELD > 25, 2, 0)
+  s8 = ifelse(retpx, 9, 0)
+
+  score = colSums(rbind(s1, s2, s3, s4, s5, s6, s7, s8))
+
+  return(score)
+}
+
