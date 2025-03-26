@@ -9,7 +9,7 @@
 #'   \item{UnitID}{name given to the device}
 #'   ...
 #' }
-#' @source <https://swtdata.org/>
+#' @source <https://data.swisstransplant.org/>
 "exam.device"
 
 #' EXAM organ data
@@ -23,7 +23,7 @@
 #'   \item{KidneySide}{left or right kidney}
 #'   ...
 #' }
-#' @source <https://swtdata.org/>
+#' @source <https://data.swisstransplant.org/>
 "exam.organ"
 
 #' EXAM summary statistics
@@ -37,7 +37,7 @@
 #'   \item{perfusion.dur.str}{perfusion duration in HH:MM:SS}
 #'   ...
 #' }
-#' @source <https://swtdata.org/>
+#' @source <https://data.swisstransplant.org/>
 "exam.sumstats"
 
 #' EXAM time series data
@@ -51,5 +51,5 @@
 #'   \item{FlowRate }{flow rate}
 #'   ...
 #' }
-#' @source <https://swtdata.org/>
+#' @source <https://data.swisstransplant.org/>
 "exam.timeseries"

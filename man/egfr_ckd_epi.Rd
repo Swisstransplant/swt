@@ -8,13 +8,13 @@ see https://www.kidney.org/content/ckd-epi-creatinine-equation-2021}
 egfr_ckd_epi(SCr, age, sex, units = "SI")
 }
 \arguments{
-\item{SCr}{Serum creatinine in mg/dL (US) or μmol/L (S)}
+\item{SCr}{Serum creatinine in mg/dL (US) or umol/L (S)}
 
 \item{age}{age in years}
 
 \item{sex}{either "F" for female, or "M" for male}
 
-\item{units}{unit for SCr, either "SI" (μmol/L; default) or "US" (mg/dL)}
+\item{units}{unit for SCr, either "SI" (umol/L; default) or "US" (mg/dL)}
 }
 \value{
 eGFR mL/min/1.73m2

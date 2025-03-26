@@ -2,8 +2,16 @@
 
 /*-- scss:defaults --*/
 
-// quarto bug, callout border box disappears
-$table-border-color: #dee2e6;
+// colors dashboard
+$navbar-bg: #E6EEF0;
+$navbar-fg: #003764;
+$navbar-hl: #E5005C;
+
+// colors document
+$link-color: #E5005C;
+$code-block-bg: #E6EEF0;
+$code-block-border-left: #3F698A;
+$table-border-color: #DEE2E6; // quarto bug, callout border box disappears
 
 /*-- scss:rules --*/
 

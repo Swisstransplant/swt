@@ -8,11 +8,11 @@ see https://www.mdcalc.com/calc/10008/revised-schwartz-equation-glomerular-filtr
 egfr_schwartz(SCr, height, units = "SI")
 }
 \arguments{
-\item{SCr}{Serum creatinine in mg/dL (US) or μmol/L (S)}
+\item{SCr}{Serum creatinine in mg/dL (US) or umol/L (S)}
 
 \item{height}{in cm}
 
-\item{units}{unit for SCr, either "SI" (μmol/L; default) or "US" (mg/dL)}
+\item{units}{unit for SCr, either "SI" (umol/L; default) or "US" (mg/dL)}
 }
 \value{
 eGFR mL/min/1.73m2

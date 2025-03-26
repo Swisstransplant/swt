@@ -21,12 +21,9 @@ swt_skeleton <- function(path) {
     "  html:",
     "    toc: true",
     "    theme: swt.scss",
-    "    linkcolor: '#E5005C'",
     "    df-print: kable",
     "    embed-resources: true",
     "    code-fold: true",
-    "    code-block-bg: '#E6EEF0'",
-    "    code-block-border-left: '#3F698A'",
     "---",
     "",
     "::: {.callout-tip appearance=\"simple\"}",
@@ -84,6 +81,7 @@ swt_skeleton <- function(path) {
 #' }
 #'
 #' @export
+#'
 swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
                       grey_theme = FALSE, legend_position="top") {
   # windowsFonts()
@@ -483,6 +481,7 @@ lifeport_read <- function(file, format="guess") {
 #' @param window_size rolling window size for filtering
 #'
 #' @return a list with LifePort data
+#'
 #' @export
 #'
 lifeport_process <- function(lpdat, window_size = 15) {
@@ -1143,10 +1142,10 @@ get_days_in_year <- function() {
 
 #' CKD-EPI Creatinine Equation for eGFR (2021)
 #' see https://www.kidney.org/content/ckd-epi-creatinine-equation-2021
-#' @param SCr Serum creatinine in mg/dL (US) or μmol/L (S)
+#' @param SCr Serum creatinine in mg/dL (US) or umol/L (S)
 #' @param age age in years
 #' @param sex either "F" for female, or "M" for male
-#' @param units unit for SCr, either "SI" (μmol/L; default) or "US" (mg/dL)
+#' @param units unit for SCr, either "SI" (umol/L; default) or "US" (mg/dL)
 #'
 #' @return eGFR mL/min/1.73m2
 #'
@@ -1180,9 +1179,9 @@ egfr_ckd_epi <- function(SCr, age, sex, units = "SI") {
 
 #' Revised Schwartz Equation for eGFR (2009)
 #' see https://www.mdcalc.com/calc/10008/revised-schwartz-equation-glomerular-filtration-rate-gfr-2009#evidence
-#' @param SCr Serum creatinine in mg/dL (US) or μmol/L (S)
+#' @param SCr Serum creatinine in mg/dL (US) or umol/L (S)
 #' @param height in cm
-#' @param units unit for SCr, either "SI" (μmol/L; default) or "US" (mg/dL)
+#' @param units unit for SCr, either "SI" (umol/L; default) or "US" (mg/dL)
 #'
 #' @return eGFR mL/min/1.73m2
 #'
@@ -1212,6 +1211,7 @@ egfr_schwartz <- function(SCr, height, units = "SI") {
 #' @param v_char character vector
 #'
 #' @return formatted character vector
+#'
 #' @export
 #'
 fmt_hla <- function(v_char) {
@@ -1230,6 +1230,7 @@ fmt_hla <- function(v_char) {
 #' @param R_HLA Recipient HLA antigens. Character string from SOAS variable R HLA Ag.
 #'
 #' @return a data frame with structured HLA information.
+#'
 #' @export
 #'
 HLA_parse <- function(D_HLA, R_HLA) {
@@ -1339,6 +1340,7 @@ HLA_parse <- function(D_HLA, R_HLA) {
 #' @param R.DR2 Recipient HLA Antigen on allele 2 locus DR
 #'
 #' @return data frame with mismatch information.
+#'
 #' @export
 #'
 HLA_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
@@ -1396,6 +1398,7 @@ HLA_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
 #' Gets KIDMO prediction model fit.
 #'
 #' @return Model fit
+#'
 #' @export
 #'
 kidmo_model <- function() {
@@ -1407,55 +1410,11 @@ kidmo_model <- function() {
 #' @param hr hazard ratio
 #'
 #' @return percentile
+#'
 #' @export
 #'
 kidmo_hr2rank <- function(hr) {
   return(idat.kidmo.model.hr2rank(hr))
-}
-
-#' Gets WAIT multi-state model fit.
-#'
-#' @return Model fit
-#' @export
-#'
-wait_model_he <- function() {
-  return(idat.wait.model.he)
-}
-
-#' Gets WAIT multi-state model fit.
-#'
-#' @return Model fit
-#' @export
-#'
-wait_model_ki <- function() {
-  return(idat.wait.model.ki)
-}
-
-#' Gets WAIT multi-state model fit.
-#'
-#' @return Model fit
-#' @export
-#'
-wait_model_li <- function() {
-  return(idat.wait.model.li)
-}
-
-#' Gets WAIT multi-state model fit.
-#'
-#' @return Model fit
-#' @export
-#'
-wait_model_lu <- function() {
-  return(idat.wait.model.lu)
-}
-
-#' Gets WAIT multi-state model fit.
-#'
-#' @return Model fit
-#' @export
-#'
-wait_model_pi <- function() {
-  return(idat.wait.model.pi)
 }
 
 #' UK DCD Risk Score by Schlegel et al.

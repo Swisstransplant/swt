@@ -19,13 +19,12 @@ Foundation for organ donation and transplantation.
 ### Package building
 
     make clean
-    cd swt; R -e 'devtools::document()'; cd ..
+    make doc
     make build
-    make file=swt_0.2.tar.gz check
+    make file=swt_0.3.tar.gz check
 
 ### Install package locally
 
     detach("package:swt", unload=TRUE)
-
     R CMD REMOVE swt
-    R CMD INSTALL swt_0.2.tar.gz
+    R CMD INSTALL swt_0.3.tar.gz

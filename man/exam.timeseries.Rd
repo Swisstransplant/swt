@@ -14,7 +14,7 @@ A list of data frames with time series data:
 }
 }
 \source{
-<https://swtdata.org/>
+<https://data.swisstransplant.org/>
 }
 \usage{
 exam.timeseries
