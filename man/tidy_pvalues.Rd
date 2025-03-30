@@ -4,10 +4,12 @@
 \alias{tidy_pvalues}
 \title{Formats p-values.}
 \usage{
-tidy_pvalues(x)
+tidy_pvalues(x, compact = FALSE)
 }
 \arguments{
 \item{x}{numerical vector with p-values}
+
+\item{compact}{logical, no asterisks when TRUE}
 }
 \value{
 formatted p-values as character vector

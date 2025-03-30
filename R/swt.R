@@ -854,12 +854,13 @@ miss_perc = function(x, d2 = 1) {
 #' Formats p-values.
 #'
 #' @param x numerical vector with p-values
+#' @param compact logical, no asterisks when TRUE
 #'
 #' @return formatted p-values as character vector
 #'
 #' @export
 #'
-tidy_pvalues <- function(x) {
+tidy_pvalues <- function(x, compact = FALSE) {
 
   f = function(p){
 
@@ -867,16 +868,16 @@ tidy_pvalues <- function(x) {
       p.fmt = NA_character_
 
     } else if (p >= 0 & p <= 0.001) {
-      p.fmt = "< 0.001 ***"
+      p.fmt = ifelse(compact, "< 0.001", "< 0.001 ***")
 
     } else if (p > 0.001 & p <= 0.01) {
-      p.fmt = sprintf("%.3f **", p)
+      p.fmt = ifelse(compact, sprintf("%.3f", p), sprintf("%.3f **", p))
 
     } else if (p > 0.01 & p <= 0.05) {
-      p.fmt = sprintf("%.3f *", p)
+      p.fmt = ifelse(compact, sprintf("%.3f", p), sprintf("%.3f *", p))
 
     } else if (p > 0.05 & p <= 0.10) {
-      p.fmt = sprintf("%.3f .", p)
+      p.fmt = ifelse(compact, sprintf("%.3f", p), sprintf("%.3f .", p))
 
     } else if (p > 0.10 & p <= 1) {
       p.fmt = sprintf("%.2f", p)
