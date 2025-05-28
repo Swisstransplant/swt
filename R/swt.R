@@ -867,10 +867,10 @@ tidy_pvalues <- function(x, compact = FALSE) {
     if (is.na(p)) {
       p.fmt = NA_character_
 
-    } else if (p >= 0 & p <= 0.001) {
+    } else if (p >= 0 & p < 0.001) {
       p.fmt = ifelse(compact, "< 0.001", "< 0.001 ***")
 
-    } else if (p > 0.001 & p <= 0.01) {
+    } else if (p >= 0.001 & p <= 0.01) {
       p.fmt = ifelse(compact, sprintf("%.3f", p), sprintf("%.3f **", p))
 
     } else if (p > 0.01 & p <= 0.05) {
