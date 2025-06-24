@@ -1234,7 +1234,7 @@ fmt_hla <- function(v_char) {
 #'
 #' @export
 #'
-HLA_parse <- function(D_HLA, R_HLA) {
+hla_parse <- function(D_HLA, R_HLA) {
 
   A_pattern  = ".*A\\[(\\d*)(\\(\\d*?\\))*,(\\d*)(\\(\\d*?\\))*\\].*"
   B_pattern  = ".*B\\[(\\d*)(\\(\\d*?\\))*,(\\d*)(\\(\\d*?\\))*\\].*"
@@ -1344,7 +1344,7 @@ HLA_parse <- function(D_HLA, R_HLA) {
 #'
 #' @export
 #'
-HLA_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
+hla_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
                          R.A1, R.A2, R.B1, R.B2, R.DR1, R.DR2) {
 
   # Locus A
@@ -1432,7 +1432,7 @@ kidmo_hr2rank <- function(hr) {
 #'
 #' @export
 #'
-UK_DCD_Score <- function(D_age, D_BMI, fWIT, CIT, R_age, R_MELD, retpx) {
+uk_dcd_score <- function(D_age, D_BMI, fWIT, CIT, R_age, R_MELD, retpx) {
 
   k = length(D_age)
   testit::assert(length(D_BMI)  == k, fact = "Vectors must have same length.")
@@ -1456,3 +1456,35 @@ UK_DCD_Score <- function(D_age, D_BMI, fWIT, CIT, R_age, R_MELD, retpx) {
   return(score)
 }
 
+#' OPTN KDRI
+#'
+#' @param D_age donor age in years
+#' @param D_height donor height in cm
+#' @param D_weight donor weight in kg
+#' @param D_hypertension donor hypertension
+#' @param D_diabetes donor diabetes
+#' @param D_CVA donor cause of death is cardiovascular accident
+#' @param D_SCr serum creatinine in mg/dL
+#' @param D_DCD donation after cardiac death
+#' @param scaling scaling factor that is published every year by the OPTN
+#'
+#' @return KDRI hazard ratio
+#'
+#' @export
+optn_kdri <- function(D_age, D_height, D_weight, D_hypertension, D_diabetes, D_CVA,
+                      D_SCr, D_DCD, scaling = 1.40436817065005) {
+
+  b1x = 0.0092*(D_age - 40) + 0.0113*(D_age < 18)*(D_age - 18) +
+    + 0.0067*(D_age > 50)*(D_age - 50)
+  b2x = -0.0557*(D_height - 170)/10
+  b3x = -0.0333*(D_weight < 80)*(D_weight - 80)/5
+  b4x = 0.1106*D_hypertension
+  b5x = 0.2577*D_diabetes
+  b6x = 0.0743*D_CVA
+  b7x = 0.2128*(D_SCr - 1) - 0.2199*(D_SCr > 1.5)*(D_SCr - 1.5)
+  b8x = 0.1966*D_DCD
+
+  kdri = exp(b1x + b2x + b3x + b4x + b5x + b6x + b7x + b8x)
+
+  return(kdri/scaling)
+}
