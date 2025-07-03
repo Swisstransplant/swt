@@ -2,18 +2,18 @@
 % Please edit documentation in R/swt.R
 \name{lifeport_process}
 \alias{lifeport_process}
-\title{Process LifePort data. Adds runtime, clock time, and smoothed time series.}
+\title{Process LifePort data}
 \usage{
 lifeport_process(lpdat, window_size = 15)
 }
 \arguments{
-\item{lpdat}{a list with data from lifeport_read()}
+\item{lpdat}{list with data from lifeport_read()}
 
 \item{window_size}{rolling window size for filtering}
 }
 \value{
-a list with LifePort data
+list with LifePort data
 }
 \description{
-Process LifePort data. Adds runtime, clock time, and smoothed time series.
+Processing of LifPort data adds runtime, clock time, and smoothed time series.
 }

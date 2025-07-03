@@ -1,3 +1,9 @@
+#' SWT skeleton
+#'
+#' This internal function enables a Swisstransplant Document in Quarto for RStudio projects.
+#'
+#' @param path project path
+
 swt_skeleton <- function(path) {
 
   # ensure path exists
@@ -66,11 +72,11 @@ swt_skeleton <- function(path) {
 #'
 #' This function allows you to add the SWT theme to your ggplot graphics.
 #'
-#' @param title_size The font size of the title
-#' @param subtitle_size The font size of the subtitle
-#' @param font_size The font font size of the legend, axis text, and axis titles
-#' @param grey_theme Whether to use the grey theme instead (TRUE or FALSE)
-#' @param legend_position Position of the legend (top, bottom, left or right)
+#' @param title_size font size of the title
+#' @param subtitle_size font size of the subtitle
+#' @param font_size font font size of the legend, axis text, and axis titles
+#' @param grey_theme whether to use the grey theme instead (TRUE or FALSE)
+#' @param legend_position position of the legend (top, bottom, left or right)
 #'
 #' @examples
 #' \donttest{
@@ -242,10 +248,12 @@ swt_colors <- function() {
 
 #' Read LifePort raw data
 #'
+#' Function to read LifePort binary as well as ASCII raw data files.
+#'
 #' @param file data file with path
 #' @param format guess (default), binary or plaintxt
 #'
-#' @return a list with LifePort data
+#' @return list with LifePort data
 #'
 #' @export
 #'
@@ -475,12 +483,14 @@ lifeport_read <- function(file, format="guess") {
   return(data.list)
 }
 
-#' Process LifePort data. Adds runtime, clock time, and smoothed time series.
+#' Process LifePort data
 #'
-#' @param lpdat a list with data from lifeport_read()
+#' Processing of LifPort data adds runtime, clock time, and smoothed time series.
+#'
+#' @param lpdat list with data from lifeport_read()
 #' @param window_size rolling window size for filtering
 #'
-#' @return a list with LifePort data
+#' @return list with LifePort data
 #'
 #' @export
 #'
@@ -530,13 +540,15 @@ lifeport_process <- function(lpdat, window_size = 15) {
   return(lpdat)
 }
 
-#' Summary statistics for LifePort data.
+#' Summary statistics for LifePort data
 #'
-#' @param lpdat a list with data from lifeport_process()
+#' Adds summary statistics for pressure, flow, resistance, and temperature time series.
+#'
+#' @param lpdat list with data from lifeport_process()
 #' @param ice_threshold threshold for ice temperature in degrees Celsius
 #' @param infuse_threshold threshold for infuse temperature in degrees Celsius
 #'
-#' @return a list with LifePort data
+#' @return list with LifePort data
 #'
 #' @importFrom stats median lm
 #' @importFrom segmented segmented
@@ -720,12 +732,14 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
   return(lpdat)
 }
 
-#' Calculate Mahalanobis distance D-square for LifePort temperature and perfusion data.
+#' D-squared for LifePort data
+#'
+#' Calculate Mahalanobis distance D-squared for LifePort temperature and perfusion data.
 #'
 #' @param data data frame or matrix with temperature or perfusion data
 #' @param type string, type of D-square either "temp" or "perf"
 #'
-#' @return vector with D-squares
+#' @return vector with D-squared
 #'
 #' @importFrom stats mahalanobis
 #'
@@ -748,6 +762,8 @@ lifeport_d2 <- function(data, type) {
   return(d2)
 }
 
+#' Rank of D-squared for LifePort data
+#'
 #' Returns the percentile rank of the temperature or perfusion D-squared.
 #'
 #' @param d2 D-squared
@@ -769,9 +785,11 @@ lifeport_d2toRank <- function(d2, type) {
   return(P)
 }
 
-#' Returns mean and SD.
+#' Returns mean and SD as string
 #'
-#' @param x a numeric vector
+#' Helper function for tidy formatting.
+#'
+#' @param x numeric vector
 #' @param d1 number of digits
 #' @param d2 number of digits
 #'
@@ -788,9 +806,11 @@ mean_sd = function(x, d1 = 1, d2 = 1) {
   )
 }
 
-#' Returns median and interquartile range IQR.
+#' Returns median and interquartile range IQR
 #'
-#' @param x a numeric vector
+#' Helper function for tidy formatting.
+#'
+#' @param x numeric vector
 #' @param d1 number of digits
 #' @param d2 number of digits
 #' @param d3 number of digits
@@ -819,9 +839,11 @@ median_iqr = function(x, d1 = 1, d2 = 1, d3 = 1, compact = FALSE) {
   )
 }
 
-#' Returns frequency count and percentage.
+#' Returns frequency count and percentage
 #'
-#' @param x a logical vector
+#' Helper function for tidy formatting.
+#'
+#' @param x logical vector
 #' @param count.na count NAs in denominator
 #' @param d2 number of digits
 #'
@@ -838,7 +860,9 @@ freq_perc = function(x, count.na = TRUE, d2 = 1) {
 
 #' Returns frequency count and percentage of missing data.
 #'
-#' @param x a vector
+#' Helper function for tidy formatting.
+#'
+#' @param x vector
 #' @param d2 number of digits
 #'
 #' @return character object
@@ -852,6 +876,8 @@ miss_perc = function(x, d2 = 1) {
 }
 
 #' Formats p-values.
+#'
+#' Helper function for tidy formatting.
 #'
 #' @param x numerical vector with p-values
 #' @param compact logical, no asterisks when TRUE
@@ -889,7 +915,9 @@ tidy_pvalues <- function(x, compact = FALSE) {
   return(vapply(X = x, FUN = f, FUN.VALUE = ""))
 }
 
-#' Tidy rms model fit results.
+#' Tidy rms model fit results
+#'
+#' Shows tidy regression table with results as data frame.
 #'
 #' @param fit model fit from rms
 #' @param ... optional arguments to summary of the rms fit object.
@@ -1022,7 +1050,9 @@ tidy_rmsfit <- function(fit, ...) {
 
 }
 
-#' Tidy missing data summary from data frame.
+#' Tidy missing data summary
+#'
+#' Calculates missing data for each variable in data frame.
 #'
 #' @param df data frame with raw data
 #'
@@ -1040,12 +1070,14 @@ tidy_missing = function(df) {
   return(tab)
 }
 
+#' Nearest element
+#'
 #' Nearest element in vector for a given set of values.
 #'
 #' @param y vector to be searched
 #' @param q vector of values of interest
 #'
-#' @return indices of the nearest elements in y for a set of values in q.
+#' @return indices of the nearest elements in y for a set of values in q
 #'
 #' @export
 #'
@@ -1057,13 +1089,14 @@ nearest <- function(y, q) {
   return(ind)
 }
 
-
-#' Convert Excel days since origin to POSIXct data type (date/time)
+#' Convert Excel numeric days to date
+#'
+#' Convert Excel days since origin to POSIXct data type (date/time).
 #'
 #' @param days days since origin as numeric or string
 #' @param origin origin, default in excel is 1899-12-30
 #' @param tz time zone to be forced upon
-#' @param filter a fix for dates not recognized (default is TRUE)
+#' @param filter apply fix for dates not recognized (default is TRUE)
 #' @param pattern the pattern to find dates not recognized
 #' @param format format to convert dates not recognized, e.g. \%d.\%m.\%Y \%H:\%M:\%OS
 #' @param round recommended when format has no time, only date information
@@ -1112,7 +1145,9 @@ num2date <- function(days, origin = "1899-12-30", tz = "CET", filter = TRUE,
   return(dates)
 }
 
-#' Convert POSIXct data type (date/time) to Excel days since origin
+#' Convert date to Excel numeric days
+#'
+#' Convert POSIXct data type (date/time) to Excel days since origin.
 #'
 #' @param dates character string in the form of YYYY-mm-dd
 #'
@@ -1131,7 +1166,9 @@ date2num <- function(dates) {
   return(days)
 }
 
-#' Get the number of days in a year. Used in survival analysis to convert event times.
+#' Get the number of days in a year
+#'
+#' Helper function useful in survival analysis to convert event times.
 #'
 #' @return number of days
 #'
@@ -1141,14 +1178,19 @@ get_days_in_year <- function() {
   return(365.24)
 }
 
-#' CKD-EPI Creatinine Equation for eGFR (2021)
-#' see https://www.kidney.org/content/ckd-epi-creatinine-equation-2021
-#' @param SCr Serum creatinine in mg/dL (US) or umol/L (S)
+#' CKD-EPI Creatinine Equation (2021)
+#'
+#' Calculates eGFR according to the 2021 formula.
+#'
+#' @details
+#' See equation and references at \url{https://www.kidney.org/ckd-epi-creatinine-equation-2021}.
+#'
+#' @param SCr serum creatinine in mg/dL (US) or umol/L (S)
 #' @param age age in years
 #' @param sex either "F" for female, or "M" for male
 #' @param units unit for SCr, either "SI" (umol/L; default) or "US" (mg/dL)
 #'
-#' @return eGFR mL/min/1.73m2
+#' @return eGFR in mL/min/1.73m2
 #'
 #' @export
 #'
@@ -1178,13 +1220,18 @@ egfr_ckd_epi <- function(SCr, age, sex, units = "SI") {
   return(round(egfr))
 }
 
-#' Revised Schwartz Equation for eGFR (2009)
-#' see https://www.mdcalc.com/calc/10008/revised-schwartz-equation-glomerular-filtration-rate-gfr-2009#evidence
-#' @param SCr Serum creatinine in mg/dL (US) or umol/L (S)
-#' @param height in cm
+#' Revised Schwartz Equation (2009)
+#'
+#' Calculates eGFR for pediatric patients.
+#'
+#' @details
+#' See equation and examples at \url{https://www.mdcalc.com/calc/10008/revised-schwartz-equation-glomerular-filtration-rate-gfr-2009#evidence}.
+#'
+#' @param SCr serum creatinine in mg/dL (US) or umol/L (S)
+#' @param height height in cm
 #' @param units unit for SCr, either "SI" (umol/L; default) or "US" (mg/dL)
 #'
-#' @return eGFR mL/min/1.73m2
+#' @return eGFR in mL/min/1.73m2
 #'
 #' @export
 #'
@@ -1202,12 +1249,9 @@ egfr_schwartz <- function(SCr, height, units = "SI") {
   return(round(egfr))
 }
 
-# Format HLA
-# Helper function to format HLA string for broads
-# e.g. A(10) becomes A10
-# "A" becomes NA
-
-#' Helper function to format strings for broads, e.g. A(10) becomes A10 and A becomes NA
+#' Format HLA
+#'
+#' Helper function to format strings for broads, e.g. A(10) becomes A10 and A becomes NA.
 #'
 #' @param v_char character vector
 #'
@@ -1225,12 +1269,14 @@ fmt_hla <- function(v_char) {
   return(v_char)
 }
 
-#' Parser for the unstructured SOAS HLA information into structured data.
+#' Parse HLA data
 #'
-#' @param D_HLA Donor HLA antigens. Character string from SOAS variable D HLA Ag.
-#' @param R_HLA Recipient HLA antigens. Character string from SOAS variable R HLA Ag.
+#' Parser to convert unstructured SOAS HLA information into structured data.
 #'
-#' @return a data frame with structured HLA information.
+#' @param D_HLA donor HLA antigens; character string from SOAS variable D HLA Ag.
+#' @param R_HLA recipient HLA antigens; character string from SOAS variable R HLA Ag.
+#'
+#' @return data frame with structured HLA information
 #'
 #' @export
 #'
@@ -1306,41 +1352,29 @@ hla_parse <- function(D_HLA, R_HLA) {
   return(tab)
 }
 
-# The function calculates HLA mismatches. The serological nomenclature in SOAS
-# is as follows:
-#
-# L[p, q]
-#
-# L is the locus A B or DR. p and q are the two alleles of the locus L and the
-# convention is p <= q. The case p != q is known as heterozygote.
-#
-# A[2, 25]
-#
-# Homozygote if p = q. DR[11,11]
-#
-# The HLA-matching process has to handle broad and splits. Two alleles p and r
-# on the same locus L match if they are equal or if one of the allele is the
-# broad of the other allele . Two different splits of same broad do not match.
-# calculate mismatch
-# we look up donor antigens and match them in the recipient. In other words,
-# how many unknown antigens are transferred to the donor?
-
-#' The function calculates HLA mismatches.
+#' Calculates HLA mismatches.
 #'
-#' @param D.A1 Donor HLA Antigen on allele 1 locus A
-#' @param D.A2 Donor HLA Antigen on allele 2 locus A
-#' @param D.B1 Donor HLA Antigen on allele 1 locus B
-#' @param D.B2 Donor HLA Antigen on allele 2 locus B
-#' @param D.DR1 Donor HLA Antigen on allele 1 locus DR
-#' @param D.DR2 Donor HLA Antigen on allele 2 locus DR
-#' @param R.A1 Recipient HLA Antigen on allele 1 locus A
-#' @param R.A2 Recipient HLA Antigen on allele 2 locus A
-#' @param R.B1 Recipient HLA Antigen on allele 1 locus B
-#' @param R.B2 Recipient HLA Antigen on allele 2 locus B
-#' @param R.DR1 Recipient HLA Antigen on allele 1 locus DR
-#' @param R.DR2 Recipient HLA Antigen on allele 2 locus DR
+#' The function calculates HLA mismatches for SOAS data.
 #'
-#' @return data frame with mismatch information.
+#' @details
+#'  The serological nomenclature in SOAS as follows: L[p, q] with L is the locus A B or DR, p and q are the two alleles of the locus L, and the convention is p <= q. The case p != q is known as heterozygote, A[2, 25]. Homozygote, if p = q, such as in DR[11,11].
+#'
+#' The HLA-matching process has to handle broad and splits. Two alleles p and r on the same locus L match if they are equal or if one of the allele is the broad of the other allele. Two different splits of same broad do not match. To calculate mismatch, we look up donor antigens and match them in the recipient. In other words, how many unknown antigens are transferred to the donor?
+#'
+#' @param D.A1 donor HLA Antigen on allele 1 locus A
+#' @param D.A2 donor HLA Antigen on allele 2 locus A
+#' @param D.B1 donor HLA Antigen on allele 1 locus B
+#' @param D.B2 donor HLA Antigen on allele 2 locus B
+#' @param D.DR1 donor HLA Antigen on allele 1 locus DR
+#' @param D.DR2 donor HLA Antigen on allele 2 locus DR
+#' @param R.A1 recipient HLA Antigen on allele 1 locus A
+#' @param R.A2 recipient HLA Antigen on allele 2 locus A
+#' @param R.B1 recipient HLA Antigen on allele 1 locus B
+#' @param R.B2 recipient HLA Antigen on allele 2 locus B
+#' @param R.DR1 recipient HLA Antigen on allele 1 locus DR
+#' @param R.DR2 recipient HLA Antigen on allele 2 locus DR
+#'
+#' @return data frame with mismatch information
 #'
 #' @export
 #'
@@ -1396,9 +1430,11 @@ hla_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
   return(df)
 }
 
-#' Gets KIDMO prediction model fit.
+#' KIDMO prediction model
 #'
-#' @return Model fit
+#' Returns KIDMO prediction model fit.
+#'
+#' @return model fit
 #'
 #' @export
 #'
@@ -1406,7 +1442,9 @@ kidmo_model <- function() {
   return(idat.kidmo.model)
 }
 
-#' KIDMO conversion of hazard ratio to percentile rank.
+#' KIDMO rank
+#'
+#' Conversion of hazard ratio into percentile rank.
 #'
 #' @param hr hazard ratio
 #'
@@ -1418,7 +1456,12 @@ kidmo_hr2rank <- function(hr) {
   return(idat.kidmo.model.hr2rank(hr))
 }
 
-#' UK DCD Risk Score by Schlegel et al.
+#' UK DCD Risk Score
+#'
+#' Calculates the UK DCD Risk Score that can range between 0 and 27.
+#'
+#' @details
+#' Reference: Schlegel A, Kalisvaart M, Scalera I, et al. The UK DCD Risk Score: A new proposal to define futility in donation-after-circulatory-death liver transplantation. J Hepatol. 2018;68(3):456-464. doi:10.1016/j.jhep.2017.10.034
 #'
 #' @param D_age donor age in years
 #' @param D_BMI donor BMI in kg/m^2
@@ -1458,6 +1501,11 @@ uk_dcd_score <- function(D_age, D_BMI, fWIT, CIT, R_age, R_MELD, retpx) {
 
 #' OPTN KDRI
 #'
+#' Calculates the OPTN KDRI according to the 2024 version.
+#'
+#' @details
+#' See details under "Learn about KDPI" at \url{https://optn.transplant.hrsa.gov/data/allocation-calculators/kdpi-calculator/}.
+#'
 #' @param D_age donor age in years
 #' @param D_height donor height in cm
 #' @param D_weight donor weight in kg
@@ -1487,4 +1535,40 @@ optn_kdri <- function(D_age, D_height, D_weight, D_hypertension, D_diabetes, D_C
   kdri = exp(b1x + b2x + b3x + b4x + b5x + b6x + b7x + b8x)
 
   return(kdri/scaling)
+}
+
+#' UK KDRI 2019
+#'
+#' Calculates the UK KDRI version from 2019.
+#'
+#' @details
+#' Reference: Kim JJ, Curtis RMK, Reynolds B, et al. The UK kidney donor risk index poorly predicts long-term transplant survival in paediatric kidney transplant recipients. Front Immunol. 2023;14:1207145. doi:10.3389/fimmu.2023.1207145
+#'
+#' Calculator at \url{https://www.glasgowtransplant.com/tools/ukkdri.html}.
+#'
+#' @param D_age donor age in years
+#' @param D_height donor height in cm
+#' @param D_hypertension donor hypertension
+#' @param D_female donor is female
+#' @param D_CMV donor cytomegalovirus positive
+#' @param D_eGFR estimated glomerular filtration rate (eGFR) in mL/min/1.73m2
+#' @param D_days_hosp days in hospital
+#'
+#' @return UK KDRI 2019 hazard ratio
+#'
+#' @export
+uk_kdri <- function(D_age, D_height, D_hypertension, D_female, D_CMV,
+                    D_eGFR, D_days_hosp) {
+
+  b1x = 0.023*(D_age - 50)
+  b2x = -0.152*(D_height - 170)/10
+  b3x = 0.149*D_hypertension
+  b4x = -0.184*D_female
+  b5x = 0.190*D_CMV
+  b6x = -0.023*(D_eGFR - 90)/10
+  b7x = 0.015*D_days_hosp
+
+  kdri = exp(b1x + b2x + b3x + b4x + b5x + b6x + b7x)
+
+  return(kdri)
 }

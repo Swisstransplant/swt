@@ -13,15 +13,15 @@ swt_style(
 )
 }
 \arguments{
-\item{title_size}{The font size of the title}
+\item{title_size}{font size of the title}
 
-\item{subtitle_size}{The font size of the subtitle}
+\item{subtitle_size}{font size of the subtitle}
 
-\item{font_size}{The font font size of the legend, axis text, and axis titles}
+\item{font_size}{font font size of the legend, axis text, and axis titles}
 
-\item{grey_theme}{Whether to use the grey theme instead (TRUE or FALSE)}
+\item{grey_theme}{whether to use the grey theme instead (TRUE or FALSE)}
 
-\item{legend_position}{Position of the legend (top, bottom, left or right)}
+\item{legend_position}{position of the legend (top, bottom, left or right)}
 }
 \description{
 This function allows you to add the SWT theme to your ggplot graphics.

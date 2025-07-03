@@ -2,22 +2,23 @@
 % Please edit documentation in R/swt.R
 \name{egfr_schwartz}
 \alias{egfr_schwartz}
-\title{Revised Schwartz Equation for eGFR (2009)
-see https://www.mdcalc.com/calc/10008/revised-schwartz-equation-glomerular-filtration-rate-gfr-2009#evidence}
+\title{Revised Schwartz Equation (2009)}
 \usage{
 egfr_schwartz(SCr, height, units = "SI")
 }
 \arguments{
-\item{SCr}{Serum creatinine in mg/dL (US) or umol/L (S)}
+\item{SCr}{serum creatinine in mg/dL (US) or umol/L (S)}
 
-\item{height}{in cm}
+\item{height}{height in cm}
 
 \item{units}{unit for SCr, either "SI" (umol/L; default) or "US" (mg/dL)}
 }
 \value{
-eGFR mL/min/1.73m2
+eGFR in mL/min/1.73m2
 }
 \description{
-Revised Schwartz Equation for eGFR (2009)
-see https://www.mdcalc.com/calc/10008/revised-schwartz-equation-glomerular-filtration-rate-gfr-2009#evidence
+Calculates eGFR for pediatric patients.
+}
+\details{
+See equation and examples at \url{https://www.mdcalc.com/calc/10008/revised-schwartz-equation-glomerular-filtration-rate-gfr-2009#evidence}.
 }

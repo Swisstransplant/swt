@@ -2,13 +2,12 @@
 % Please edit documentation in R/swt.R
 \name{egfr_ckd_epi}
 \alias{egfr_ckd_epi}
-\title{CKD-EPI Creatinine Equation for eGFR (2021)
-see https://www.kidney.org/content/ckd-epi-creatinine-equation-2021}
+\title{CKD-EPI Creatinine Equation (2021)}
 \usage{
 egfr_ckd_epi(SCr, age, sex, units = "SI")
 }
 \arguments{
-\item{SCr}{Serum creatinine in mg/dL (US) or umol/L (S)}
+\item{SCr}{serum creatinine in mg/dL (US) or umol/L (S)}
 
 \item{age}{age in years}
 
@@ -17,9 +16,11 @@ egfr_ckd_epi(SCr, age, sex, units = "SI")
 \item{units}{unit for SCr, either "SI" (umol/L; default) or "US" (mg/dL)}
 }
 \value{
-eGFR mL/min/1.73m2
+eGFR in mL/min/1.73m2
 }
 \description{
-CKD-EPI Creatinine Equation for eGFR (2021)
-see https://www.kidney.org/content/ckd-epi-creatinine-equation-2021
+Calculates eGFR according to the 2021 formula.
+}
+\details{
+See equation and references at \url{https://www.kidney.org/ckd-epi-creatinine-equation-2021}.
 }

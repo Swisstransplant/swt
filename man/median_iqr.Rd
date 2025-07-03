@@ -2,12 +2,12 @@
 % Please edit documentation in R/swt.R
 \name{median_iqr}
 \alias{median_iqr}
-\title{Returns median and interquartile range IQR.}
+\title{Returns median and interquartile range IQR}
 \usage{
 median_iqr(x, d1 = 1, d2 = 1, d3 = 1, compact = FALSE)
 }
 \arguments{
-\item{x}{a numeric vector}
+\item{x}{numeric vector}
 
 \item{d1}{number of digits}
 
@@ -21,5 +21,5 @@ median_iqr(x, d1 = 1, d2 = 1, d3 = 1, compact = FALSE)
 character object
 }
 \description{
-Returns median and interquartile range IQR.
+Helper function for tidy formatting.
 }

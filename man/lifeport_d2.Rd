@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{lifeport_d2}
 \alias{lifeport_d2}
-\title{Calculate Mahalanobis distance D-square for LifePort temperature and perfusion data.}
+\title{D-squared for LifePort data}
 \usage{
 lifeport_d2(data, type)
 }
@@ -12,8 +12,8 @@ lifeport_d2(data, type)
 \item{type}{string, type of D-square either "temp" or "perf"}
 }
 \value{
-vector with D-squares
+vector with D-squared
 }
 \description{
-Calculate Mahalanobis distance D-square for LifePort temperature and perfusion data.
+Calculate Mahalanobis distance D-squared for LifePort temperature and perfusion data.
 }

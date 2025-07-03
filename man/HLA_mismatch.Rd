@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{hla_mismatch}
 \alias{hla_mismatch}
-\title{The function calculates HLA mismatches.}
+\title{Calculates HLA mismatches.}
 \usage{
 hla_mismatch(
   D.A1,
@@ -20,33 +20,38 @@ hla_mismatch(
 )
 }
 \arguments{
-\item{D.A1}{Donor HLA Antigen on allele 1 locus A}
+\item{D.A1}{donor HLA Antigen on allele 1 locus A}
 
-\item{D.A2}{Donor HLA Antigen on allele 2 locus A}
+\item{D.A2}{donor HLA Antigen on allele 2 locus A}
 
-\item{D.B1}{Donor HLA Antigen on allele 1 locus B}
+\item{D.B1}{donor HLA Antigen on allele 1 locus B}
 
-\item{D.B2}{Donor HLA Antigen on allele 2 locus B}
+\item{D.B2}{donor HLA Antigen on allele 2 locus B}
 
-\item{D.DR1}{Donor HLA Antigen on allele 1 locus DR}
+\item{D.DR1}{donor HLA Antigen on allele 1 locus DR}
 
-\item{D.DR2}{Donor HLA Antigen on allele 2 locus DR}
+\item{D.DR2}{donor HLA Antigen on allele 2 locus DR}
 
-\item{R.A1}{Recipient HLA Antigen on allele 1 locus A}
+\item{R.A1}{recipient HLA Antigen on allele 1 locus A}
 
-\item{R.A2}{Recipient HLA Antigen on allele 2 locus A}
+\item{R.A2}{recipient HLA Antigen on allele 2 locus A}
 
-\item{R.B1}{Recipient HLA Antigen on allele 1 locus B}
+\item{R.B1}{recipient HLA Antigen on allele 1 locus B}
 
-\item{R.B2}{Recipient HLA Antigen on allele 2 locus B}
+\item{R.B2}{recipient HLA Antigen on allele 2 locus B}
 
-\item{R.DR1}{Recipient HLA Antigen on allele 1 locus DR}
+\item{R.DR1}{recipient HLA Antigen on allele 1 locus DR}
 
-\item{R.DR2}{Recipient HLA Antigen on allele 2 locus DR}
+\item{R.DR2}{recipient HLA Antigen on allele 2 locus DR}
 }
 \value{
-data frame with mismatch information.
+data frame with mismatch information
 }
 \description{
-The function calculates HLA mismatches.
+The function calculates HLA mismatches for SOAS data.
+}
+\details{
+The serological nomenclature in SOAS as follows: L[p, q] with L is the locus A B or DR, p and q are the two alleles of the locus L, and the convention is p <= q. The case p != q is known as heterozygote, A[2, 25]. Homozygote, if p = q, such as in DR[11,11].
+
+The HLA-matching process has to handle broad and splits. Two alleles p and r on the same locus L match if they are equal or if one of the allele is the broad of the other allele. Two different splits of same broad do not match. To calculate mismatch, we look up donor antigens and match them in the recipient. In other words, how many unknown antigens are transferred to the donor?
 }

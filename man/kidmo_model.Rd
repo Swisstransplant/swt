@@ -2,13 +2,13 @@
 % Please edit documentation in R/swt.R
 \name{kidmo_model}
 \alias{kidmo_model}
-\title{Gets KIDMO prediction model fit.}
+\title{KIDMO prediction model}
 \usage{
 kidmo_model()
 }
 \value{
-Model fit
+model fit
 }
 \description{
-Gets KIDMO prediction model fit.
+Returns KIDMO prediction model fit.
 }

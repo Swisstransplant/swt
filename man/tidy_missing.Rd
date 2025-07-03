@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{tidy_missing}
 \alias{tidy_missing}
-\title{Tidy missing data summary from data frame.}
+\title{Tidy missing data summary}
 \usage{
 tidy_missing(df)
 }
@@ -13,5 +13,5 @@ tidy_missing(df)
 data frame with summary data
 }
 \description{
-Tidy missing data summary from data frame.
+Calculates missing data for each variable in data frame.
 }

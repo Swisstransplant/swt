@@ -5,16 +5,27 @@
 \alias{exam.organ}
 \title{EXAM organ data}
 \format{
-## `exam.organ`
 A data frame with self explaining variable names:
 \describe{
   \item{OrganID}{identifier entered into the machine}
   \item{KidneySide}{left or right kidney}
-  ...
+  \item{BloodType}{self explaining}
+  \item{CrossClampTime.Date}{self explaining}
+  \item{CrossClampTimezone}{self explaining}
+  \item{TotalIschemicTime}{self explaining}
+  \item{PerfusateLot}{self explaining}
+  \item{PerfusateExpirationDate}{self explaining}
+  \item{PerfusateUsed}{self explaining}
+  \item{Cannula}{self explaining}
+  \item{CannulaExpirationDate}{self explaining}
+  \item{CassetteLot.}{self explaining}
+  \item{CasetteExpirationDate}{self explaining}
+  \item{ID}{self explaining}
+  \item{DonorID}{self explaining}
 }
 }
 \source{
-<https://data.swisstransplant.org/>
+\url{https://data.swisstransplant.org/}
 }
 \usage{
 exam.organ

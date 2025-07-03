@@ -15,5 +15,5 @@ tidy_pvalues(x, compact = FALSE)
 formatted p-values as character vector
 }
 \description{
-Formats p-values.
+Helper function for tidy formatting.
 }

@@ -12,8 +12,8 @@ lifeport_read(file, format = "guess")
 \item{format}{guess (default), binary or plaintxt}
 }
 \value{
-a list with LifePort data
+list with LifePort data
 }
 \description{
-Read LifePort raw data
+Function to read LifePort binary as well as ASCII raw data files.
 }

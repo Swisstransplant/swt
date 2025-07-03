@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{tidy_rmsfit}
 \alias{tidy_rmsfit}
-\title{Tidy rms model fit results.}
+\title{Tidy rms model fit results}
 \usage{
 tidy_rmsfit(fit, ...)
 }
@@ -15,5 +15,5 @@ tidy_rmsfit(fit, ...)
 formatted data.frame
 }
 \description{
-Tidy rms model fit results.
+Shows tidy regression table with results as data frame.
 }

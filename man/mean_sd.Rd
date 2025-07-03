@@ -2,12 +2,12 @@
 % Please edit documentation in R/swt.R
 \name{mean_sd}
 \alias{mean_sd}
-\title{Returns mean and SD.}
+\title{Returns mean and SD as string}
 \usage{
 mean_sd(x, d1 = 1, d2 = 1)
 }
 \arguments{
-\item{x}{a numeric vector}
+\item{x}{numeric vector}
 
 \item{d1}{number of digits}
 
@@ -17,5 +17,5 @@ mean_sd(x, d1 = 1, d2 = 1)
 character object
 }
 \description{
-Returns mean and SD.
+Helper function for tidy formatting.
 }

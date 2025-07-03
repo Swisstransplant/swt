@@ -5,7 +5,6 @@
 \alias{exam.timeseries}
 \title{EXAM time series data}
 \format{
-## `exam.timeseries`
 A list of data frames with time series data:
 \describe{
   \item{SerialNumber}{serial number of the device}
@@ -14,7 +13,7 @@ A list of data frames with time series data:
 }
 }
 \source{
-<https://data.swisstransplant.org/>
+\url{https://data.swisstransplant.org/}
 }
 \usage{
 exam.timeseries

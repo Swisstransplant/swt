@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{fmt_hla}
 \alias{fmt_hla}
-\title{Helper function to format strings for broads, e.g. A(10) becomes A10 and A becomes NA}
+\title{Format HLA}
 \usage{
 fmt_hla(v_char)
 }
@@ -13,5 +13,5 @@ fmt_hla(v_char)
 formatted character vector
 }
 \description{
-Helper function to format strings for broads, e.g. A(10) becomes A10 and A becomes NA
+Helper function to format strings for broads, e.g. A(10) becomes A10 and A becomes NA.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{kidmo_hr2rank}
 \alias{kidmo_hr2rank}
-\title{KIDMO conversion of hazard ratio to percentile rank.}
+\title{KIDMO rank}
 \usage{
 kidmo_hr2rank(hr)
 }
@@ -13,5 +13,5 @@ kidmo_hr2rank(hr)
 percentile
 }
 \description{
-KIDMO conversion of hazard ratio to percentile rank.
+Conversion of hazard ratio into percentile rank.
 }

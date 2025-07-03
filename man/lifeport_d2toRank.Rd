@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{lifeport_d2toRank}
 \alias{lifeport_d2toRank}
-\title{Returns the percentile rank of the temperature or perfusion D-squared.}
+\title{Rank of D-squared for LifePort data}
 \usage{
 lifeport_d2toRank(d2, type)
 }

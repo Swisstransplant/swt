@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{get_days_in_year}
 \alias{get_days_in_year}
-\title{Get the number of days in a year. Used in survival analysis to convert event times.}
+\title{Get the number of days in a year}
 \usage{
 get_days_in_year()
 }
@@ -10,5 +10,5 @@ get_days_in_year()
 number of days
 }
 \description{
-Get the number of days in a year. Used in survival analysis to convert event times.
+Helper function useful in survival analysis to convert event times.
 }

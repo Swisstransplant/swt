@@ -39,5 +39,8 @@ optn_kdri(
 KDRI hazard ratio
 }
 \description{
-OPTN KDRI
+Calculates the OPTN KDRI according to the 2024 version.
+}
+\details{
+See details under "Learn about KDPI" at \url{https://optn.transplant.hrsa.gov/data/allocation-calculators/kdpi-calculator/}.
 }

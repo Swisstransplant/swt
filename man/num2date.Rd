@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{num2date}
 \alias{num2date}
-\title{Convert Excel days since origin to POSIXct data type (date/time)}
+\title{Convert Excel numeric days to date}
 \usage{
 num2date(
   days,
@@ -21,7 +21,7 @@ num2date(
 
 \item{tz}{time zone to be forced upon}
 
-\item{filter}{a fix for dates not recognized (default is TRUE)}
+\item{filter}{apply fix for dates not recognized (default is TRUE)}
 
 \item{pattern}{the pattern to find dates not recognized}
 
@@ -33,5 +33,5 @@ num2date(
 date of the type POSIXct
 }
 \description{
-Convert Excel days since origin to POSIXct data type (date/time)
+Convert Excel days since origin to POSIXct data type (date/time).
 }

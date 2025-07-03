@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{date2num}
 \alias{date2num}
-\title{Convert POSIXct data type (date/time) to Excel days since origin}
+\title{Convert date to Excel numeric days}
 \usage{
 date2num(dates)
 }
@@ -13,5 +13,5 @@ date2num(dates)
 number of days
 }
 \description{
-Convert POSIXct data type (date/time) to Excel days since origin
+Convert POSIXct data type (date/time) to Excel days since origin.
 }

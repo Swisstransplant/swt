@@ -7,7 +7,7 @@
 miss_perc(x, d2 = 1)
 }
 \arguments{
-\item{x}{a vector}
+\item{x}{vector}
 
 \item{d2}{number of digits}
 }
@@ -15,5 +15,5 @@ miss_perc(x, d2 = 1)
 character object
 }
 \description{
-Returns frequency count and percentage of missing data.
+Helper function for tidy formatting.
 }

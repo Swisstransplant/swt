@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{uk_dcd_score}
 \alias{uk_dcd_score}
-\title{UK DCD Risk Score by Schlegel et al.}
+\title{UK DCD Risk Score}
 \usage{
 uk_dcd_score(D_age, D_BMI, fWIT, CIT, R_age, R_MELD, retpx)
 }
@@ -25,5 +25,8 @@ uk_dcd_score(D_age, D_BMI, fWIT, CIT, R_age, R_MELD, retpx)
 UK DCD Risk Score
 }
 \description{
-UK DCD Risk Score by Schlegel et al.
+Calculates the UK DCD Risk Score that can range between 0 and 27.
+}
+\details{
+Reference: Schlegel A, Kalisvaart M, Scalera I, et al. The UK DCD Risk Score: A new proposal to define futility in donation-after-circulatory-death liver transplantation. J Hepatol. 2018;68(3):456-464. doi:10.1016/j.jhep.2017.10.034
 }

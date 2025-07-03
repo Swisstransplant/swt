@@ -2,18 +2,18 @@
 % Please edit documentation in R/swt.R
 \name{hla_parse}
 \alias{hla_parse}
-\title{Parser for the unstructured SOAS HLA information into structured data.}
+\title{Parse HLA data}
 \usage{
 hla_parse(D_HLA, R_HLA)
 }
 \arguments{
-\item{D_HLA}{Donor HLA antigens. Character string from SOAS variable D HLA Ag.}
+\item{D_HLA}{donor HLA antigens; character string from SOAS variable D HLA Ag.}
 
-\item{R_HLA}{Recipient HLA antigens. Character string from SOAS variable R HLA Ag.}
+\item{R_HLA}{recipient HLA antigens; character string from SOAS variable R HLA Ag.}
 }
 \value{
-a data frame with structured HLA information.
+data frame with structured HLA information
 }
 \description{
-Parser for the unstructured SOAS HLA information into structured data.
+Parser to convert unstructured SOAS HLA information into structured data.
 }

@@ -2,12 +2,12 @@
 % Please edit documentation in R/swt.R
 \name{freq_perc}
 \alias{freq_perc}
-\title{Returns frequency count and percentage.}
+\title{Returns frequency count and percentage}
 \usage{
 freq_perc(x, count.na = TRUE, d2 = 1)
 }
 \arguments{
-\item{x}{a logical vector}
+\item{x}{logical vector}
 
 \item{count.na}{count NAs in denominator}
 
@@ -17,5 +17,5 @@ freq_perc(x, count.na = TRUE, d2 = 1)
 character object
 }
 \description{
-Returns frequency count and percentage.
+Helper function for tidy formatting.
 }

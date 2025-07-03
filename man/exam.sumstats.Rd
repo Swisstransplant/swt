@@ -5,16 +5,38 @@
 \alias{exam.sumstats}
 \title{EXAM summary statistics}
 \format{
-## `exam.sumstats`
 A data frame with self explaining variable names:
 \describe{
   \item{perfusion.dur}{perfusion duration in minutes}
   \item{perfusion.dur.str}{perfusion duration in HH:MM:SS}
-  ...
+  \item{systolicPressure.md}{self explaining}
+  \item{diastolicPressure.mean}{self explaining}
+  \item{flowRate.mean}{self explaining}
+  \item{organResistance.mean}{self explaining}
+  \item{organResistance.sd}{self explaining}
+  \item{organResistance.x1}{self explaining}
+  \item{organResistance.y1}{self explaining}
+  \item{organResistance.x2}{self explaining}
+  \item{organResistance.y2}{self explaining}
+  \item{organResistance.delta}{self explaining}
+  \item{organResistance.slope}{self explaining}
+  \item{iceContainerTemperature.mean}{self explaining}
+  \item{iceContainerTemperature.sd}{self explaining}
+  \item{iceContainerTemperature.minAbove}{self explaining}
+  \item{iceContainerTemperature.minAbove.str}{self explaining}
+  \item{infuseTemperature.mean}{self explaining}
+  \item{infuseTemperature.sd}{self explaining}
+  \item{infuseTemperature.start}{self explaining}
+  \item{infuseTemperature.minAbove}{self explaining}
+  \item{infuseTemperature.minAbove.str}{self explaining}
+  \item{D2temp}{self explaining}
+  \item{Ptemp}{self explaining}
+  \item{D2perf}{self explaining}
+  \item{Pperf}{self explaining}
 }
 }
 \source{
-<https://data.swisstransplant.org/>
+\url{https://data.swisstransplant.org/}
 }
 \usage{
 exam.sumstats
