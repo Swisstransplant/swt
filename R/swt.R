@@ -839,7 +839,7 @@ median_iqr = function(x, d1 = 1, d2 = 1, d3 = 1, compact = FALSE) {
   )
 }
 
-#' Returns frequency count and percentage
+#' Returns count and percentage
 #'
 #' Helper function for tidy formatting.
 #'
@@ -851,14 +851,14 @@ median_iqr = function(x, d1 = 1, d2 = 1, d3 = 1, compact = FALSE) {
 #'
 #' @export
 #'
-freq_perc = function(x, count.na = TRUE, d2 = 1) {
+count_perc = function(x, count.na = TRUE, d2 = 1) {
   if (!count.na) {x = x[!is.na(x)]}
   return(sprintf(paste0("%d (%.", d2, "f)"),
                  sum(x, na.rm = TRUE),
                  sum(x, na.rm = TRUE)/length(x)*100))
 }
 
-#' Returns frequency count and percentage of missing data.
+#' Returns count and percentage of missing data.
 #'
 #' Helper function for tidy formatting.
 #'
@@ -1065,7 +1065,7 @@ tidy_rmsfit <- function(fit, ...) {
 tidy_missing = function(df) {
 
   tab = as.data.frame((apply(df, 2, FUN = miss_perc)))
-  tab = rbind(tab, TOTAL = freq_perc(!complete.cases(df)))
+  tab = rbind(tab, TOTAL = count_perc(!complete.cases(df)))
   colnames(tab)[1] = "Missing"
   return(tab)
 }

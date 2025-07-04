@@ -2,7 +2,7 @@
 % Please edit documentation in R/swt.R
 \name{miss_perc}
 \alias{miss_perc}
-\title{Returns frequency count and percentage of missing data.}
+\title{Returns count and percentage of missing data.}
 \usage{
 miss_perc(x, d2 = 1)
 }
