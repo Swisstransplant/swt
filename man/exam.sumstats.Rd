@@ -29,10 +29,10 @@ A data frame with self explaining variable names:
   \item{infuseTemperature.start}{self explaining}
   \item{infuseTemperature.minAbove}{self explaining}
   \item{infuseTemperature.minAbove.str}{self explaining}
-  \item{D2temp}{self explaining}
-  \item{Ptemp}{self explaining}
   \item{D2perf}{self explaining}
   \item{Pperf}{self explaining}
+  \item{D2temp}{self explaining}
+  \item{Ptemp}{self explaining}
 }
 }
 \source{

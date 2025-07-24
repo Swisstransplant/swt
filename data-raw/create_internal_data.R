@@ -21,13 +21,6 @@ idat.kidmo.model = fit.fg.del
 idat.kidmo.model$x = NULL
 idat.kidmo.model.hr2rank = fit.fg.del.hr2rank
 
-# WAIT project:
-idat.wait.model.he = fit.he
-idat.wait.model.ki = fit.ki
-idat.wait.model.li = fit.li
-idat.wait.model.lu = fit.lu
-idat.wait.model.pi = fit.pi
-
 # 3. Quality checks: don't save sensitive data
 assert(is.null(idat.kidmo.model$x))
 assert(is.null(idat.kidmo.model$model))
@@ -48,11 +41,5 @@ usethis::use_data(
   idat.kidmo.model,
   idat.kidmo.model.hr2rank,
 
-  # WAIT
-  idat.wait.model.he,
-  idat.wait.model.ki,
-  idat.wait.model.li,
-  idat.wait.model.lu,
-  idat.wait.model.pi,
-
-  internal = TRUE, overwrite = TRUE)
+  internal = TRUE, overwrite = TRUE
+)

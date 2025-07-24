@@ -739,7 +739,7 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
 #' @param data data frame or matrix with temperature or perfusion data
 #' @param type string, type of D-square either "temp" or "perf"
 #'
-#' @return vector with D-squared
+#' @return data frame with D-squared and rank
 #'
 #' @importFrom stats mahalanobis
 #'
@@ -747,42 +747,20 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
 #'
 lifeport_d2 <- function(data, type) {
 
-  d2 = NA
-
   if (type == "temp") {
     d2 = stats::mahalanobis(x = data,
-                            center = idat.md.temp.center,
-                            cov = idat.md.temp.cov)
+                              center = idat.md.temp.center,
+                              cov = idat.md.temp.cov)
+    rank = idat.fn.D2.temp(d2)
+
   } else if (type == "perf") {
     d2 = stats::mahalanobis(x = data,
-                            center = idat.md.perf.center,
-                            cov = idat.md.perf.cov)
+                              center = idat.md.perf.center,
+                              cov = idat.md.perf.cov)
+    rank = idat.fn.D2.perf(d2)
   }
 
-  return(d2)
-}
-
-#' Rank of D-squared for LifePort data
-#'
-#' Returns the percentile rank of the temperature or perfusion D-squared.
-#'
-#' @param d2 D-squared
-#' @param type string, type of D-square either "temp" or "perf"
-#'
-#' @return percentile rank
-#'
-#' @export
-#'
-lifeport_d2toRank <- function(d2, type) {
-  P = NA
-
-  if (type == "temp") {
-    P = idat.fn.D2.temp(d2)
-  } else if (type == "perf") {
-    P = idat.fn.D2.perf(d2)
-  }
-
-  return(P)
+  return(data.frame(d2 = d2, rank = rank))
 }
 
 #' Returns mean and SD as string

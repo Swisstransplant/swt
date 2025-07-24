@@ -12,7 +12,7 @@ lifeport_d2(data, type)
 \item{type}{string, type of D-square either "temp" or "perf"}
 }
 \value{
-vector with D-squared
+data frame with D-squared and rank
 }
 \description{
 Calculate Mahalanobis distance D-squared for LifePort temperature and perfusion data.
