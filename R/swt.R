@@ -749,14 +749,14 @@ lifeport_d2 <- function(data, type) {
 
   if (type == "temp") {
     d2 = stats::mahalanobis(x = data,
-                              center = idat.md.temp.center,
-                              cov = idat.md.temp.cov)
+                            center = idat.md.temp.center,
+                            cov = idat.md.temp.cov)
     rank = idat.fn.D2.temp(d2)
 
   } else if (type == "perf") {
     d2 = stats::mahalanobis(x = data,
-                              center = idat.md.perf.center,
-                              cov = idat.md.perf.cov)
+                            center = idat.md.perf.center,
+                            cov = idat.md.perf.cov)
     rank = idat.fn.D2.perf(d2)
   }
 
