@@ -29,13 +29,13 @@ assert(is.null(idat.kidmo.model$model))
 usethis::use_data(
 
   # EXAM
-  idat.md.temp.center,
-  idat.md.temp.cov,
-  idat.fn.D2.temp,
-
   idat.md.perf.center,
   idat.md.perf.cov,
   idat.fn.D2.perf,
+
+  idat.md.temp.center,
+  idat.md.temp.cov,
+  idat.fn.D2.temp,
 
   # KIDMO
   idat.kidmo.model,
