@@ -555,7 +555,7 @@ lifeport_process <- function(lpdat, window_size = 15) {
 #'
 #' @export
 #'
-lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
+lifeport_sumstats <- function(lpdat, ice_threshold = 3,
                               infuse_threshold = 10) {
 
   # Thresholds that may be changed with good reasoning
@@ -590,6 +590,7 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
   # also perfusion needs to be at least 5 minutes
   idx = lpdat$data$SystolicPressure.flt > THR_PRES & perfusion.dur > 5
   systolicPressure.md = median(lpdat$data$SystolicPressure.flt[idx], na.rm = TRUE)
+  systolicPressure.mean = mean(lpdat$data$SystolicPressure.flt[idx], na.rm = TRUE)
 
   idx = lpdat$data$DiastolicPressure.flt > THR_PRES & perfusion.dur > 5
   diastolicPressure.mean = mean(lpdat$data$DiastolicPressure.flt[idx], na.rm = TRUE)
@@ -702,6 +703,7 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 2.5,
     perfusion.dur.str = perfusion.dur.str,
 
     systolicPressure.md    = systolicPressure.md,
+    systolicPressure.mean  = systolicPressure.mean,
     diastolicPressure.mean = diastolicPressure.mean,
 
     flowRate.mean         = flowRate.mean,

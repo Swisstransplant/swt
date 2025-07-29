@@ -54,6 +54,7 @@
 #'   \item{perfusion.dur}{perfusion duration in minutes}
 #'   \item{perfusion.dur.str}{perfusion duration in HH:MM:SS}
 #'   \item{systolicPressure.md}{self explaining}
+#'   \item{systolicPressure.mean}{self explaining}
 #'   \item{diastolicPressure.mean}{self explaining}
 #'   \item{flowRate.mean}{self explaining}
 #'   \item{organResistance.mean}{self explaining}

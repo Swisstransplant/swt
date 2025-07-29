@@ -4,7 +4,7 @@
 \alias{lifeport_sumstats}
 \title{Summary statistics for LifePort data}
 \usage{
-lifeport_sumstats(lpdat, ice_threshold = 2.5, infuse_threshold = 10)
+lifeport_sumstats(lpdat, ice_threshold = 3, infuse_threshold = 10)
 }
 \arguments{
 \item{lpdat}{list with data from lifeport_process()}
