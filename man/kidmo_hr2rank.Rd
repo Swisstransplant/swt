@@ -13,5 +13,5 @@ kidmo_hr2rank(hr)
 percentile
 }
 \description{
-Conversion of hazard ratio into percentile rank.
+Conversion of (unscaled) hazard ratio into percentile rank.
 }

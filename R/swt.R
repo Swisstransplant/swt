@@ -1424,7 +1424,7 @@ kidmo_model <- function() {
 
 #' KIDMO rank
 #'
-#' Conversion of hazard ratio into percentile rank.
+#' Conversion of (unscaled) hazard ratio into percentile rank.
 #'
 #' @param hr hazard ratio
 #'
@@ -1434,6 +1434,110 @@ kidmo_model <- function() {
 #'
 kidmo_hr2rank <- function(hr) {
   return(idat.kidmo.model.hr2rank(hr))
+}
+
+#' KIDMO Score
+#'
+#' Calculates the KIDMO Score.
+#'
+#' @param D_age donor age in years
+#' @param D_deathcause donor cause of death (cerebral hemorrhage, anoxia, or others)
+#' @param D_diabetes donor history of diabetes (binary)
+#' @param D_hypertension donor history of hypertension (binary)
+#' @param R_age recipient age in years
+#' @param R_retpx recipient listed for retransplant (binary)
+#' @param R_tpxyear recipient year of transplant (continuous)
+#' @param times time points for predictions, in years
+#'
+#' @return KIDMO Score
+#'
+#' @importFrom utils tail
+#' @importFrom rms Predict
+#'
+#' @export
+kidmo <- function(D_age = 55,
+                  D_deathcause = "cerebral hemorrhage",
+                  D_diabetes = FALSE,
+                  D_hypertension = FALSE,
+                  R_age = 57,
+                  R_retpx = FALSE,
+                  R_tpxyear = 2026,
+                  times = c(2, 5)) {
+
+  HR_median = 1.500849
+  fit = kidmo_model()
+
+  # 1. Calculate KIDMO score (relative risk)
+  pred = Predict(fit, D_age = D_age,
+                 D_deathcause = D_deathcause,
+                 D_diabetes = D_diabetes,
+                 D_hypertension = D_hypertension,
+                 R_age = R_age,
+                 R_retpx = R_retpx,
+                 R_tpxyear = R_tpxyear,
+                 type = "predictions", ref.zero = TRUE)
+
+  kidmo = exp(pred$yhat)/HR_median
+  # confint = c(exp(pred$lower)/HR_median, exp(pred$upper)/HR_median)
+  rank  = swt::kidmo_hr2rank(exp(pred$yhat))
+
+  # 2. Calculate absolute risk
+  #
+  # a) Get baseline hazard
+  # baseline hazard and survival have a direct relationship S_0 = exp(-H_0)
+  # I don't use basehaz() as this required the data matrix fit$x
+  # bH = basehaz(fit, centered = TRUE) # baseline hazard
+  # bH = rbind(data.frame(time = 0, hazard = 0), bH)
+  # H_0 = bH$hazard
+
+  H_0 = -log(fit$surv)
+
+  # 2. calculate linear predictor
+  pred = Predict(fit, D_age = D_age,
+                 D_deathcause = D_deathcause,
+                 D_diabetes = D_diabetes,
+                 D_hypertension = D_hypertension,
+                 R_age = R_age,
+                 R_retpx = R_retpx,
+                 R_tpxyear = R_tpxyear,
+                 type = "predictions", ref.zero = FALSE)
+  bX = pred$yhat
+
+  # for comparison, use ref.zero = FALSE in the call to Predict()
+  # d = data.frame(D_age = D_age,
+  #                D_deathcause = D_deathcause,
+  #                D_diabetes = D_diabetes,
+  #                D_hypertension = D_hypertension,
+  #                R_age = R_age,
+  #                R_retpx = R_retpx,
+  #                R_tpxyear = R_tpxyear)
+  #
+  # bX2 = rms::predictrms(fit = fit, newdata = d, type = "lp")
+  # assert(bX == pred2)
+
+  # b) calculate KIDMO score
+  # via baseline survival
+  # CI = t(1 - outer(S_0,  exp(bX), "^")) # 1 - S_0^exp(bX[1]), 1 - S_0^exp(bX[2])
+
+  # via baseline hazard, this gives cumulative incidence per subject (rows)
+  CI = t(1 - exp(outer(-H_0, exp(bX), "*"))) # 1 - exp(-H_0 x exp(bX[1])), ..
+  CI.lower = t(1 - exp(outer(-H_0, exp(pred$lower), "*")))
+  CI.upper = t(1 - exp(outer(-H_0, exp(pred$upper), "*")))
+  CI.time = fit$time
+
+  # do it for each time point in object times
+  idx = sapply(times, function(x) tail(which(fit$time <= x), 1))
+
+  mylist = list(kidmo = kidmo,
+                rank = rank,
+                risk = CI[,idx],
+                CI = CI,
+                CI.lower = CI.lower,
+                CI.upper = CI.upper,
+                CI.time = CI.time)
+
+  return(mylist)
+
 }
 
 #' UK DCD Risk Score
