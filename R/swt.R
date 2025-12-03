@@ -86,6 +86,8 @@ swt_skeleton <- function(path) {
 #'    swt_style()
 #' }
 #'
+#' @importFrom ggplot2 theme element_text element_blank element_line element_rect
+#'
 #' @export
 #'
 swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
@@ -100,54 +102,51 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
     gridColor = "white"
   }
 
-  ggplot2::theme(
+  theme(
 
     # Title
-    plot.title = ggplot2::element_text(family=font,
-                                       size=title_size,
-                                       face="bold"),
+    plot.title = element_text(family=font,
+                              size=title_size,
+                              face="bold"),
 
     # Subtitle
-    plot.subtitle = ggplot2::element_text(family=font,
-                                          size=subtitle_size,
-                                          #margin=ggplot2::margin(9,0,9,0)
-    ),
-    plot.caption = ggplot2::element_blank(),
+    plot.subtitle = element_text(family=font,
+                                 size=subtitle_size),
+    plot.caption = element_blank(),
     # This leaves the caption text element empty, because it is set elsewhere in
     # the finalise plot function
 
     # Legend
     legend.position = legend_position,
     legend.text.align = 0,
-    legend.background = ggplot2::element_blank(),
-    legend.title = ggplot2::element_blank(),
-    legend.key = ggplot2::element_blank(),
-    legend.text = ggplot2::element_text(size=font_size),
+    legend.background = element_blank(),
+    legend.title = element_blank(),
+    legend.key = element_blank(),
+    legend.text = element_text(size=font_size),
 
     # Axis
-    axis.text = ggplot2::element_text(family=font, size=font_size),
-    axis.title = ggplot2::element_text(family=font, size=font_size),
-    # axis.text.x = ggplot2::element_text(margin=ggplot2::margin(5, b = 10)),
+    axis.text = element_text(family=font, size=font_size),
+    axis.title = element_text(family=font, size=font_size),
 
-    axis.ticks = ggplot2::element_blank(),
-    axis.line = ggplot2::element_blank(),
+    axis.ticks = element_blank(),
+    axis.line = element_blank(),
 
     # Grid lines
-    panel.grid.minor = ggplot2::element_blank(),
-    panel.grid.major.y = ggplot2::element_line(color=gridColor),
-    panel.grid.major.x = ggplot2::element_line(color=gridColor),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_line(color=gridColor),
+    panel.grid.major.x = element_line(color=gridColor),
 
     # Background
     # This sets the panel background as blank, removing the standard grey ggplot
     # background colour from the plot
-    panel.background = ggplot2::element_rect(fill = bgColor),
-    plot.background = ggplot2::element_rect(fill = bgColor)
+    panel.background = element_rect(fill = bgColor),
+    plot.background = element_rect(fill = bgColor)
 
     # Strip background (This sets the panel background for facet-wrapped plots
     # to white, removing the standard grey ggplot background colour and sets the
     # title size of the facet-wrap title to font size 22)
-    # strip.background = ggplot2::element_rect(fill="red"),
-    # strip.text = ggplot2::element_text(size  = 22,  hjust = 0)
+    # strip.background = element_rect(fill="red"),
+    # strip.text = element_text(size  = 22,  hjust = 0)
   )
 }
 
@@ -161,56 +160,58 @@ swt_style <- function(title_size=14, subtitle_size=14, font_size=10,
 #' mycolors = swt_colors()
 #' mycolors$red.liver
 #'
+#' @importFrom grDevices rgb colorRampPalette
+#'
 #' @export
 #'
 swt_colors <- function() {
   colors = list(
 
     # primary colors
-    blue.dark          = grDevices::rgb(  0, 55,100, maxColorValue = 255),
-    blue.alt           = grDevices::rgb( 42, 84,138, maxColorValue = 255),
-    turkis.cm          = grDevices::rgb(105,211,195, maxColorValue = 255),
-    yellow.cndo        = grDevices::rgb(251,228, 70, maxColorValue = 255),
-    strongred.akzent   = grDevices::rgb(229,  0, 92, maxColorValue = 255),
+    blue.dark          = rgb(  0, 55,100, maxColorValue = 255),
+    blue.alt           = rgb( 42, 84,138, maxColorValue = 255),
+    turkis.cm          = rgb(105,211,195, maxColorValue = 255),
+    yellow.cndo        = rgb(251,228, 70, maxColorValue = 255),
+    strongred.akzent   = rgb(229,  0, 92, maxColorValue = 255),
 
     # duplicate colors
-    turkis.tpx         = grDevices::rgb(105,211,195, maxColorValue = 255),
-    yellow.donation    = grDevices::rgb(251,228, 70, maxColorValue = 255),
-    blue.swt           = grDevices::rgb(  0, 55,100, maxColorValue = 255),
+    turkis.tpx         = rgb(105,211,195, maxColorValue = 255),
+    yellow.donation    = rgb(251,228, 70, maxColorValue = 255),
+    blue.swt           = rgb(  0, 55,100, maxColorValue = 255),
 
     # secondary colors
-    lightblue.lungs    = grDevices::rgb(155,189,197, maxColorValue = 255),
-    green.pancreas     = grDevices::rgb(139,173,143, maxColorValue = 255),
-    green.langerhans   = grDevices::rgb(139,173,143, maxColorValue = 255),
-    darkyellow.kidney  = grDevices::rgb(242,175, 92, maxColorValue = 255),
-    red.liver          = grDevices::rgb(217,143,143, maxColorValue = 255),
-    beige.intestine    = grDevices::rgb(209,205,189, maxColorValue = 255),
+    lightblue.lungs    = rgb(155,189,197, maxColorValue = 255),
+    green.pancreas     = rgb(139,173,143, maxColorValue = 255),
+    green.langerhans   = rgb(139,173,143, maxColorValue = 255),
+    darkyellow.kidney  = rgb(242,175, 92, maxColorValue = 255),
+    red.liver          = rgb(217,143,143, maxColorValue = 255),
+    beige.intestine    = rgb(209,205,189, maxColorValue = 255),
     # convert 40% alpha to RGB: round(255 - 0.8*(255 - c(212,  0, 84)))
     # 50% pallette version will be 0.4
-    pink.heart         = grDevices::rgb(221, 51,118, maxColorValue = 255),
-    purple.alt         = grDevices::rgb(196,201,255, maxColorValue = 255),
+    pink.heart         = rgb(221, 51,118, maxColorValue = 255),
+    purple.alt         = rgb(196,201,255, maxColorValue = 255),
 
     # background color
-    grey.bg            = grDevices::rgb(244,244,241, maxColorValue = 255),
-    white              = grDevices::rgb(255,255, 255, maxColorValue = 255)
+    grey.bg            = rgb(244,244,241, maxColorValue = 255),
+    white              = rgb(255,255, 255, maxColorValue = 255)
   )
 
   # single 5 hue color scheme 100% 75% 50%  25% 0% (white)
 
   # primary colors
-  colfun = grDevices::colorRampPalette(c(colors$blue.dark, colors$white))
+  colfun = colorRampPalette(c(colors$blue.dark, colors$white))
   colors$pal.blue.dark = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$blue.alt, colors$white))
+  colfun = colorRampPalette(c(colors$blue.alt, colors$white))
   colors$pal.blue.alt = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$turkis.cm, colors$white))
+  colfun = colorRampPalette(c(colors$turkis.cm, colors$white))
   colors$pal.turkis.cm = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$yellow.cndo, colors$white))
+  colfun = colorRampPalette(c(colors$yellow.cndo, colors$white))
   colors$pal.yellow.cndo = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$strongred.akzent, colors$white))
+  colfun = colorRampPalette(c(colors$strongred.akzent, colors$white))
   colors$pal.strongred.akzent = colfun(5)
 
   # duplicate colors
@@ -219,28 +220,28 @@ swt_colors <- function() {
   colors$pal.yellow.donation = colors$pal.yellow.cndo
 
   # secondary colors
-  colfun = grDevices::colorRampPalette(c(colors$lightblue.lungs, colors$white))
+  colfun = colorRampPalette(c(colors$lightblue.lungs, colors$white))
   colors$pal.lightblue.lungs = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$green.pancreas, colors$white))
+  colfun = colorRampPalette(c(colors$green.pancreas, colors$white))
   colors$pal.green.pancreas = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$green.langerhans, colors$white))
+  colfun = colorRampPalette(c(colors$green.langerhans, colors$white))
   colors$pal.green.langerhans = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$darkyellow.kidney, colors$white))
+  colfun = colorRampPalette(c(colors$darkyellow.kidney, colors$white))
   colors$pal.darkyellow.kidney = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$red.liver, colors$white))
+  colfun = colorRampPalette(c(colors$red.liver, colors$white))
   colors$pal.red.liver = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$beige.intestine, colors$white))
+  colfun = colorRampPalette(c(colors$beige.intestine, colors$white))
   colors$pal.beige.intestine = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$pink.heart, colors$white))
+  colfun = colorRampPalette(c(colors$pink.heart, colors$white))
   colors$pal.pink.heart = colfun(5)
 
-  colfun = grDevices::colorRampPalette(c(colors$purple.alt, colors$white))
+  colfun = colorRampPalette(c(colors$purple.alt, colors$white))
   colors$pal.purple.alt = colfun(5)
 
   return(colors)
@@ -254,6 +255,8 @@ swt_colors <- function() {
 #' @param format guess (default), binary or plaintxt
 #'
 #' @return list with LifePort data
+#'
+#' @importFrom utils read.csv
 #'
 #' @export
 #'
@@ -454,9 +457,9 @@ lifeport_read <- function(file, format="guess") {
     # when file is ascii data (export from ORS Data Station)
   } else if (format == "plaintxt"){
 
-    data.device = utils::read.csv(file = file, nrows = 1, head = TRUE)
-    data.organ  = utils::read.csv(file = file, skip = 3, nrows = 1, head = TRUE)
-    data = utils::read.csv(file = file, skip = 6, head = TRUE)
+    data.device = read.csv(file = file, nrows = 1, header = TRUE)
+    data.organ  = read.csv(file = file, skip = 3, nrows = 1, header = TRUE)
+    data = read.csv(file = file, skip = 6, header = TRUE)
 
     # fix StartTime for consistency with binary data
     # bin file: 2022-05-06 11:18:07
@@ -492,6 +495,9 @@ lifeport_read <- function(file, format="guess") {
 #'
 #' @return list with LifePort data
 #'
+#' @importFrom hms round_hms as_hms
+#' @importFrom data.table frollmean
+#'
 #' @export
 #'
 lifeport_process <- function(lpdat, window_size = 15) {
@@ -506,7 +512,7 @@ lifeport_process <- function(lpdat, window_size = 15) {
   }
 
   dur = (start + n*10) - start
-  lpdat$data.device$Runtime = as.character(hms::round_hms(hms::as_hms(dur), 1))
+  lpdat$data.device$Runtime = as.character(round_hms(as_hms(dur), 1))
 
   # We calculate own time vector ignoring the duplicated timestamps in InfuseTime
   # InfuseTime is only in the txt file so must be an bug in ORS software export
@@ -523,15 +529,15 @@ lifeport_process <- function(lpdat, window_size = 15) {
 
   # timeseries filtering
   lpdat$data$SystolicPressure.flt  =
-    data.table::frollmean(lpdat$data$SystolicPressure, n = window_size, align = "center")
+    frollmean(lpdat$data$SystolicPressure, n = window_size, align = "center")
   lpdat$data$DiastolicPressure.flt =
-    data.table::frollmean(lpdat$data$DiastolicPressure, n = window_size, align = "center")
+    frollmean(lpdat$data$DiastolicPressure, n = window_size, align = "center")
   lpdat$data$AveragePressure.flt =
-    data.table::frollmean(lpdat$data$AveragePressure, n = window_size, align = "center")
+    frollmean(lpdat$data$AveragePressure, n = window_size, align = "center")
   lpdat$data$FlowRate.flt =
-    data.table::frollmean(lpdat$data$FlowRate, n = window_size, align = "center")
+    frollmean(lpdat$data$FlowRate, n = window_size, align = "center")
   lpdat$data$OrganResistance.flt =
-    data.table::frollmean(lpdat$data$OrganResistance, n = window_size, align = "center")
+    frollmean(lpdat$data$OrganResistance, n = window_size, align = "center")
 
   # remove crazy temperatures
   lpdat$data$InfuseTemperature[lpdat$data$InfuseTemperature > 200] = NA
@@ -550,8 +556,9 @@ lifeport_process <- function(lpdat, window_size = 15) {
 #'
 #' @return list with LifePort data
 #'
-#' @importFrom stats median lm
-#' @importFrom segmented segmented
+#' @importFrom stats median lm sd
+#' @importFrom segmented segmented slope
+#' @importFrom hms round_hms as_hms
 #'
 #' @export
 #'
@@ -582,7 +589,7 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 3,
 
   # The time in minutes duration the kidney was perfused
   perfusion.dur = (sum(lpdat$data$FlowRate.flt > THR_FLOW, na.rm = TRUE)*10)/60
-  perfusion.dur.str = as.character(hms::round_hms(hms::as_hms(perfusion.dur*60), 1))
+  perfusion.dur.str = as.character(round_hms(as_hms(perfusion.dur*60), 1))
 
   ## Pressure
 
@@ -624,7 +631,7 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 3,
     idx = lpdat$data$SequentialRecordNumber > IDX_30MIN &
       lpdat$data$OrganResistance.flt > THR_RES
     organResistance.mean = mean(lpdat$data$OrganResistance.flt[idx], na.rm = TRUE)
-    organResistance.sd = stats::sd(lpdat$data$OrganResistance.flt[idx], na.rm = TRUE)
+    organResistance.sd = sd(lpdat$data$OrganResistance.flt[idx], na.rm = TRUE)
 
     # vascular indicators: delta and slope
     NO_NA = sum(is.na(lpdat$data$OrganResistance.flt[1:40])) # No of NA due to smoothing
@@ -641,7 +648,7 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 3,
     if ( !all(d.vi$y[(length(d.vi$y) - 10*6):length(d.vi$y)] <= THR_RES) ) {
 
       fit.lm = lm(y ~ 1 + x, data = d.vi)  # intercept-only model
-      fit = segmented::segmented(fit.lm, seg.Z = ~x, npsi = NO_CHANGEPOINTS)
+      fit = segmented(fit.lm, seg.Z = ~x, npsi = NO_CHANGEPOINTS)
       y_ = c(rep(NA, NO_NA), fit$fitted.values) # adjust same length due to smoothing
       # debug
       # plot(fit); points(d.vi$y)
@@ -659,7 +666,7 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 3,
       organResistance.y2    = y_points[k_seg + 1]
       organResistance.delta = y_points[k_seg + 1] - y_points[k_seg]
       # scale as change in resistance per minute
-      organResistance.slope = segmented::slope(fit)$x[,1][k_seg] * 6
+      organResistance.slope = slope(fit)$x[,1][k_seg] * 6
     }
 
   }
@@ -668,10 +675,10 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 3,
 
   # ice
   iceContainerTemperature.mean = mean(lpdat$data$IceContainerTemperature, na.rm = TRUE)
-  iceContainerTemperature.sd = stats::sd(lpdat$data$IceContainerTemperature, na.rm = TRUE)
+  iceContainerTemperature.sd = sd(lpdat$data$IceContainerTemperature, na.rm = TRUE)
   iceContainerTemperature.minAbove = (sum(lpdat$data$IceContainerTemperature > THR_ICE)*10)/60
   iceContainerTemperature.minAbove.str =
-    as.character(hms::round_hms(hms::as_hms(iceContainerTemperature.minAbove*60), 1))
+    as.character(round_hms(as_hms(iceContainerTemperature.minAbove*60), 1))
 
   # mean and SD of inf temperature are calculated excluding the first 2 min. and
   # excluding segments with no flow using idx
@@ -687,13 +694,13 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 3,
     # calculate the following indicators when flow is positive using idx
     # for start temp this works also well to exclude segments of no perfusion at start
     infuseTemperature.mean = mean(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
-    infuseTemperature.sd = stats::sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
+    infuseTemperature.sd = sd(lpdat$data$InfuseTemperature[idx], na.rm = TRUE)
 
     infuseTemperature.start =
       mean(lpdat$data$InfuseTemperature[lpdat$data$FlowRate > THR_FLOW][INF_START_IDX], na.rm = TRUE)
   }
   infuseTemperature.minAbove = (sum(lpdat$data$InfuseTemperature[idx] > THR_INF, na.rm = TRUE)*10)/60
-  infuseTemperature.minAbove.str = as.character(hms::round_hms(hms::as_hms(infuseTemperature.minAbove*60), 1))
+  infuseTemperature.minAbove.str = as.character(round_hms(as_hms(infuseTemperature.minAbove*60), 1))
 
   ## prepare data
 
@@ -750,15 +757,15 @@ lifeport_sumstats <- function(lpdat, ice_threshold = 3,
 lifeport_d2 <- function(data, type) {
 
   if (type == "temp") {
-    d2 = stats::mahalanobis(x = data,
-                            center = idat.md.temp.center,
-                            cov = idat.md.temp.cov)
+    d2 = mahalanobis(x = data,
+                     center = idat.md.temp.center,
+                     cov = idat.md.temp.cov)
     rank = idat.fn.D2.temp(d2)
 
   } else if (type == "perf") {
-    d2 = stats::mahalanobis(x = data,
-                            center = idat.md.perf.center,
-                            cov = idat.md.perf.cov)
+    d2 = mahalanobis(x = data,
+                     center = idat.md.perf.center,
+                     cov = idat.md.perf.cov)
     rank = idat.fn.D2.perf(d2)
   }
 
@@ -1258,6 +1265,8 @@ fmt_hla <- function(v_char) {
 #'
 #' @return data frame with structured HLA information
 #'
+#' @importFrom testit assert
+#'
 #' @export
 #'
 hla_parse <- function(D_HLA, R_HLA) {
@@ -1321,13 +1330,13 @@ hla_parse <- function(D_HLA, R_HLA) {
 
   # quality checks
   i = 1:length(D_HLA)
-  testit::assert(sapply(i, FUN = function(x) grepl(tab$D.HLA.A[x],  D_HLA[x], fixed = TRUE)))
-  testit::assert(sapply(i, FUN = function(x) grepl(tab$D.HLA.B[x],  D_HLA[x], fixed = TRUE)))
-  testit::assert(sapply(i, FUN = function(x) grepl(tab$D.HLA.DR[x], D_HLA[x], fixed = TRUE)))
+  assert(sapply(i, FUN = function(x) grepl(tab$D.HLA.A[x],  D_HLA[x], fixed = TRUE)))
+  assert(sapply(i, FUN = function(x) grepl(tab$D.HLA.B[x],  D_HLA[x], fixed = TRUE)))
+  assert(sapply(i, FUN = function(x) grepl(tab$D.HLA.DR[x], D_HLA[x], fixed = TRUE)))
 
-  testit::assert(sapply(i, FUN = function(x) grepl(tab$R.HLA.A[x],  R_HLA[x], fixed = TRUE)))
-  testit::assert(sapply(i, FUN = function(x) grepl(tab$R.HLA.B[x],  R_HLA[x], fixed = TRUE)))
-  testit::assert(sapply(i, FUN = function(x) grepl(tab$R.HLA.DR[x], R_HLA[x], fixed = TRUE)))
+  assert(sapply(i, FUN = function(x) grepl(tab$R.HLA.A[x],  R_HLA[x], fixed = TRUE)))
+  assert(sapply(i, FUN = function(x) grepl(tab$R.HLA.B[x],  R_HLA[x], fixed = TRUE)))
+  assert(sapply(i, FUN = function(x) grepl(tab$R.HLA.DR[x], R_HLA[x], fixed = TRUE)))
 
   return(tab)
 }
@@ -1356,6 +1365,8 @@ hla_parse <- function(D_HLA, R_HLA) {
 #'
 #' @return data frame with mismatch information
 #'
+#' @importFrom testit assert
+#'
 #' @export
 #'
 hla_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
@@ -1373,7 +1384,7 @@ hla_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
   m1 = as.numeric( (D.A1[idx] != R.A1[idx]) & D.A1[idx] != R.A2[idx] )
   m2 = as.numeric( (D.A2[idx] != R.A1[idx]) & D.A2[idx] != R.A2[idx] )
   A.Mm[idx] = m1 + m2
-  testit::assert(!all(is.na(A.Mm)))
+  assert(!all(is.na(A.Mm)))
 
   # Locus B
   B.Mm = rep(NA, length(D.B1))
@@ -1387,7 +1398,7 @@ hla_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
   m1 = as.numeric( (D.B1[idx] != R.B1[idx]) & D.B1[idx] != R.B2[idx] )
   m2 = as.numeric( (D.B2[idx] != R.B1[idx]) & D.B2[idx] != R.B2[idx] )
   B.Mm[idx] = m1 + m2
-  testit::assert(!all(is.na(B.Mm)))
+  assert(!all(is.na(B.Mm)))
 
   # Locus DR
   DR.Mm = rep(NA, length(D.DR1))
@@ -1401,7 +1412,7 @@ hla_mismatch <- function(D.A1, D.A2, D.B1, D.B2, D.DR1, D.DR2,
   m1 = as.numeric( (D.DR1[idx] != R.DR1[idx]) & D.DR1[idx] != R.DR2[idx] )
   m2 = as.numeric( (D.DR2[idx] != R.DR1[idx]) & D.DR2[idx] != R.DR2[idx] )
   DR.Mm[idx] = m1 + m2
-  testit::assert(!all(is.na(DR.Mm)))
+  assert(!all(is.na(DR.Mm)))
 
   df = data.frame(A.Mm = A.Mm,
                   B.Mm = B.Mm,
@@ -1448,11 +1459,13 @@ kidmo_hr2rank <- function(hr) {
 #' @param R_retpx recipient listed for retransplant (binary)
 #' @param R_tpxyear recipient year of transplant (continuous)
 #' @param times time points for predictions, in years
+#' @param newdata data frame with variables (requires correct variable names)
 #'
 #' @return KIDMO Score
 #'
 #' @importFrom utils tail
-#' @importFrom rms Predict
+#' @importFrom stats predict
+#' @importFrom rms cph
 #'
 #' @export
 kidmo <- function(D_age = 55,
@@ -1462,24 +1475,45 @@ kidmo <- function(D_age = 55,
                   R_age = 57,
                   R_retpx = FALSE,
                   R_tpxyear = 2026,
-                  times = c(2, 5)) {
+                  times = c(2, 5), newdata = NULL) {
 
-  HR_median = 1.500849
+  HR_MED = 1.500849 # median hazard ratio in population
+  LP_REF = -0.5172806 # lin. predictor of reference patient
   fit = kidmo_model()
 
-  # 1. Calculate KIDMO score (relative risk)
-  pred = Predict(fit, D_age = D_age,
-                 D_deathcause = D_deathcause,
-                 D_diabetes = D_diabetes,
-                 D_hypertension = D_hypertension,
-                 R_age = R_age,
-                 R_retpx = R_retpx,
-                 R_tpxyear = R_tpxyear,
-                 type = "predictions", ref.zero = TRUE)
+  if (is.null(newdata)) {
 
-  kidmo = exp(pred$yhat)/HR_median
-  # confint = c(exp(pred$lower)/HR_median, exp(pred$upper)/HR_median)
-  rank  = swt::kidmo_hr2rank(exp(pred$yhat))
+    newdata = data.frame(D_age = D_age,
+                         D_deathcause = D_deathcause,
+                         D_diabetes = D_diabetes,
+                         D_hypertension = D_hypertension,
+                         R_age = R_age,
+                         R_retpx = R_retpx,
+                         R_tpxyear = R_tpxyear)
+
+  }
+
+  # 1. Calculate KIDMO score (relative risk)
+  # Predict() does not handle multiple patients well,
+  # so I use predict()
+  # pred = Predict(fit,
+  #                D_age = D_age,
+  #                D_deathcause = D_deathcause,
+  #                D_diabetes = D_diabetes,
+  #                D_hypertension = D_hypertension,
+  #                R_age = R_age,
+  #                R_retpx = R_retpx,
+  #                R_tpxyear = R_tpxyear,
+  #                type = "predictions", ref.zero = TRUE)
+
+  pred = predict(fit, newdata = newdata, type = "lp", se.fit = TRUE)
+  lp = pred$linear.predictors - LP_REF
+  lo = lp - 1.96*pred$se.fit
+  up = lp + 1.96*pred$se.fit
+
+  kidmo = exp(lp)/HR_MED
+  # confint = c(exp(lo)/HR_median, exp(up)/HR_median)
+  rank = kidmo_hr2rank(exp(lp))
 
   # 2. Calculate absolute risk
   #
@@ -1493,15 +1527,21 @@ kidmo <- function(D_age = 55,
   H_0 = -log(fit$surv)
 
   # 2. calculate linear predictor
-  pred = Predict(fit, D_age = D_age,
-                 D_deathcause = D_deathcause,
-                 D_diabetes = D_diabetes,
-                 D_hypertension = D_hypertension,
-                 R_age = R_age,
-                 R_retpx = R_retpx,
-                 R_tpxyear = R_tpxyear,
-                 type = "predictions", ref.zero = FALSE)
-  bX = pred$yhat
+
+  # pred = Predict(fit,
+  #                D_age = D_age,
+  #                D_deathcause = D_deathcause,
+  #                D_diabetes = D_diabetes,
+  #                D_hypertension = D_hypertension,
+  #                R_age = R_age,
+  #                R_retpx = R_retpx,
+  #                R_tpxyear = R_tpxyear,
+  #                type = "predictions", ref.zero = FALSE)
+
+  pred = predict(fit, newdata = newdata, type = "lp", se.fit = TRUE)
+  lp = pred$linear.predictors
+  lo = lp - 1.96*pred$se.fit
+  up = lp + 1.96*pred$se.fit
 
   # for comparison, use ref.zero = FALSE in the call to Predict()
   # d = data.frame(D_age = D_age,
@@ -1512,7 +1552,7 @@ kidmo <- function(D_age = 55,
   #                R_retpx = R_retpx,
   #                R_tpxyear = R_tpxyear)
   #
-  # bX2 = rms::predictrms(fit = fit, newdata = d, type = "lp")
+  # bX2 = predictrms(fit = fit, newdata = d, type = "lp")
   # assert(bX == pred2)
 
   # b) calculate KIDMO score
@@ -1520,9 +1560,9 @@ kidmo <- function(D_age = 55,
   # CI = t(1 - outer(S_0,  exp(bX), "^")) # 1 - S_0^exp(bX[1]), 1 - S_0^exp(bX[2])
 
   # via baseline hazard, this gives cumulative incidence per subject (rows)
-  CI = t(1 - exp(outer(-H_0, exp(bX), "*"))) # 1 - exp(-H_0 x exp(bX[1])), ..
-  CI.lower = t(1 - exp(outer(-H_0, exp(pred$lower), "*")))
-  CI.upper = t(1 - exp(outer(-H_0, exp(pred$upper), "*")))
+  CI = t(1 - exp(outer(-H_0, exp(lp), "*"))) # 1 - exp(-H_0 x exp(bX[1])), ..
+  CI.lower = t(1 - exp(outer(-H_0, exp(lo), "*")))
+  CI.upper = t(1 - exp(outer(-H_0, exp(up), "*")))
   CI.time = fit$time
 
   # do it for each time point in object times
@@ -1534,9 +1574,42 @@ kidmo <- function(D_age = 55,
                 CI = CI,
                 CI.lower = CI.lower,
                 CI.upper = CI.upper,
-                CI.time = CI.time)
+                CI.time = CI.time,
+                times = times)
+
+  # nice summary table for print
+  tab = data.frame(kidmo = sprintf("%.2f", kidmo),
+                   rank = sprintf("%.0f%%", rank*100))
+
+  tab = cbind(tab, matrix((CI[,idx]),
+                          nrow = nrow(newdata),
+                          ncol = length(times)))
+  k = length(times)
+  colnames(tab)[3:(k+2)] = sprintf("%d-year risk", times)
+  mylist$summary = tab
+
+  class(mylist) = "kidmo"
 
   return(mylist)
+
+}
+
+#' Print method for kidmo objects
+#'
+#' @param x An object of class \code{kidmo}.
+#' @param ... Additional arguments (ignored).
+#'
+#' @method print kidmo
+#'
+#' @export
+print.kidmo <- function(x, ...) {
+
+  cat("KIDMO Risk score\n")
+  cat("Number of patients:", length(x$kidmo), "\n")
+  cat("Summary:\n")
+
+  print(x$summary)
+  invisible(x)
 
 }
 
@@ -1557,17 +1630,19 @@ kidmo <- function(D_age = 55,
 #'
 #' @return UK DCD Risk Score
 #'
+#' @importFrom testit assert
+#'
 #' @export
 #'
 uk_dcd_score <- function(D_age, D_BMI, fWIT, CIT, R_age, R_MELD, retpx) {
 
   k = length(D_age)
-  testit::assert(length(D_BMI)  == k, fact = "Vectors must have same length.")
-  testit::assert(length(fWIT)   == k, fact = "Vectors must have same length.")
-  testit::assert(length(CIT)    == k, fact = "Vectors must have same length.")
-  testit::assert(length(R_age)  == k, fact = "Vectors must have same length.")
-  testit::assert(length(R_MELD) == k, fact = "Vectors must have same length.")
-  testit::assert(length(retpx)  == k, fact = "Vectors must have same length.")
+  assert(length(D_BMI)  == k, fact = "Vectors must have same length.")
+  assert(length(fWIT)   == k, fact = "Vectors must have same length.")
+  assert(length(CIT)    == k, fact = "Vectors must have same length.")
+  assert(length(R_age)  == k, fact = "Vectors must have same length.")
+  assert(length(R_MELD) == k, fact = "Vectors must have same length.")
+  assert(length(retpx)  == k, fact = "Vectors must have same length.")
 
   s1 = ifelse(D_age > 60, 2, 0)
   s2 = ifelse(D_BMI > 25, 3, 0)

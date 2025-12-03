@@ -12,7 +12,8 @@ kidmo(
   R_age = 57,
   R_retpx = FALSE,
   R_tpxyear = 2026,
-  times = c(2, 5)
+  times = c(2, 5),
+  newdata = NULL
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ kidmo(
 \item{R_tpxyear}{recipient year of transplant (continuous)}
 
 \item{times}{time points for predictions, in years}
+
+\item{newdata}{data frame with variables (requires correct variable names)}
 }
 \value{
 KIDMO Score
