@@ -1604,8 +1604,8 @@ kidmo <- function(D_age = 55,
 #' @export
 print.kidmo <- function(x, ...) {
 
-  cat("KIDMO Risk score\n")
-  cat("Number of patients:", length(x$kidmo), "\n")
+  cat("KIDMO Risk Score\n")
+  cat("Number of recipients:", length(x$kidmo), "\n")
   cat("Summary:\n")
 
   print(x$summary)
