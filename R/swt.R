@@ -1,71 +1,52 @@
-#' SWT skeleton
+#' SWT skeleton for documents
 #'
-#' This internal function enables a Swisstransplant Document in Quarto for RStudio projects.
+#' This internal function supports Swisstransplant Documents in Quarto for RStudio projects.
 #'
 #' @param path project path
 
-swt_skeleton <- function(path) {
+swt_document_skeleton <- function(path) {
 
   # ensure path exists
   FILENAME = paste0(basename(path), ".qmd")
   PATH_R = file.path(path, "R")
   PATH_DATA = file.path(path, "data")
+  SOURCEPATH = file.path(find.package("swt"), "rstudio", "templates", "project")
 
   dir.create(PATH_R, recursive = TRUE, showWarnings = FALSE)
-  dir.create(PATH_DATA, recursive = TRUE, showWarnings = FALSE)
+  dir.create(PATH_DATA, showWarnings = FALSE)
 
-  # generate header for file
-  content = c(
-    "---",
-    "title: 'Project Title'",
-    "subtitle: 'Statistical report'",
-    "author: Author Name",
-    "date: last-modified",
-    "abstract: 'Short description of the project'",
-    "lang: en",
-    "format:",
-    "  html:",
-    "    toc: true",
-    "    theme: swt.scss",
-    "    df-print: kable",
-    "    embed-resources: true",
-    "    code-fold: true",
-    "---",
-    "",
-    "::: {.callout-tip appearance=\"simple\"}",
-    "This is a Swisstransplant Quarto document. For tips and guidance, refer to the Swisstransplant R Cookbook at <https://data.swisstransplant.org/rcookbook/>.",
-    ":::",
-    "",
-    "## Objectives",
-    "",
-    "## Data import",
-    "",
-    "## Data processing",
-    "",
-    "## Quality control",
-    "",
-    "## Descriptive statistics",
-    "",
-    "## Primary analysis",
-    "",
-    "## Secondary analysis",
-    "",
-    "## Computing information",
-    "",
-    "```{r}",
-    "sessionInfo()",
-    "```"
-  )
-
-  if (!file.exists(file.path(path, FILENAME))) {
-    writeLines(content, con = file.path(PATH_R, FILENAME))
+  # copy quarto template, but don't overwrite
+  if (!file.exists(file.path(PATH_R, FILENAME))) {
+    file.copy(file.path(SOURCEPATH, "document.qmd"), file.path(PATH_R, FILENAME))
   }
 
-  # copy files
-  SOURCEPATH = file.path(find.package("swt"), "rstudio", "templates", "project")
-  myfiles = list.files(SOURCEPATH, pattern = "swt.scss|SWT_2955_2021.png",
-                       full.names = TRUE)
+  # copy other files
+  myfiles = list.files(SOURCEPATH, pattern = "swt.scss|SWT_2955_2021.png", full.names = TRUE)
   file.copy(myfiles, PATH_R)
+}
+
+#' SWT skeleton for slides
+#'
+#' This internal function supports Swisstransplant Presentations in Quarto for RStudio projects.
+#'
+#' @param path project path
+
+swt_slides_skeleton <- function(path) {
+
+  # ensure path exists
+  FILENAME = paste0(basename(path), ".qmd")
+  SOURCEPATH = file.path(find.package("swt"), "rstudio", "templates", "project")
+
+  dir.create(path, showWarnings = FALSE)
+
+  # copy quarto template, but don't overwrite
+  if (!file.exists(file.path(path, FILENAME))) {
+    file.copy(file.path(SOURCEPATH, "slides.qmd"), file.path(path, FILENAME))
+  }
+
+  # copy other files
+  myfiles = list.files(SOURCEPATH, pattern = "swt.scss|SWT_2955_2021.png", full.names = TRUE)
+  file.copy(myfiles, path)
 }
 
 #' SWT theme for ggplot
@@ -1170,7 +1151,7 @@ get_days_in_year <- function() {
 #' Calculates eGFR according to the 2021 formula.
 #'
 #' @details
-#' See equation and references at \url{https://www.kidney.org/ckd-epi-creatinine-equation-2021}.
+#' See equation and references at \url{https://www.kidney.org/professionals/ckd-epi-creatinine-equation-2021}.
 #'
 #' @param SCr serum creatinine in mg/dL (US) or umol/L (S)
 #' @param age age in years
@@ -1663,7 +1644,7 @@ uk_dcd_score <- function(D_age, D_BMI, fWIT, CIT, R_age, R_MELD, retpx) {
 #' Calculates the OPTN KDRI according to the 2024 version.
 #'
 #' @details
-#' See details under "Learn about KDPI" at \url{https://optn.transplant.hrsa.gov/data/allocation-calculators/kdpi-calculator/}.
+#' See details under "Learn about KDPI" at \url{https://www.hrsa.gov/optn/data/allocation-calculators/kdpi-calculator}.
 #'
 #' @param D_age donor age in years
 #' @param D_height donor height in cm

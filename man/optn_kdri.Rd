@@ -42,5 +42,5 @@ KDRI hazard ratio
 Calculates the OPTN KDRI according to the 2024 version.
 }
 \details{
-See details under "Learn about KDPI" at \url{https://optn.transplant.hrsa.gov/data/allocation-calculators/kdpi-calculator/}.
+See details under "Learn about KDPI" at \url{https://www.hrsa.gov/optn/data/allocation-calculators/kdpi-calculator}.
 }

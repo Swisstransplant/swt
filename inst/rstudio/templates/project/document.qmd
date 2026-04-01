@@ -1,0 +1,39 @@
+---
+title: 'Project Title'
+subtitle: 'Statistical report'
+author: Author Name
+date: last-modified
+abstract: 'Short description of the project'
+lang: en
+format:
+  html:
+    toc: true
+    theme: swt.scss
+    df-print: kable
+    embed-resources: true
+    code-fold: true
+---
+
+::: {.callout-tip appearance="simple"}
+This is a Swisstransplant Quarto document. For tips and guidance, refer to the Swisstransplant R Cookbook at <https://data.swisstransplant.org/rcookbook/>.
+:::
+
+## Objectives
+
+## Data import
+
+## Data processing
+
+## Quality control
+
+## Descriptive statistics
+
+## Primary analysis
+
+## Secondary analysis
+
+## Computing information
+
+```{r}
+sessionInfo()
+```

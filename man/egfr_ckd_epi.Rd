@@ -22,5 +22,5 @@ eGFR in mL/min/1.73m2
 Calculates eGFR according to the 2021 formula.
 }
 \details{
-See equation and references at \url{https://www.kidney.org/ckd-epi-creatinine-equation-2021}.
+See equation and references at \url{https://www.kidney.org/professionals/ckd-epi-creatinine-equation-2021}.
 }
