@@ -15,6 +15,6 @@ Imports: ggplot2, grDevices, utils, hms, data.table, testit, segmented, lubridat
 LazyData: true
 License: file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.3.3
 Depends: 
     R (>= 3.5.0)
+Config/roxygen2/version: 8.0.0

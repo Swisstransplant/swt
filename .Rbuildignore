@@ -4,3 +4,5 @@
 ^data-raw$
 ^devel$
 ^manual$
+^\.positai$
+^\.claude$
