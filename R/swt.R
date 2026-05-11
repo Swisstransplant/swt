@@ -1414,18 +1414,18 @@ kidmo_model <- function() {
   return(idat.kidmo.model)
 }
 
-#' KIDMO rank
+#' KIDMO empirical cumulative distribution function (ecdf)
 #'
-#' Conversion of (unscaled) hazard ratio into percentile rank.
+#' Conversion of log hazard ratio into percentile rank.
 #'
-#' @param hr hazard ratio
+#' @param log_hr log hazard ratio (unscaled)
 #'
-#' @return percentile
+#' @return percentile rank
 #'
 #' @export
 #'
-kidmo_hr2rank <- function(hr) {
-  return(idat.kidmo.model.hr2rank(hr))
+kidmo_ecdf <- function(log_hr) {
+  return(idat.kidmo.model.ecdf(log_hr))
 }
 
 #' KIDMO Score
@@ -1494,7 +1494,7 @@ kidmo <- function(D_age = 55,
 
   kidmo = exp(lp)/HR_MED
   # confint = c(exp(lo)/HR_median, exp(up)/HR_median)
-  rank = kidmo_hr2rank(exp(lp))
+  rank = kidmo_ecdf(lp)
 
   # 2. Calculate absolute risk
   #
